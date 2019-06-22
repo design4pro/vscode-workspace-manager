@@ -2,7 +2,7 @@
 
 import * as nls from 'vscode-nls';
 import { InputBoxOptions, window } from 'vscode';
-import { ExtensionConfig } from './model/config';
+import { IConfig } from './model/config';
 
 const localize = nls.loadMessageBundle();
 
@@ -23,13 +23,15 @@ export default class Common {
         return options;
     }
 
-    public async getPathsAndSave(sett: ExtensionConfig): Promise<string> {
+    public async getPathsAndSave(sett: IConfig): Promise<string> {
         const opt = Common.getInputBox(false);
 
-        const paths = ((await window.showInputBox(opt)) || '').trim();
+        const includeGlobPattern = (
+            (await window.showInputBox(opt)) || ''
+        ).trim();
 
-        if (paths && paths !== 'esc') {
-            sett.paths = paths;
+        if (includeGlobPattern && includeGlobPattern !== 'esc') {
+            sett.includeGlobPattern = [includeGlobPattern];
             // const saved = await this.saveSettings(sett);
 
             // if (saved) {
@@ -38,7 +40,7 @@ export default class Common {
             //         1000
             //     );
             // }
-            return paths;
+            return includeGlobPattern;
         }
     }
 }

@@ -1,3 +1,5 @@
+'use strict';
+
 import { commands } from 'vscode';
 
 export function refreshTreeDataCommand() {

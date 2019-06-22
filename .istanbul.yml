@@ -1,0 +1,20 @@
+verbose: false
+instrumentation:
+    root: ./src/
+    extensions:
+        - .ts
+    default-excludes: true
+    excludes: ['**/node_modules/**']
+    include-pid: false
+reporting:
+    print: summary
+    reports:
+        - html
+        - text-summary
+        - lcov
+    dir: ./coverage
+    watermarks:
+        statements: [70, 90]
+        lines: [70, 90]
+        functions: [70, 90]
+        branches: [70, 90]

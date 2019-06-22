@@ -1,6 +1,7 @@
 {
     "configuration.title": "Workspace Manager",
-    "configuration.paths": "Paths of directories when `.code-workspace` files can be saved and then read from",
+    "configuration.includeGlobPattern": "Paths of directories when `.code-workspace` files can be saved and then read from",
+    "configuration.excludeGlobPattern": "A glob pattern that defines files and folders to exclude",
     "configuration.codeExecutable": "Path to the executable file for VS Code",
     "configuration.codeInsidersExecutable": "Path to the executable file for VS Code Insiders",
     "configuration.showInActivityBar": "Whether or not to show the activity bar tree view container",

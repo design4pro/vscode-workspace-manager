@@ -9,7 +9,8 @@ export enum IOutputLevel {
 }
 
 export interface IConfig {
-    paths: string[];
+    includeGlobPattern: string | string[];
+    excludeGlobPattern: string | string[];
     codeExecutable: string;
     codeInsidersExecutable: string;
     showInActivityBar: boolean;

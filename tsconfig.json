@@ -9,8 +9,8 @@
         "outDir": "out",
         "lib": ["es6"],
         "sourceMap": true,
-        "rootDir": "src"
+        "rootDir": "."
     },
     "include": ["src/**/*.ts"],
-    "exclude": ["node_modules"]
+    "exclude": ["node_modules", ".vscode-test"]
 }

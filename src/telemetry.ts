@@ -1,8 +1,11 @@
+'use strict';
+
 import * as appInsights from 'applicationinsights';
 import * as os from 'os';
+import { Disposable, env, ExtensionContext, version, workspace } from 'vscode';
 import { configuration } from './configuration';
+import { APPINSIGHTS_KEY } from './constants';
 import { Logger } from './logger';
-import { Disposable, workspace, env, version, ExtensionContext } from 'vscode';
 
 class TelemetryReporter extends Disposable {
     private client: appInsights.TelemetryClient;
@@ -173,12 +176,10 @@ export let Reporter: TelemetryReporter;
 export function activate(ctx: ExtensionContext) {
     const packageJson = require(ctx.asAbsolutePath('./package.json'));
 
-    const aiKey = require('./constants.json').APPINSIGHTS_KEY;
-
     Reporter = new TelemetryReporter(
         `${packageJson.publisher}.${packageJson.name}`,
         packageJson.version,
-        aiKey
+        APPINSIGHTS_KEY
     );
 }
 

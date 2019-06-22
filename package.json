@@ -24,24 +24,24 @@
         "save",
         "switch"
     ],
-    "main": "./out/extension.js",
+    "main": "./out/src/extension.js",
     "scripts": {
-        "build": "gulp build",
-        "watch": "gulp watch",
-        "vscode:prepublish": "gulp verify-no-linked-modules",
+        "vscode:prepublish": "npm run compile",
+        "publish": "vsce publish",
+        "package": "vsce package",
+        "clean": "rimraf out",
+        "compile": "npm run clean && tsc -p ./",
+        "watch": "tsc -watch -p ./",
         "commit": "commit",
         "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "npm run lint && node ./node_modules/vscode/bin/test",
-        "test-compile": "npm run lint && tsc -p ./",
-        "release": "./node_modules/.bin/semantic-release",
-        "format": "prettier --write './src/**/*.ts'",
-        "lint": "gulp tslint",
-        "package": "gulp package"
+        "test": "npm run compile && node ./node_modules/vscode/bin/test",
+        "release": "./node_modules/.bin/semantic-release"
     },
     "dependencies": {
         "applicationinsights": "^1.4.0",
         "lodash": "^4.17.11",
         "mkdirp": "^0.5.1",
+        "fast-glob": "^3.0.4",
         "semver": "^6.1.2",
         "uuid": "^3.3.2",
         "verror": "^1.10.0",
@@ -57,23 +57,21 @@
         "@types/lodash": "^4.14.134",
         "@types/mkdirp": "^0.5.2",
         "@types/mocha": "^2.2.42",
-        "@types/node": "^10.12.21",
-        "del": "^4.1.1",
-        "event-stream": "^4.0.1",
-        "gulp": "^4.0.2",
-        "gulp-sourcemaps": "^2.6.5",
-        "gulp-tslint": "^8.1.4",
-        "gulp-typescript": "^5.0.1",
-        "gulp-util": "^3.0.8",
+        "@types/node": "12.6.2",
+        "decache": "^4.5.1",
         "husky": "^2.4.1",
+        "istanbul": "^0.4.5",
         "minimist": "^1.2.0",
         "prettier": "^1.18.2",
+        "remap-istanbul": "^0.13.0",
+        "rimraf": "^2.6.3",
         "semantic-release": "^15.13.16",
         "semantic-release-vsce": "^2.2.8",
         "ts-loader": "^6.0.4",
         "tslint": "^5.12.1",
         "tslint-plugin-prettier": "^2.0.1",
         "typescript": "^3.3.1",
+        "vsce": "^1.64.0",
         "vscode-nls-dev": "^3.2.6"
     },
     "husky": {
@@ -89,10 +87,17 @@
             "type": "object",
             "title": "%configuration.title%",
             "properties": {
-                "workspace-manager.paths": {
+                "workspace-manager.includeGlobPattern": {
+                    "type": "array",
+                    "default": [
+                        "~/**/*"
+                    ],
+                    "description": "%configuration.includeGlobPattern%"
+                },
+                "workspace-manager.excludeGlobPattern": {
                     "type": "array",
                     "default": [],
-                    "description": "%configuration.paths%"
+                    "description": "%configuration.excludeGlobPattern%"
                 },
                 "workspace-manager.codeExecutable": {
                     "type": "string",
@@ -133,16 +138,16 @@
                 "command": "workspaceManager.switchWorkspaceInNewWindow",
                 "title": "%command.switchWorkspaceInNewWindow.title%",
                 "icon": {
-                    "light": "assets/icons/light/switch-new-window.svg",
-                    "dark": "assets/icons/dark/switch-new-window.svg"
+                    "light": "resources/light/new-window.svg",
+                    "dark": "resources/dark/new-window.svg"
                 }
             },
             {
                 "command": "workspaceManager.deleteWorkspace",
                 "title": "%command.deleteWorkspace.title%",
                 "icon": {
-                    "light": "assets/icons/light/delete.svg",
-                    "dark": "assets/icons/dark/delete.svg"
+                    "light": "resources/light/delete.svg",
+                    "dark": "resources/dark/delete.svg"
                 }
             },
             {
@@ -171,8 +176,8 @@
                 {
                     "id": "workspaceManagerViewContainer",
                     "title": "%viewsContainers.activitybar.title%",
-                    "icon": "assets/icons/dark/tree-container.svg",
-                    "when": "workspaceManagerExplorerShow && !workspaceManagerEmpty"
+                    "icon": "media/workspace-1.svg",
+                    "when": "!workspaceManagerEmpty"
                 }
             ]
         },
@@ -256,7 +261,7 @@
             {
                 "command": "workspaceManager.switchWorkspace",
                 "key": "shift+alt+p",
-				"mac": "cmd+alt+p"
+                "mac": "cmd+alt+p"
             },
             {
                 "command": "workspaceManager.switchWorkspaceInNewWindow",

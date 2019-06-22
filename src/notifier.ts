@@ -1,3 +1,5 @@
+'use strict';
+
 import { StatusBarItem, window, StatusBarAlignment } from 'vscode';
 
 export class Notifier {
@@ -11,7 +13,6 @@ export class Notifier {
     ) {
         this.statusBarItem = window.createStatusBarItem(alignment, priority);
         this.statusBarItem.command = command;
-        this.statusBarItem.show();
     }
 
     notify(icon: string, text: string, autoHide: boolean = true): void {
@@ -19,6 +20,7 @@ export class Notifier {
             clearTimeout(this.timeoutId);
         }
 
+        this.statusBarItem.show();
         this.statusBarItem.text = `$(${icon}) ${text}`;
         this.statusBarItem.tooltip = null;
 

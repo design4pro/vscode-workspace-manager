@@ -1,3 +1,5 @@
+'use strict';
+
 import * as vscode from 'vscode';
 import { Command, Commands } from '../common';
 import { AbstractCommand } from '../abstractCommand';

@@ -1,8 +1,9 @@
+'use strict';
+
 import { existsSync, writeFileSync } from 'fs';
 import * as mkdirp from 'mkdirp';
 import { basename, dirname, join } from 'path';
 import { WorkspaceEntry } from '../../model/workspace';
-import { switchToWorkspaceCommand } from './switchToWorkspace';
 import { getWorkspaceEntryDirectories } from '../../util/getWorkspaceEntryDirectories';
 import { getFirstWorkspaceFolderName } from '../../util/getFirstWorkspaceFolderName';
 import { refreshTreeDataCommand } from '../common/refreshTreeData';
@@ -12,8 +13,10 @@ import {
     QuickPickOptions,
     InputBoxOptions,
     workspace,
-    WorkspaceFolder
+    WorkspaceFolder,
+    commands
 } from 'vscode';
+import { Commands } from '../common';
 
 export function saveWorkspaceCommand() {
     const workspaceEntryDirectories = getWorkspaceEntryDirectories();
@@ -108,9 +111,12 @@ export function saveWorkspaceCommand() {
 
                                 refreshTreeDataCommand();
 
-                                switchToWorkspaceCommand(<WorkspaceEntry>{
-                                    path: workspaceFilePath
-                                });
+                                commands.executeCommand(
+                                    Commands.SwitchToWorkspace,
+                                    <WorkspaceEntry>{
+                                        path: workspaceFilePath
+                                    }
+                                );
                             } catch (error) {
                                 window.showErrorMessage(
                                     'Error while trying to save workspace ' +

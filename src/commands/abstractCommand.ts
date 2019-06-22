@@ -1,3 +1,5 @@
+'use strict';
+
 import * as uuid from 'uuid/v4';
 import * as VError from 'verror';
 import { commands, Disposable, TextEditor, Uri } from 'vscode';
@@ -46,7 +48,6 @@ export abstract class AbstractCommand implements Disposable {
     private _disposable: Disposable;
 
     constructor(command: Commands | Commands[]) {
-        console.log(command);
         if (typeof command === 'string') {
             this._disposable = commands.registerCommand(
                 command,
@@ -69,7 +70,9 @@ export abstract class AbstractCommand implements Disposable {
     }
 
     dispose() {
-        this._disposable && this._disposable.dispose();
+        if (this._disposable) {
+            this._disposable.dispose();
+        }
     }
 
     protected preExecute(
@@ -79,7 +82,7 @@ export abstract class AbstractCommand implements Disposable {
         return this.execute(...args);
     }
 
-    abstract execute(...args: any[]): Promise<any>;
+    abstract async execute(...args: any[]): Promise<any>;
 
     protected async _execute(command: string, ...args: any[]): Promise<any> {
         const operationId = uuid();
@@ -137,8 +140,10 @@ export abstract class AbstractCommand implements Disposable {
 
         if (options.uri && (firstArg === null || firstArg instanceof Uri)) {
             const [uri, ...rest] = args as [Uri, any];
+
             if (uri !== undefined) {
                 const uris = rest[0];
+
                 if (
                     uris !== null &&
                     Array.isArray(uris) &&
@@ -156,6 +161,7 @@ export abstract class AbstractCommand implements Disposable {
                         rest.slice(1)
                     ];
                 }
+
                 return [
                     { command: command, type: 'uri', editor: editor, uri: uri },
                     rest
@@ -165,6 +171,9 @@ export abstract class AbstractCommand implements Disposable {
             args = args.slice(1);
         }
 
-        return [{ command: command, type: 'unknown', editor: editor }, args];
+        return [
+            { command: command, type: 'unknown', editor: editor },
+            firstArg
+        ];
     }
 }

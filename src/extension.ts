@@ -1,20 +1,22 @@
+'use strict';
+
 // import * as nls from 'vscode-nls';
-import { ExtensionContext, extensions, window } from 'vscode';
+import { ExtensionContext, extensions } from 'vscode';
 import { registerCommands } from './commands';
 import { configuration, Configuration } from './configuration';
 import { extensionOutputChannelName, extensionQualifiedId } from './constants';
 import { Container } from './container';
 import { Environment } from './environment';
 import { Logger } from './logger';
-import { IOutputLevel, IConfig } from './model/config';
-import { state } from './state';
-import { TreeDataProvider } from './tree-view/explorer/treeDataProvider';
-import { setWorkspaceManagerEmpty } from './util/setWorkspaceManagerEmpty';
-import { setWorkspaceManagerViewInActivityBarShow } from './util/setWorkspaceManagerViewInActivityBarShow';
-import { setWorkspaceManagerViewInExplorerShow } from './util/setWorkspaceManagerViewInExplorerShow';
-import { cacheWorkspace } from './util/cacheWorkspace';
+import { IConfig, IOutputLevel } from './model/config';
 import { Notifier } from './notifier';
+import { state } from './state';
 import * as telemetry from './telemetry';
+import { cacheWorkspace } from './cache/cacheWorkspace';
+import { setWorkspaceManagerEmpty } from './util/context/setWorkspaceManagerEmpty';
+import { setWorkspaceManagerViewInActivityBarShow } from './util/context/setWorkspaceManagerViewInActivityBarShow';
+import { setWorkspaceManagerViewInExplorerShow } from './util/context/setWorkspaceManagerViewInExplorerShow';
+import { registerViews } from './views';
 
 // The example uses the file message format.
 // const localize = nls.loadMessageBundle();
@@ -25,7 +27,7 @@ export const notifier: Notifier = new Notifier(
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
-export async function activate(context: ExtensionContext) {
+export async function activate(context: ExtensionContext): Promise<void> {
     const start = process.hrtime();
     state.context = context;
     state.environment = new Environment();
@@ -51,6 +53,7 @@ export async function activate(context: ExtensionContext) {
         Container.initialize(context, cfg, workspaceManagerVersion);
 
         registerCommands(context);
+        registerViews(context);
     } catch (e) {
         Logger.error(e, 'Error initializing atlascode!');
     }
@@ -104,16 +107,16 @@ export async function activate(context: ExtensionContext) {
     // );
     // disposables.push(listenForConfigurationChanges());
 
-    const treeDataProvider = new TreeDataProvider();
+    // const treeDataProvider = new TreeDataProvider();
 
-    window.registerTreeDataProvider(
-        'workspaceManagerViewInActivityBar',
-        treeDataProvider
-    );
-    window.registerTreeDataProvider(
-        'workspaceManagerViewInExplorer',
-        treeDataProvider
-    );
+    // window.registerTreeDataProvider(
+    //     'workspaceManager.viewInActivityBar',
+    //     treeDataProvider
+    // );
+    // window.registerTreeDataProvider(
+    //     'workspaceManager.viewInExplorer',
+    //     treeDataProvider
+    // );
 
     // disposables.push(
     //     vscode.commands.registerCommand(
@@ -123,10 +126,6 @@ export async function activate(context: ExtensionContext) {
     // );
 
     // context.subscriptions.push(...disposables);
-
-    setWorkspaceManagerEmpty();
-    setWorkspaceManagerViewInActivityBarShow();
-    setWorkspaceManagerViewInExplorerShow();
 
     const elapsed = process.hrtime(start);
     const elapsedMs = elapsed[0] * 1e3 + elapsed[1] / 1e6;
@@ -141,6 +140,10 @@ export async function activate(context: ExtensionContext) {
     );
 
     await cacheWorkspace();
+
+    setWorkspaceManagerEmpty();
+    setWorkspaceManagerViewInActivityBarShow();
+    setWorkspaceManagerViewInExplorerShow();
 }
 
 // this method is called when your extension is deactivated

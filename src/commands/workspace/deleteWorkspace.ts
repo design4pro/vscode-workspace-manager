@@ -1,12 +1,14 @@
+'use strict';
+
 import * as nls from 'vscode-nls';
-import { gatherWorkspaceEntries } from '../../util/getWorkspaceEntries';
+import { getWorkspaceEntries } from '../../util/getWorkspaceEntries';
 import { window, QuickPickItem, QuickPickOptions } from 'vscode';
 import { deleteWorkspace } from '../../util/deleteWorkspace';
 
 const localize = nls.loadMessageBundle();
 
-export function deleteWorkspaceCommand() {
-    let workspaceEntries = gatherWorkspaceEntries();
+export async function deleteWorkspaceCommand() {
+    let workspaceEntries = await getWorkspaceEntries();
 
     if (!workspaceEntries.length) {
         const noWorkspacesFoundText = localize(

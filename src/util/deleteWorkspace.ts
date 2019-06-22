@@ -2,7 +2,7 @@
 
 import { unlinkSync } from 'fs';
 import { window } from 'vscode';
-import { refreshTreeDataCommand } from '../commands';
+import { refreshTreeDataCommand } from '../commands/common/refreshTreeData';
 import { WorkspaceEntry } from '../model/workspace';
 
 export function deleteWorkspace(

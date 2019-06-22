@@ -1,23 +1,36 @@
+'use strict';
+
 import * as nls from 'vscode-nls';
-import { switchToWorkspaceCommand } from './switchToWorkspace';
-import { gatherWorkspaceEntries } from '../../util/getWorkspaceEntries';
+import { getWorkspaceEntries } from '../../util/getWorkspaceEntries';
 import { AbstractCommand } from '../abstractCommand';
-import { window, QuickPickItem, QuickPickOptions } from 'vscode';
+import {
+    window,
+    QuickPickItem,
+    QuickPickOptions,
+    commands,
+    TextEditor,
+    Uri
+} from 'vscode';
 import { Commands, Command } from '../common';
+import { ISwitchToWorkspaceCommandArgs } from './switchToWorkspace';
+import { WorkspaceEntry } from '../../model/workspace';
 
 const localize = nls.loadMessageBundle();
+
+export interface ISwitchWorkspaceCommandArgs {
+    inNewWindow?: boolean;
+}
 
 @Command()
 export class SwitchWorkspaceCommand extends AbstractCommand {
     constructor() {
-        console.log(Commands.SwitchWorkspace);
         super(Commands.SwitchWorkspace);
     }
 
-    async execute(inNewWindow?: boolean) {
-        const workspaceEntries = await gatherWorkspaceEntries();
+    async execute(args: ISwitchWorkspaceCommandArgs = {}) {
+        args = { ...args };
 
-        console.log(workspaceEntries);
+        const workspaceEntries = await getWorkspaceEntries();
 
         if (!workspaceEntries.length) {
             const noWorkspacesFoundText = localize(
@@ -42,7 +55,7 @@ export class SwitchWorkspaceCommand extends AbstractCommand {
             matchOnDescription: false,
             matchOnDetail: false,
             placeHolder: `Choose a workspace to switch to${
-                inNewWindow ? ' in a new window' : ''
+                args.inNewWindow ? ' in a new window' : ''
             }...`
         };
 
@@ -52,7 +65,7 @@ export class SwitchWorkspaceCommand extends AbstractCommand {
                     return;
                 }
 
-                const entry = workspaceEntries.find(
+                const entry: WorkspaceEntry = workspaceEntries.find(
                     entry => entry.path === workspaceItem.description
                 );
 
@@ -60,7 +73,14 @@ export class SwitchWorkspaceCommand extends AbstractCommand {
                     return;
                 }
 
-                switchToWorkspaceCommand(entry, inNewWindow);
+                const commandArgs: ISwitchToWorkspaceCommandArgs = {
+                    workspaceEntry: entry,
+                    inNewWindow: args.inNewWindow
+                };
+
+                commands.executeCommand(Commands.SwitchToWorkspace, [
+                    commandArgs
+                ]);
             },
             (reason: any) => {}
         );

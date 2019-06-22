@@ -1,6 +1,8 @@
+'use strict';
+
 import { Command, Commands } from '../common';
 import { AbstractCommand } from '../abstractCommand';
-import { cacheWorkspace } from '../../util/cacheWorkspace';
+import { cacheWorkspace } from '../../cache/cacheWorkspace';
 
 @Command()
 export class CacheWorkspace extends AbstractCommand {

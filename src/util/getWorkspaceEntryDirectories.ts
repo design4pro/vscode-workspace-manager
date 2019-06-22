@@ -5,11 +5,12 @@ import { existsSync, statSync } from 'fs';
 import { workspace } from 'vscode';
 
 export function getWorkspaceEntryDirectories(): string[] {
-    let paths = workspace
-        .getConfiguration('workspaceManager')
-        .get('paths') as string[];
+    const configuration = workspace.getConfiguration();
+    let includeGlobPattern: string[] = configuration.get(
+        'workspace-manager.includeGlobPattern'
+    );
 
-    if (!paths || !paths.length) {
+    if (!includeGlobPattern || !includeGlobPattern.length) {
         return [];
     }
 
@@ -17,15 +18,15 @@ export function getWorkspaceEntryDirectories(): string[] {
         process.env[process.platform === 'win32' ? 'USERPROFILE' : 'HOME'] ||
         '~';
 
-    paths = paths
+    includeGlobPattern = includeGlobPattern
         .filter(p => typeof p === 'string')
         .map(p => p.replace('~', userHome));
 
-    if (!paths.length) {
+    if (!includeGlobPattern.length) {
         return [];
     }
 
-    const pathsHash = paths.reduce(
+    const pathsHash = includeGlobPattern.reduce(
         (acc: any, path) => ((acc[path] = true), acc),
         {}
     );
