@@ -1,16 +1,16 @@
+'use strict';
+
 import { existsSync, statSync } from 'fs';
 import { dirname, join } from 'path';
-import * as vscode from 'vscode';
+import { env, workspace } from 'vscode';
 
 export function getApp() {
     const key = `${
-        vscode.env.appName.toLowerCase().search('insiders') !== -1
+        env.appName.toLowerCase().search('insiders') !== -1
             ? 'codeInsiders'
             : 'code'
     }Executable`;
-    const app = <string>(
-        vscode.workspace.getConfiguration('vscodeWorkspaceManager').get(key)
-    );
+    const app = <string>workspace.getConfiguration('workspaceManager').get(key);
 
     if (app.search(/\s/) !== -1) {
         return `"${app}"`;

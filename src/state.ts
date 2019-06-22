@@ -1,4 +1,6 @@
-import { IExtensionState } from './model/extensionState';
+'use strict';
+
+import { IExtensionState } from './model/state';
 
 export const state: IExtensionState = {
     instanceID: Math.random().toString()

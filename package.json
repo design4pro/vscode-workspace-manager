@@ -1,5 +1,5 @@
 {
-    "name": "vscode-workspace-manager",
+    "name": "workspace-manager",
     "displayName": "Workspace Manager",
     "description": "Workspace manager for Visual Studio Code",
     "version": "0.0.0-development",
@@ -10,7 +10,8 @@
         "url": "https://github.com/design4pro/vscode-workspace-manager.git"
     },
     "bugs": {
-        "url": "https://github.com/design4pro/vscode-workspace-manager/issues"
+        "url": "https://github.com/design4pro/vscode-workspace-manager/issues",
+        "email": "workspace-manager@design4.pro"
     },
     "engines": {
         "vscode": "^1.35.0"
@@ -38,9 +39,11 @@
         "package": "gulp package"
     },
     "dependencies": {
-        "applicationinsights": "^1.4.0",
+        "lodash": "^4.17.11",
         "mkdirp": "^0.5.1",
+        "semver": "^6.1.2",
         "uuid": "^3.3.2",
+        "verror": "^1.10.0",
         "vscode": "^1.1.28",
         "vscode-nls": "^4.1.1"
     },
@@ -62,7 +65,6 @@
         "gulp-typescript": "^5.0.1",
         "gulp-util": "^3.0.8",
         "husky": "^2.4.1",
-        "lodash": "^4.17.11",
         "minimist": "^1.2.0",
         "prettier": "^1.18.2",
         "semantic-release": "^15.13.16",
@@ -86,27 +88,27 @@
             "type": "object",
             "title": "%configuration.title%",
             "properties": {
-                "vscodeWorkspaceManager.paths": {
+                "workspaceManager.paths": {
                     "type": "array",
                     "default": [],
                     "description": "%configuration.paths%"
                 },
-                "vscodeWorkspaceManager.codeExecutable": {
+                "workspaceManager.codeExecutable": {
                     "type": "string",
                     "default": "code",
                     "description": "%configuration.codeExecutable%"
                 },
-                "vscodeWorkspaceManager.codeInsidersExecutable": {
+                "workspaceManager.codeInsidersExecutable": {
                     "type": "string",
                     "default": "code-insiders",
                     "description": "%configuration.codeInsidersExecutable%"
                 },
-                "vscodeWorkspaceManager.showInActivityBar": {
+                "workspaceManager.showInActivityBar": {
                     "type": "boolean",
                     "default": true,
                     "description": "%configuration.showInActivityBar%"
                 },
-                "vscodeWorkspaceManager.showInExplorer": {
+                "workspaceManager.showInExplorer": {
                     "type": "boolean",
                     "default": true,
                     "description": "%configuration.showInExplorer%"
@@ -115,7 +117,7 @@
         },
         "commands": [
             {
-                "command": "vscodeWorkspaceManager.saveWorkspace",
+                "command": "workspaceManager.saveWorkspace",
                 "title": "%command.saveWorkspace.title%",
                 "icon": {
                     "light": "assets/icons/light/save.svg",
@@ -123,11 +125,11 @@
                 }
             },
             {
-                "command": "vscodeWorkspaceManager.switchWorkspace",
+                "command": "workspaceManager.switchWorkspace",
                 "title": "%command.switchWorkspace.title%"
             },
             {
-                "command": "vscodeWorkspaceManager.switchWorkspaceInNewWindow",
+                "command": "workspaceManager.switchWorkspaceInNewWindow",
                 "title": "%command.switchWorkspaceInNewWindow.title%",
                 "icon": {
                     "light": "assets/icons/light/switch-new-window.svg",
@@ -135,7 +137,7 @@
                 }
             },
             {
-                "command": "vscodeWorkspaceManager.deleteWorkspace",
+                "command": "workspaceManager.deleteWorkspace",
                 "title": "%command.deleteWorkspace.title%",
                 "icon": {
                     "light": "assets/icons/light/delete.svg",
@@ -143,7 +145,7 @@
                 }
             },
             {
-                "command": "vscodeWorkspaceManager.reloadWorkspaces",
+                "command": "workspaceManager.reloadWorkspaces",
                 "title": "%command.reloadWorkspaces.title%",
                 "icon": {
                     "light": "assets/icons/light/reload.svg",
@@ -151,108 +153,113 @@
                 }
             },
             {
-                "command": "vscodeWorkspaceManager.closeWorkspace",
+                "command": "workspaceManager.closeWorkspace",
                 "title": "%command.closeWorkspace.title%",
                 "icon": {
                     "light": "assets/icons/light/close.svg",
                     "dark": "assets/icons/dark/close.svg"
                 }
+            },
+            {
+                "command": "workspaceManager.cacheWorkspace",
+                "title": "%command.cacheWorkspace.title%"
             }
         ],
         "viewsContainers": {
             "activitybar": [
                 {
-                    "id": "vscodeWorkspaceManagerViewContainer",
+                    "id": "workspaceManagerViewContainer",
                     "title": "%viewsContainers.activitybar.title%",
                     "icon": "assets/icons/dark/tree-container.svg",
-                    "when": "vscodeWorkspaceManagerExplorerShow && !vscodeWorkspaceManagerEmpty"
+                    "when": "workspaceManagerExplorerShow && !workspaceManagerEmpty"
                 }
             ]
         },
         "views": {
-            "vscodeWorkspaceManagerViewContainer": [
+            "workspaceManagerViewContainer": [
                 {
-                    "id": "vscodeWorkspaceManagerViewInActivityBar",
-                    "name": "%views.vscodeWorkspaceManagerViewContainer.title%",
-                    "when": "vscodeWorkspaceManagerViewInActivityBarShow && !vscodeWorkspaceManagerEmpty"
+                    "id": "workspaceManagerViewInActivityBar",
+                    "name": "%views.workspaceManagerViewContainer.title%",
+                    "when": "workspaceManagerViewInActivityBarShow && !workspaceManagerEmpty"
                 }
             ],
             "explorer": [
                 {
-                    "id": "vscodeWorkspaceManagerViewInExplorer",
+                    "id": "workspaceManagerViewInExplorer",
                     "name": "%views.explorer.title%",
-                    "when": "vscodeWorkspaceManagerViewInExplorerShow && !vscodeWorkspaceManagerEmpty"
+                    "when": "workspaceManagerViewInExplorerShow && !workspaceManagerEmpty"
                 }
             ]
         },
         "menus": {
             "view/title": [
                 {
-                    "command": "vscodeWorkspaceManager.saveWorkspace",
-                    "when": "view == vscodeWorkspaceManagerViewInActivityBar",
+                    "command": "workspaceManager.saveWorkspace",
+                    "when": "view == workspaceManagerViewInActivityBar",
                     "group": "navigation@1"
                 },
                 {
-                    "command": "vscodeWorkspaceManager.reloadWorkspaces",
-                    "when": "view == vscodeWorkspaceManagerViewInActivityBar",
+                    "command": "workspaceManager.reloadWorkspaces",
+                    "when": "view == workspaceManagerViewInActivityBar",
                     "group": "navigation@2"
                 },
                 {
-                    "command": "vscodeWorkspaceManager.closeWorkspace",
-                    "when": "view == vscodeWorkspaceManagerViewInActivityBar",
+                    "command": "workspaceManager.closeWorkspace",
+                    "when": "view == workspaceManagerViewInActivityBar",
                     "group": "navigation@3"
                 },
                 {
-                    "command": "vscodeWorkspaceManager.saveWorkspace",
-                    "when": "view == vscodeWorkspaceManagerViewInExplorer",
+                    "command": "workspaceManager.saveWorkspace",
+                    "when": "view == workspaceManagerViewInExplorer",
                     "group": "navigation@1"
                 },
                 {
-                    "command": "vscodeWorkspaceManager.reloadWorkspaces",
-                    "when": "view == vscodeWorkspaceManagerViewInExplorer",
+                    "command": "workspaceManager.reloadWorkspaces",
+                    "when": "view == workspaceManagerViewInExplorer",
                     "group": "navigation@2"
                 },
                 {
-                    "command": "vscodeWorkspaceManager.closeWorkspace",
-                    "when": "view == vscodeWorkspaceManagerViewInExplorer",
+                    "command": "workspaceManager.closeWorkspace",
+                    "when": "view == workspaceManagerViewInExplorer",
                     "group": "navigation@3"
                 }
             ],
             "view/item/context": [
                 {
-                    "command": "vscodeWorkspaceManager.switchWorkspaceInNewWindow",
-                    "when": "view == vscodeWorkspaceManagerViewInActivityBar",
+                    "command": "workspaceManager.switchWorkspaceInNewWindow",
+                    "when": "view == workspaceManagerViewInActivityBar",
                     "group": "inline@1"
                 },
                 {
-                    "command": "vscodeWorkspaceManager.deleteWorkspace",
-                    "when": "view == vscodeWorkspaceManagerViewInActivityBar",
+                    "command": "workspaceManager.deleteWorkspace",
+                    "when": "view == workspaceManagerViewInActivityBar",
                     "group": "inline@2"
                 },
                 {
-                    "command": "vscodeWorkspaceManager.switchWorkspaceInNewWindow",
-                    "when": "view == vscodeWorkspaceManagerViewInExplorer",
+                    "command": "workspaceManager.switchWorkspaceInNewWindow",
+                    "when": "view == workspaceManagerViewInExplorer",
                     "group": "inline@1"
                 },
                 {
-                    "command": "vscodeWorkspaceManager.deleteWorkspace",
-                    "when": "view == vscodeWorkspaceManagerViewInExplorer",
+                    "command": "workspaceManager.deleteWorkspace",
+                    "when": "view == workspaceManagerViewInExplorer",
                     "group": "inline@2"
                 }
             ]
         },
         "keybindings": [
             {
-                "key": "Ctrl-k Shift-w",
-                "command": "vscodeWorkspaceManager.saveWorkspace"
+                "command": "workspaceManager.saveWorkspace",
+                "key": "ctrl-k shift-w"
             },
             {
-                "key": "Ctrl-k w",
-                "command": "vscodeWorkspaceManager.switchWorkspace"
+                "command": "workspaceManager.switchWorkspace",
+                "key": "shift+alt+p",
+				"mac": "cmd+alt+p"
             },
             {
-                "key": "Ctrl-k Ctrl-w",
-                "command": "vscodeWorkspaceManager.switchWorkspaceInNewWindow"
+                "command": "workspaceManager.switchWorkspaceInNewWindow",
+                "key": "ctrl-k ctrl-w"
             }
         ]
     }

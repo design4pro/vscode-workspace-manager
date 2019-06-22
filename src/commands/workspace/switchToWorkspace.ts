@@ -1,5 +1,5 @@
 import { exec } from 'child_process';
-import { WorkspaceEntry } from '../../model/workspaceEntry';
+import { WorkspaceEntry } from '../../model/workspace';
 import { getApp } from '../../util/getApp';
 import { onCommandRun } from '../../util/onCommandRun';
 

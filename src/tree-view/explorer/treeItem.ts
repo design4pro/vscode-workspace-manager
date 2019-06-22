@@ -1,5 +1,7 @@
+'use strict';
+
 import * as vscode from 'vscode';
-import { WorkspaceEntry } from '../../model/workspaceEntry';
+import { WorkspaceEntry } from '../../model/workspace';
 
 export class TreeItem extends vscode.TreeItem {
     public readonly label: string;

@@ -1,14 +1,16 @@
+'use strict';
+
 import { unlinkSync } from 'fs';
-import * as vscode from 'vscode';
-import { WorkspaceEntry } from '../model/workspaceEntry';
+import { window } from 'vscode';
 import { refreshTreeDataCommand } from '../commands';
+import { WorkspaceEntry } from '../model/workspace';
 
 export function deleteWorkspace(
     workspaceEntry: WorkspaceEntry,
     prompt: boolean
 ) {
     if (prompt) {
-        vscode.window
+        window
             .showInformationMessage(
                 `Are you sure you want to delete file ${workspaceEntry.path}?`,
                 'Yes',

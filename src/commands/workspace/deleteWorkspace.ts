@@ -1,6 +1,7 @@
-import { deleteWorkspace, gatherWorkspaceEntries } from '../../util';
-import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
+import { gatherWorkspaceEntries } from '../../util/getWorkspaceEntries';
+import { window, QuickPickItem, QuickPickOptions } from 'vscode';
+import { deleteWorkspace } from '../../util/deleteWorkspace';
 
 const localize = nls.loadMessageBundle();
 
@@ -13,27 +14,27 @@ export function deleteWorkspaceCommand() {
             'No workspaces found'
         );
 
-        vscode.window.showInformationMessage(noWorkspacesFoundText);
+        window.showInformationMessage(noWorkspacesFoundText);
 
         return;
     }
 
     const workspaceItems = workspaceEntries.map(
         entry =>
-            <vscode.QuickPickItem>{
+            <QuickPickItem>{
                 label: entry.name,
                 description: entry.path
             }
     );
 
-    const options = <vscode.QuickPickOptions>{
+    const options = <QuickPickOptions>{
         matchOnDescription: false,
         matchOnDetail: false,
         placeHolder: `Choose a workspace to delete...`
     };
 
-    vscode.window.showQuickPick(workspaceItems, options).then(
-        (workspaceItem?: vscode.QuickPickItem) => {
+    window.showQuickPick(workspaceItems, options).then(
+        (workspaceItem?: QuickPickItem) => {
             if (!workspaceItem) {
                 return;
             }

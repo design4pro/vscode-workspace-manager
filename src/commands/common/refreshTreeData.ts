@@ -1,5 +1,5 @@
-import * as vscode from 'vscode';
+import { commands } from 'vscode';
 
 export function refreshTreeDataCommand() {
-    vscode.commands.executeCommand('vscodeWorkspaceManager.treeData.refresh');
+    commands.executeCommand('workspaceManager.treeData.refresh');
 }

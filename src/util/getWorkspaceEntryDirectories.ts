@@ -1,10 +1,12 @@
+'use strict';
+
 import * as glob from 'fast-glob';
 import { existsSync, statSync } from 'fs';
-import * as vscode from 'vscode';
+import { workspace } from 'vscode';
 
 export function getWorkspaceEntryDirectories(): string[] {
-    let paths = vscode.workspace
-        .getConfiguration('vscodeWorkspaceManager')
+    let paths = workspace
+        .getConfiguration('workspaceManager')
         .get('paths') as string[];
 
     if (!paths || !paths.length) {

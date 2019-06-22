@@ -1,58 +1,70 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
-import * as vscode from 'vscode';
-import * as nls from 'vscode-nls';
-import { configuration } from './configuration';
+// import * as nls from 'vscode-nls';
+import { ExtensionContext, extensions, window } from 'vscode';
+import { registerCommands } from './commands';
+import { configuration, Configuration } from './configuration';
 import { extensionOutputChannelName, extensionQualifiedId } from './constants';
+import { Container } from './container';
 import { Environment } from './environment';
-import { LoggerOutput, TraceLevel } from './logger';
-import { WorkspaceEntry } from './model/workspaceEntry';
+import { Logger } from './logger';
+import { IConfig, OutputLevel } from './model/config';
 import { state } from './state';
 import { TreeDataProvider } from './tree-view/explorer/treeDataProvider';
-import { TreeItem } from './tree-view/explorer/treeItem';
-import { registerCommands } from './commands/common';
-import { setVSCodeWorkspaceManagerEmpty } from './util/setVSCodeWorkspaceManagerEmpty';
-import { setVSCodeWorkspaceManagerViewInActivityBarShow } from './util/setVSCodeWorkspaceManagerViewInActivityBarShow';
-import { setVSCodeWorkspaceManagerViewInExplorerShow } from './util/setVSCodeWorkspaceManagerViewInExplorerShow';
-// import * as telemetry from './telemetry';
+import { setWorkspaceManagerEmpty } from './util/setWorkspaceManagerEmpty';
+import { setWorkspaceManagerViewInActivityBarShow } from './util/setWorkspaceManagerViewInActivityBarShow';
+import { setWorkspaceManagerViewInExplorerShow } from './util/setWorkspaceManagerViewInExplorerShow';
+import { cacheWorkspace } from './util/cacheWorkspace';
+import { Notifier } from './notifier';
 
 // The example uses the file message format.
-const localize = nls.loadMessageBundle();
+// const localize = nls.loadMessageBundle();
+
+export const notifier: Notifier = new Notifier(
+    'workspaceManager.cacheWorkspace'
+);
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
-export async function activate(context: vscode.ExtensionContext) {
+export async function activate(context: ExtensionContext) {
     // const start = process.hrtime();
     state.context = context;
     state.environment = new Environment();
 
-    LoggerOutput.configure(
+    Logger.configure(
         context,
-        configuration.get<TraceLevel>(configuration.name('outputLevel').value),
+        configuration.get<OutputLevel>(configuration.name('outputLevel').value),
         o => undefined
     );
 
     // telemetry.activate(context);
 
-    const vscodeWorkspaceManager = vscode.extensions.getExtension(
-        extensionQualifiedId
-    )!;
-    const vscodeWorkspaceManagerVersion =
-        vscodeWorkspaceManager.packageJSON.version;
+    const workspaceManager = extensions.getExtension(extensionQualifiedId)!;
+    const workspaceManagerVersion = workspaceManager.packageJSON.version;
 
-    registerCommands(context);
+    Configuration.configure(context);
+
+    try {
+        Container.initialize(
+            context,
+            configuration.get<IConfig>(),
+            workspaceManagerVersion
+        );
+
+        registerCommands(context);
+    } catch (e) {
+        Logger.error(e, 'Error initializing atlascode!');
+    }
 
     // const disposables = [];
 
     // disposables.push(
     //     vscode.commands.registerCommand(
-    //         'vscodeWorkspaceManager.saveWorkspace',
+    //         'workspaceManager.saveWorkspace',
     //         () => saveWorkspaceCommand()
     //     )
     // );
     // disposables.push(
     //     vscode.commands.registerCommand(
-    //         'vscodeWorkspaceManager.switchWorkspace',
+    //         'workspaceManager.switchWorkspace',
     //         (workspaceEntry?: WorkspaceEntry) =>
     //             workspaceEntry
     //                 ? switchToWorkspaceCommand(workspaceEntry, false)
@@ -61,7 +73,7 @@ export async function activate(context: vscode.ExtensionContext) {
     // );
     // disposables.push(
     //     vscode.commands.registerCommand(
-    //         'vscodeWorkspaceManager.switchWorkspaceInNewWindow',
+    //         'workspaceManager.switchWorkspaceInNewWindow',
     //         (treeItem?: TreeItem) =>
     //             treeItem
     //                 ? switchToWorkspaceCommand(treeItem.workspaceEntry, true)
@@ -70,7 +82,7 @@ export async function activate(context: vscode.ExtensionContext) {
     // );
     // disposables.push(
     //     vscode.commands.registerCommand(
-    //         'vscodeWorkspaceManager.deleteWorkspace',
+    //         'workspaceManager.deleteWorkspace',
     //         (treeItem?: TreeItem) =>
     //             treeItem
     //                 ? deleteWorkspace(treeItem.workspaceEntry, true)
@@ -79,13 +91,13 @@ export async function activate(context: vscode.ExtensionContext) {
     // );
     // disposables.push(
     //     vscode.commands.registerCommand(
-    //         'vscodeWorkspaceManager.reloadWorkspaces',
+    //         'workspaceManager.reloadWorkspaces',
     //         () => refreshTreeDataCommand()
     //     )
     // );
     // disposables.push(
     //     vscode.commands.registerCommand(
-    //         'vscodeWorkspaceManager.closeWorkspace',
+    //         'workspaceManager.closeWorkspace',
     //         () => closeWorkspaceCommand()
     //     )
     // );
@@ -93,27 +105,27 @@ export async function activate(context: vscode.ExtensionContext) {
 
     const treeDataProvider = new TreeDataProvider();
 
-    vscode.window.registerTreeDataProvider(
-        'vscodeWorkspaceManagerViewInActivityBar',
+    window.registerTreeDataProvider(
+        'workspaceManagerViewInActivityBar',
         treeDataProvider
     );
-    vscode.window.registerTreeDataProvider(
-        'vscodeWorkspaceManagerViewInExplorer',
+    window.registerTreeDataProvider(
+        'workspaceManagerViewInExplorer',
         treeDataProvider
     );
 
     // disposables.push(
     //     vscode.commands.registerCommand(
-    //         'vscodeWorkspaceManager.treeData.refresh',
+    //         'workspaceManager.treeData.refresh',
     //         () => treeDataProvider.refresh()
     //     )
     // );
 
     // context.subscriptions.push(...disposables);
 
-    setVSCodeWorkspaceManagerEmpty();
-    setVSCodeWorkspaceManagerViewInActivityBarShow();
-    setVSCodeWorkspaceManagerViewInExplorerShow();
+    setWorkspaceManagerEmpty();
+    setWorkspaceManagerViewInActivityBarShow();
+    setWorkspaceManagerViewInExplorerShow();
 
     // const elapsed = process.hrtime(start);
     // const elapsedMs = elapsed[0] * 1e3 + elapsed[1] / 1e6;
@@ -123,14 +135,16 @@ export async function activate(context: vscode.ExtensionContext) {
     //     { activateTimeMs: elapsedMs }
     // );
 
-    LoggerOutput.log(
-        `${extensionOutputChannelName} (v${vscodeWorkspaceManagerVersion}) activated`
+    Logger.log(
+        `${extensionOutputChannelName} (v${workspaceManagerVersion}) activated`
     );
+
+    await cacheWorkspace();
 }
 
 // this method is called when your extension is deactivated
 export function deactivate() {
     // export async function deactivate() {
-    LoggerOutput.configure(null);
+    Logger.configure(null);
     // return await telemetry.deactivate();
 }

@@ -1,15 +1,19 @@
+'use strict';
+
 import {
     ConfigurationChangeEvent,
-    workspace,
-    ExtensionContext,
-    EventEmitter,
+    ConfigurationTarget,
+    Disposable,
     Event,
+    EventEmitter,
+    ExtensionContext,
     Uri,
-    ConfigurationTarget
+    workspace
 } from 'vscode';
 import { extensionId } from './constants';
+import { Container } from './container';
+import { Config } from './model/config';
 import { Functions } from './system/function';
-import { Config } from './config';
 
 const emptyConfig: Config = new Proxy<Config>({} as Config, {
     get: function() {
@@ -22,7 +26,15 @@ export interface ConfigurationWillChangeEvent {
     transform?(e: ConfigurationChangeEvent): ConfigurationChangeEvent;
 }
 
-export class Configuration {
+export class Configuration extends Disposable {
+    constructor() {
+        super(() => this.dispose());
+    }
+
+    dispose() {
+        this._onDidChange.dispose();
+    }
+
     static configure(context: ExtensionContext) {
         context.subscriptions.push(
             workspace.onDidChangeConfiguration(
@@ -57,11 +69,14 @@ export class Configuration {
         const evt: ConfigurationWillChangeEvent = {
             change: e
         };
+
         this._onWillChange.fire(evt);
 
         if (evt.transform !== undefined) {
             e = evt.transform(e);
         }
+
+        Container.resetConfig();
 
         this._onDidChange.fire(e);
     }
@@ -128,13 +143,13 @@ export class Configuration {
         return Functions.propOf(emptyConfig as Config, name);
     }
 
-    update(
+    async update(
         section: string,
         value: any,
         target: ConfigurationTarget,
         resource?: Uri | null
     ) {
-        return workspace
+        return await workspace
             .getConfiguration(
                 extensionId,
                 target === ConfigurationTarget.Global ? undefined : resource!
@@ -162,6 +177,7 @@ export class Configuration {
         resource: Uri | null = null
     ) {
         const inspect = await configuration.inspect(section, resource)!;
+
         if (inspect.workspaceFolderValue !== undefined) {
             if (value === inspect.workspaceFolderValue) {
                 return undefined;

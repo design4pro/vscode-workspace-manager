@@ -1,28 +1,26 @@
-import * as vscode from 'vscode';
-import { setVSCodeWorkspaceManagerEmpty } from './setVSCodeWorkspaceManagerEmpty';
-import { setVSCodeWorkspaceManagerViewInActivityBarShow } from './setVSCodeWorkspaceManagerViewInActivityBarShow';
-import { setVSCodeWorkspaceManagerViewInExplorerShow } from './setVSCodeWorkspaceManagerViewInExplorerShow';
-import { refreshTreeDataCommand } from '../commands/common/refreshTreeData';
+'use strict';
 
-export function listenForConfigurationChanges(): vscode.Disposable {
-    return vscode.workspace.onDidChangeConfiguration(
-        (event: vscode.ConfigurationChangeEvent) => {
-            if (event.affectsConfiguration('vscodeWorkspaceManager.paths')) {
-                setVSCodeWorkspaceManagerEmpty();
+import { ConfigurationChangeEvent, Disposable, workspace } from 'vscode';
+import { refreshTreeDataCommand } from '../commands/common/refreshTreeData';
+import { setWorkspaceManagerEmpty } from './setWorkspaceManagerEmpty';
+import { setWorkspaceManagerViewInActivityBarShow } from './setWorkspaceManagerViewInActivityBarShow';
+import { setWorkspaceManagerViewInExplorerShow } from './setWorkspaceManagerViewInExplorerShow';
+
+export function listenForConfigurationChanges(): Disposable {
+    return workspace.onDidChangeConfiguration(
+        (event: ConfigurationChangeEvent) => {
+            if (event.affectsConfiguration('workspaceManager.paths')) {
+                setWorkspaceManagerEmpty();
 
                 refreshTreeDataCommand();
             } else if (
-                event.affectsConfiguration(
-                    'vscodeWorkspaceManager.showInActivityBar'
-                )
+                event.affectsConfiguration('workspaceManager.showInActivityBar')
             ) {
-                setVSCodeWorkspaceManagerViewInActivityBarShow();
+                setWorkspaceManagerViewInActivityBarShow();
             } else if (
-                event.affectsConfiguration(
-                    'vscodeWorkspaceManager.showInExplorer'
-                )
+                event.affectsConfiguration('workspaceManager.showInExplorer')
             ) {
-                setVSCodeWorkspaceManagerViewInExplorerShow();
+                setWorkspaceManagerViewInExplorerShow();
             }
         }
     );

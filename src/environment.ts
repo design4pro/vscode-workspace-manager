@@ -1,6 +1,8 @@
+'use strict';
+
 import { normalize, resolve } from 'path';
-import { state } from './state';
 import { extensions } from 'vscode';
+import { state } from './state';
 
 export enum OsType {
     Windows = 'win32',

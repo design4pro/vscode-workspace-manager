@@ -1,6 +1,7 @@
 'use strict';
+
 import * as _ from 'lodash';
-import * as vscode from 'vscode';
+import { CancellationToken, Disposable } from 'vscode';
 
 export interface Deferrable {
     cancel(): void;
@@ -32,7 +33,7 @@ export namespace Functions {
 
     export function cancellable<T>(
         promise: Promise<T>,
-        token: vscode.CancellationToken
+        token: CancellationToken
     ): Promise<T | undefined> {
         return new Promise<T | undefined>((resolve, reject) => {
             token.onCancellationRequested(() => resolve(undefined));
@@ -191,7 +192,7 @@ export namespace Functions {
     export function interval(
         fn: (...args: any[]) => void,
         ms: number
-    ): vscode.Disposable {
+    ): Disposable {
         let timer: NodeJS.Timer | undefined;
         const disposable = {
             dispose: () => {

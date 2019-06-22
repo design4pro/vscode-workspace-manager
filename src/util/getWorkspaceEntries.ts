@@ -1,44 +1,40 @@
-import { readdirSync, statSync } from 'fs';
-import { join } from 'path';
-import { WorkspaceEntry } from '../model/workspaceEntry';
+'use strict';
+
+import * as glob from 'fast-glob';
+import { WorkspaceEntry } from '../model/workspace';
 import { getWorkspaceEntryDirectories } from './getWorkspaceEntryDirectories';
 
-export function gatherWorkspaceEntries(): WorkspaceEntry[] {
+export async function gatherWorkspaceEntries(): Promise<WorkspaceEntry[]> {
     const directoryPaths = getWorkspaceEntryDirectories();
-    const uniqueWorkspaceEntries: any = {};
 
-    return (<WorkspaceEntry[]>directoryPaths.reduce(
+    return await (<WorkspaceEntry[]>directoryPaths.reduce(
         (acc: WorkspaceEntry[], dir: string) => {
-            return readdirSync(dir)
-                .filter(fileName => {
-                    try {
-                        return (
-                            /.code-workspace$/.test(fileName) &&
-                            statSync(join(dir, fileName)).isFile()
-                        );
-                    } catch (err) {
-                        return false;
-                    }
-                })
-                .reduce((accProxy: WorkspaceEntry[], fileName: string) => {
-                    accProxy.push({
-                        name: fileName.replace(/.code-workspace$/, ''),
-                        path: join(dir, fileName)
-                    });
+            try {
+                return glob
+                    .sync<string>('**/*.code-workspace', {
+                        cwd: dir,
+                        absolute: true,
+                        onlyFiles: true,
+                        unique: true,
+                        deep: 2
+                    })
+                    .reduce((accProxy: WorkspaceEntry[], path: string) => {
+                        accProxy.push({
+                            name: path
+                                .split('\\')
+                                .pop()
+                                .split('/')
+                                .pop()
+                                .replace(/.code-workspace$/, ''),
+                            path: path
+                        });
 
-                    return accProxy;
-                }, acc);
+                        return accProxy;
+                    }, acc);
+            } catch (err) {
+                return acc;
+            }
         },
         <WorkspaceEntry[]>[]
-    ))
-        .filter(workspaceEntry => {
-            if (uniqueWorkspaceEntries[workspaceEntry.path]) {
-                return false;
-            }
-
-            uniqueWorkspaceEntries[workspaceEntry.path] = true;
-
-            return true;
-        })
-        .sort((a, b) => a.name.localeCompare(b.name));
+    )).sort((a, b) => a.name.localeCompare(b.name));
 }

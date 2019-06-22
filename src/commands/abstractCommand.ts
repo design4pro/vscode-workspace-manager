@@ -43,6 +43,7 @@ export abstract class AbstractCommand implements Disposable {
     private _disposable: Disposable;
 
     constructor(command: Commands | Commands[]) {
+        console.log(command);
         if (typeof command === 'string') {
             this._disposable = commands.registerCommand(
                 command,
@@ -102,7 +103,7 @@ export abstract class AbstractCommand implements Disposable {
             if (uri !== undefined) {
                 const uris = rest[0];
                 if (
-                    uris != null &&
+                    uris !== null &&
                     Array.isArray(uris) &&
                     uris.length !== 0 &&
                     uris[0] instanceof Uri

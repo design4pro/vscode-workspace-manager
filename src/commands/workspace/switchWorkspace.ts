@@ -1,56 +1,68 @@
 import * as nls from 'vscode-nls';
-import { gatherWorkspaceEntries } from '../../util';
 import { switchToWorkspaceCommand } from './switchToWorkspace';
-import * as vscode from 'vscode';
+import { gatherWorkspaceEntries } from '../../util/getWorkspaceEntries';
+import { AbstractCommand } from '../abstractCommand';
+import { window, QuickPickItem, QuickPickOptions } from 'vscode';
+import { Commands, Command } from '../common';
 
 const localize = nls.loadMessageBundle();
 
-export function switchWorkspaceCommand(inNewWindow: boolean = false) {
-    const workspaceEntries = gatherWorkspaceEntries();
-
-    if (!workspaceEntries.length) {
-        const noWorkspacesFoundText = localize(
-            'noWorkspacesFound.text',
-            'No workspaces found'
-        );
-
-        vscode.window.showInformationMessage(noWorkspacesFoundText);
-
-        return;
+@Command()
+export class SwitchWorkspaceCommand extends AbstractCommand {
+    constructor() {
+        console.log(Commands.SwitchWorkspace);
+        super(Commands.SwitchWorkspace);
     }
 
-    const workspaceItems = workspaceEntries.map(
-        entry =>
-            <vscode.QuickPickItem>{
-                label: entry.name,
-                description: entry.path
-            }
-    );
+    execute(inNewWindow?: boolean) {
+        const workspaceEntries = gatherWorkspaceEntries();
 
-    const options = <vscode.QuickPickOptions>{
-        matchOnDescription: false,
-        matchOnDetail: false,
-        placeHolder: `Choose a workspace to switch to${
-            inNewWindow ? ' in a new window' : ''
-        }...`
-    };
+        console.log(workspaceEntries);
 
-    vscode.window.showQuickPick(workspaceItems, options).then(
-        (workspaceItem?: vscode.QuickPickItem) => {
-            if (!workspaceItem) {
-                return;
-            }
-
-            const entry = workspaceEntries.find(
-                entry => entry.path === workspaceItem.description
+        if (!workspaceEntries.length) {
+            const noWorkspacesFoundText = localize(
+                'noWorkspacesFound.text',
+                'No workspaces found'
             );
 
-            if (!entry) {
-                return;
-            }
+            window.showInformationMessage(noWorkspacesFoundText);
 
-            switchToWorkspaceCommand(entry, inNewWindow);
-        },
-        (reason: any) => {}
-    );
+            return;
+        }
+
+        const workspaceItems = workspaceEntries.map(
+            entry =>
+                <QuickPickItem>{
+                    label: entry.name,
+                    description: entry.path
+                }
+        );
+
+        const options = <QuickPickOptions>{
+            matchOnDescription: false,
+            matchOnDetail: false,
+            placeHolder: `Choose a workspace to switch to${
+                inNewWindow ? ' in a new window' : ''
+            }...`
+        };
+
+        window.showQuickPick(workspaceItems, options).then(
+            (workspaceItem?: QuickPickItem) => {
+                if (!workspaceItem) {
+                    return;
+                }
+
+                const entry = workspaceEntries.find(
+                    entry => entry.path === workspaceItem.description
+                );
+
+                if (!entry) {
+                    return;
+                }
+
+                switchToWorkspaceCommand(entry, inNewWindow);
+            },
+            (reason: any) => {}
+        );
+    }
 }

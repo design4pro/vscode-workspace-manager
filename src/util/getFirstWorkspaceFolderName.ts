@@ -1,5 +1,7 @@
-import * as vscode from 'vscode';
+'use strict';
+
+import { workspace } from 'vscode';
 
 export function getFirstWorkspaceFolderName(): string | undefined {
-    return (vscode.workspace.workspaceFolders || [{ name: undefined }])[0].name;
+    return (workspace.workspaceFolders || [{ name: undefined }])[0].name;
 }

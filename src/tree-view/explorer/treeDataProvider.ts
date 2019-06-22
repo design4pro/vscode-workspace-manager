@@ -1,7 +1,9 @@
+'use strict';
+
 import * as vscode from 'vscode';
-import * as util from '../../util';
+import { WorkspaceEntry } from '../../model/workspace';
+import { gatherWorkspaceEntries } from '../../util/getWorkspaceEntries';
 import { TreeItem } from './treeItem';
-import { WorkspaceEntry } from '../../model/workspaceEntry';
 
 export class TreeDataProvider implements vscode.TreeDataProvider<TreeItem> {
     private _onDidChangeTreeData: vscode.EventEmitter<
@@ -19,11 +21,14 @@ export class TreeDataProvider implements vscode.TreeDataProvider<TreeItem> {
     }
 
     getChildren(element?: TreeItem): Thenable<TreeItem[]> {
-        const workspaceEntries = util.gatherWorkspaceEntries();
-        const reducer = (acc: TreeItem[], workspaceEntry: WorkspaceEntry) => (
-            acc.push(new TreeItem(workspaceEntry)), acc
+        const workspaceEntries = gatherWorkspaceEntries();
+
+        const treeItems = workspaceEntries.reduce(
+            (acc: TreeItem[], workspaceEntry: WorkspaceEntry) => (
+                acc.push(new TreeItem(workspaceEntry)), acc
+            ),
+            []
         );
-        let treeItems = workspaceEntries.reduce(reducer, []);
 
         return Promise.resolve(treeItems);
     }

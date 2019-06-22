@@ -10,10 +10,14 @@
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
-            "args": ["--extensionDevelopmentPath=${workspaceFolder}"],
+            "args": [
+                "--extensionDevelopmentPath=${workspaceFolder}"
+            ],
             "stopOnEntry": false,
-            "sourceMaps": true,
-            "outFiles": ["${workspaceFolder}/out/**/*.js"],
+			"sourceMaps": true,
+            "outFiles": [
+                "${workspaceFolder}/out/**/*.js"
+            ],
             "preLaunchTask": "npm: watch"
         },
         {
@@ -26,8 +30,10 @@
                 "--extensionTestsPath=${workspaceFolder}/out/test"
             ],
             "stopOnEntry": false,
-            "sourceMaps": true,
-            "outFiles": ["${workspaceFolder}/out/test/**/*.js"],
+			"sourceMaps": true,
+            "outFiles": [
+                "${workspaceFolder}/out/test/**/*.js"
+            ],
             "preLaunchTask": "npm: test-compile"
         }
     ]

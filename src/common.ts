@@ -1,12 +1,14 @@
-import * as vscode from 'vscode';
+'use strict';
+
 import * as nls from 'vscode-nls';
-import { ExtensionConfig } from './model/extensionConfig';
+import { InputBoxOptions, window } from 'vscode';
+import { ExtensionConfig } from './model/config';
 
 const localize = nls.loadMessageBundle();
 
 export default class Common {
     public static getInputBox(token: boolean) {
-        const options: vscode.InputBoxOptions = {
+        const options: InputBoxOptions = {
             placeHolder: localize(
                 'common.placeholder.enterWorkspacesSearchPaths',
                 'Enter Workspaces search paths'
@@ -24,7 +26,7 @@ export default class Common {
     public async getPathsAndSave(sett: ExtensionConfig): Promise<string> {
         const opt = Common.getInputBox(false);
 
-        const paths = ((await vscode.window.showInputBox(opt)) || '').trim();
+        const paths = ((await window.showInputBox(opt)) || '').trim();
 
         if (paths && paths !== 'esc') {
             sett.paths = paths;

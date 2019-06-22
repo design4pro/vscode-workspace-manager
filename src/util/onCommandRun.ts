@@ -1,5 +1,7 @@
+'use strict';
+
 import { ExecException } from 'child_process';
-import * as vscode from 'vscode';
+import { window } from 'vscode';
 
 export function onCommandRun(
     err: ExecException | null,
@@ -7,6 +9,6 @@ export function onCommandRun(
     stderr: string
 ) {
     if (err || stderr) {
-        vscode.window.showErrorMessage((err || { message: stderr }).message);
+        window.showErrorMessage((err || { message: stderr }).message);
     }
 }

@@ -1,20 +1,25 @@
 import { existsSync, writeFileSync } from 'fs';
 import * as mkdirp from 'mkdirp';
 import { basename, dirname, join } from 'path';
-import * as vscode from 'vscode';
-import { WorkspaceEntry } from '../../model/workspaceEntry';
-import {
-    getFirstWorkspaceFolderName,
-    getWorkspaceEntryDirectories,
-    refreshTreeDataCommand
-} from '../../util';
+import { WorkspaceEntry } from '../../model/workspace';
 import { switchToWorkspaceCommand } from './switchToWorkspace';
+import { getWorkspaceEntryDirectories } from '../../util/getWorkspaceEntryDirectories';
+import { getFirstWorkspaceFolderName } from '../../util/getFirstWorkspaceFolderName';
+import { refreshTreeDataCommand } from '../common/refreshTreeData';
+import {
+    window,
+    QuickPickItem,
+    QuickPickOptions,
+    InputBoxOptions,
+    workspace,
+    WorkspaceFolder
+} from 'vscode';
 
 export function saveWorkspaceCommand() {
     const workspaceEntryDirectories = getWorkspaceEntryDirectories();
 
     if (!workspaceEntryDirectories.length) {
-        vscode.window.showInformationMessage(
+        window.showInformationMessage(
             'No workspace directories have been configured'
         );
 
@@ -23,27 +28,27 @@ export function saveWorkspaceCommand() {
 
     const directoryItems = workspaceEntryDirectories.map(
         directory =>
-            <vscode.QuickPickItem>{
+            <QuickPickItem>{
                 label: basename(directory),
                 description: dirname(directory)
             }
     );
 
-    const options = <vscode.QuickPickOptions>{
+    const options = <QuickPickOptions>{
         matchOnDescription: false,
         matchOnDetail: false,
         placeHolder:
             'Choose a workspace directory to save the new workspace file...'
     };
 
-    vscode.window.showQuickPick(directoryItems, options).then(
-        (directoryItem?: vscode.QuickPickItem) => {
+    window.showQuickPick(directoryItems, options).then(
+        (directoryItem?: QuickPickItem) => {
             if (!directoryItem) {
                 return;
             }
 
-            vscode.window
-                .showInputBox(<vscode.InputBoxOptions>{
+            window
+                .showInputBox(<InputBoxOptions>{
                     value: getFirstWorkspaceFolderName(),
                     prompt: 'Enter a path for the workspace file...'
                 })
@@ -83,8 +88,8 @@ export function saveWorkspaceCommand() {
                             '.code-workspace';
 
                         const workspaceFolderPaths = (
-                            vscode.workspace.workspaceFolders || []
-                        ).map((workspaceFolder: vscode.WorkspaceFolder) => ({
+                            workspace.workspaceFolders || []
+                        ).map((workspaceFolder: WorkspaceFolder) => ({
                             path: workspaceFolder.uri.fsPath
                         }));
 
@@ -107,7 +112,7 @@ export function saveWorkspaceCommand() {
                                     path: workspaceFilePath
                                 });
                             } catch (error) {
-                                vscode.window.showErrorMessage(
+                                window.showErrorMessage(
                                     'Error while trying to save workspace ' +
                                         `${workspaceFileName} to ${workspaceFilePath}: ${error.message}`
                                 );
@@ -115,7 +120,7 @@ export function saveWorkspaceCommand() {
                         };
 
                         if (existsSync(workspaceFilePath)) {
-                            vscode.window
+                            window
                                 .showInformationMessage(
                                     `File ${workspaceFilePath} already exists. Do you want to override it?`,
                                     'Yes',
