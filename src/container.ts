@@ -48,7 +48,11 @@ export class Container {
 
     private static _config: IConfig | undefined;
     static get config() {
-        return this._config || configuration.get<IConfig>();
+        if (this._config === undefined) {
+            this._config = configuration.get<IConfig>();
+        }
+
+        return this._config;
     }
 
     private static _context: ExtensionContext;

@@ -6,7 +6,7 @@ import { extensionOutputChannelName, extensionQualifiedId } from './constants';
 import { Container } from './container';
 import { Environment } from './environment';
 import { Logger } from './logger';
-import { IConfig, OutputLevel } from './model/config';
+import { IOutputLevel, IConfig } from './model/config';
 import { state } from './state';
 import { TreeDataProvider } from './tree-view/explorer/treeDataProvider';
 import { setWorkspaceManagerEmpty } from './util/setWorkspaceManagerEmpty';
@@ -14,6 +14,7 @@ import { setWorkspaceManagerViewInActivityBarShow } from './util/setWorkspaceMan
 import { setWorkspaceManagerViewInExplorerShow } from './util/setWorkspaceManagerViewInExplorerShow';
 import { cacheWorkspace } from './util/cacheWorkspace';
 import { Notifier } from './notifier';
+import * as telemetry from './telemetry';
 
 // The example uses the file message format.
 // const localize = nls.loadMessageBundle();
@@ -25,29 +26,29 @@ export const notifier: Notifier = new Notifier(
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export async function activate(context: ExtensionContext) {
-    // const start = process.hrtime();
+    const start = process.hrtime();
     state.context = context;
     state.environment = new Environment();
 
     Logger.configure(
         context,
-        configuration.get<OutputLevel>(configuration.name('outputLevel').value),
+        configuration.get<IOutputLevel>(
+            configuration.name('outputLevel').value
+        ),
         o => undefined
     );
 
-    // telemetry.activate(context);
+    telemetry.activate(context);
 
     const workspaceManager = extensions.getExtension(extensionQualifiedId)!;
     const workspaceManagerVersion = workspaceManager.packageJSON.version;
 
     Configuration.configure(context);
 
+    const cfg = configuration.get<IConfig>();
+
     try {
-        Container.initialize(
-            context,
-            configuration.get<IConfig>(),
-            workspaceManagerVersion
-        );
+        Container.initialize(context, cfg, workspaceManagerVersion);
 
         registerCommands(context);
     } catch (e) {
@@ -127,13 +128,13 @@ export async function activate(context: ExtensionContext) {
     setWorkspaceManagerViewInActivityBarShow();
     setWorkspaceManagerViewInExplorerShow();
 
-    // const elapsed = process.hrtime(start);
-    // const elapsedMs = elapsed[0] * 1e3 + elapsed[1] / 1e6;
-    // telemetry.Reporter.trackEvent(
-    //     'activated',
-    //     {},
-    //     { activateTimeMs: elapsedMs }
-    // );
+    const elapsed = process.hrtime(start);
+    const elapsedMs = elapsed[0] * 1e3 + elapsed[1] / 1e6;
+    telemetry.Reporter.trackEvent(
+        'activated',
+        {},
+        { activateTimeMs: elapsedMs }
+    );
 
     Logger.log(
         `${extensionOutputChannelName} (v${workspaceManagerVersion}) activated`
@@ -143,8 +144,8 @@ export async function activate(context: ExtensionContext) {
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() {
-    // export async function deactivate() {
+export async function deactivate(): Promise<any> {
     Logger.configure(null);
-    // return await telemetry.deactivate();
+
+    return await telemetry.deactivate();
 }

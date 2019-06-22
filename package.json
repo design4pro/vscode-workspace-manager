@@ -39,6 +39,7 @@
         "package": "gulp package"
     },
     "dependencies": {
+        "applicationinsights": "^1.4.0",
         "lodash": "^4.17.11",
         "mkdirp": "^0.5.1",
         "semver": "^6.1.2",
@@ -88,27 +89,27 @@
             "type": "object",
             "title": "%configuration.title%",
             "properties": {
-                "workspaceManager.paths": {
+                "workspace-manager.paths": {
                     "type": "array",
                     "default": [],
                     "description": "%configuration.paths%"
                 },
-                "workspaceManager.codeExecutable": {
+                "workspace-manager.codeExecutable": {
                     "type": "string",
                     "default": "code",
                     "description": "%configuration.codeExecutable%"
                 },
-                "workspaceManager.codeInsidersExecutable": {
+                "workspace-manager.codeInsidersExecutable": {
                     "type": "string",
                     "default": "code-insiders",
                     "description": "%configuration.codeInsidersExecutable%"
                 },
-                "workspaceManager.showInActivityBar": {
+                "workspace-manager.showInActivityBar": {
                     "type": "boolean",
                     "default": true,
                     "description": "%configuration.showInActivityBar%"
                 },
-                "workspaceManager.showInExplorer": {
+                "workspace-manager.showInExplorer": {
                     "type": "boolean",
                     "default": true,
                     "description": "%configuration.showInExplorer%"

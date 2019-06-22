@@ -14,8 +14,8 @@ export class SwitchWorkspaceCommand extends AbstractCommand {
         super(Commands.SwitchWorkspace);
     }
 
-    execute(inNewWindow?: boolean) {
-        const workspaceEntries = gatherWorkspaceEntries();
+    async execute(inNewWindow?: boolean) {
+        const workspaceEntries = await gatherWorkspaceEntries();
 
         console.log(workspaceEntries);
 

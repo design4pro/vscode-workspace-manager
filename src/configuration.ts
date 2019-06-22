@@ -12,10 +12,10 @@ import {
 } from 'vscode';
 import { extensionId } from './constants';
 import { Container } from './container';
-import { Config } from './model/config';
+import { IConfig } from './model/config';
 import { Functions } from './system/function';
 
-const emptyConfig: Config = new Proxy<Config>({} as Config, {
+const emptyConfig: IConfig = new Proxy<IConfig>({} as IConfig, {
     get: function() {
         return emptyConfig;
     }
@@ -139,8 +139,8 @@ export class Configuration extends Disposable {
             .inspect(section);
     }
 
-    name<K extends keyof Config>(name: K) {
-        return Functions.propOf(emptyConfig as Config, name);
+    name<K extends keyof IConfig>(name: K) {
+        return Functions.propOf(emptyConfig as IConfig, name);
     }
 
     async update(

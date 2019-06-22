@@ -1,5 +1,9 @@
+import * as uuid from 'uuid/v4';
+import * as VError from 'verror';
 import { commands, Disposable, TextEditor, Uri } from 'vscode';
 import { Commands } from './common';
+import { Logger } from '../logger';
+import { Reporter } from '../telemetry';
 
 export interface CommandContextParsingOptions {
     editor: boolean;
@@ -31,9 +35,8 @@ export type CommandContext =
     | CommandUrisContext;
 
 export abstract class AbstractCommand implements Disposable {
-    static getMarkdownCommandArgsCore<T>(command: Commands, args: T): string {
-        return `command:${command}?${encodeURIComponent(JSON.stringify(args))}`;
-    }
+    protected trackSuccess: boolean = false;
+    protected eventName: string;
 
     protected readonly contextParsingOptions: CommandContextParsingOptions = {
         editor: false,
@@ -76,17 +79,51 @@ export abstract class AbstractCommand implements Disposable {
         return this.execute(...args);
     }
 
-    abstract execute(...args: any[]): any;
+    abstract execute(...args: any[]): Promise<any>;
 
-    protected _execute(command: string, ...args: any[]): any {
-        // Telemetry.trackEvent(command);
+    protected async _execute(command: string, ...args: any[]): Promise<any> {
+        const operationId = uuid();
+        this.eventName = `command:${command}?${encodeURIComponent(
+            JSON.stringify(args)
+        )}`;
 
-        const [context, rest] = AbstractCommand.parseContext(
-            command,
-            { ...this.contextParsingOptions },
-            ...args
-        );
-        return this.preExecute(context, ...rest);
+        try {
+            const start = process.hrtime();
+
+            const [context, rest] = AbstractCommand.parseContext(
+                command,
+                { ...this.contextParsingOptions },
+                ...args
+            );
+
+            let result = this.preExecute(context, rest);
+
+            const elapsed = process.hrtime(start);
+            const elapsedMs = elapsed[0] * 1e3 + elapsed[1] / 1e6;
+
+            if (this.trackSuccess) {
+                Logger.info(`Finished command, took ${elapsedMs} ms.`);
+                Reporter.trackEvent(
+                    this.eventName,
+                    { operationId: operationId },
+                    { elapsedMs: elapsedMs }
+                );
+            }
+
+            return result;
+        } catch (err) {
+            err = new VError(err, 'Execution of command failed');
+            Logger.error(err);
+
+            if (Reporter.enabled) {
+                Logger.info(
+                    `If you open a bugreport at https://github.com/design4pro/vscode-workspace-manager/issues, please supply this operation ID: ${operationId}`
+                );
+                Reporter.trackException(err, this.eventName, {
+                    operationId: operationId
+                });
+            }
+        }
     }
 
     private static parseContext(

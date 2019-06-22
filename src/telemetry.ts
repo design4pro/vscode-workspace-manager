@@ -1,14 +1,13 @@
-import * as ai from 'applicationinsights';
+import * as appInsights from 'applicationinsights';
 import * as os from 'os';
+import { configuration } from './configuration';
 import { Logger } from './logger';
 import { Disposable, workspace, env, version, ExtensionContext } from 'vscode';
-import { configuration } from './configuration';
 
 class TelemetryReporter extends Disposable {
-    private client: ai.TelemetryClient;
+    private client: appInsights.TelemetryClient;
     private userOptIn: boolean = false;
     private disposables: Disposable[] = [];
-    private logger = new Logger('telemetry');
 
     constructor(
         public extensionId: string,
@@ -34,20 +33,28 @@ class TelemetryReporter extends Disposable {
         measurements?: { [key: string]: number }
     ) {
         if (!this.userOptIn || !this.client || !eventName) {
-            this.logger.debug(`Not sending metric ${eventName}`);
+            Logger.debug(`Not sending metric ${eventName}`);
+
             if (properties) {
                 Object.keys(properties).forEach(p =>
-                    this.logger.debug(`    ${p}: ${properties[p]}`)
+                    Logger.debug(`    ${p}: ${properties[p]}`)
                 );
             }
+
             if (measurements) {
                 Object.keys(measurements).forEach(p =>
-                    this.logger.debug(`    ${p}: ${measurements[p]}`)
+                    Logger.debug(`    ${p}: ${measurements[p]}`)
                 );
             }
 
             return;
         }
+
+        console.log({
+            name: `${eventName}`,
+            properties: properties,
+            measurements: measurements
+        });
 
         this.client.trackEvent({
             name: `${eventName}`,
@@ -57,15 +64,16 @@ class TelemetryReporter extends Disposable {
     }
 
     trackException(
-        eventName: string,
         exception: Error,
+        eventName?: string,
         properties?: { [key: string]: string },
         measurements?: { [key: string]: number }
     ) {
         if (!this.userOptIn || !this.client || !exception || !eventName) {
-            this.logger.debug(
-                `terraform.telemetry: Not sending exception metric ${eventName}/${exception}`
+            Logger.debug(
+                `workspace-manager.telemetry: Not sending exception metric ${eventName}/${exception}`
             );
+
             return;
         }
 
@@ -101,7 +109,9 @@ class TelemetryReporter extends Disposable {
     private updateUserOptIn() {
         const globalConfig = workspace.getConfiguration('telemetry');
         const globalOptIn = globalConfig.get<boolean>('enableTelemetry', true);
-        const extensionOptIn = configuration.get<boolean>('enableTelemetry');
+        const extensionOptIn = configuration.get<boolean>(
+            configuration.name('advanced')('telemetry')('enabled').value
+        );
 
         const optIn = globalOptIn && extensionOptIn;
 
@@ -118,11 +128,12 @@ class TelemetryReporter extends Disposable {
 
     private createClient() {
         // check if another instance exists
-        if (ai.defaultClient) {
-            this.client = new ai.TelemetryClient(this.aiKey);
+        if (appInsights.defaultClient) {
+            this.client = new appInsights.TelemetryClient(this.aiKey);
             this.client.channel.setUseDiskRetryCaching(true);
         } else {
-            ai.setup(this.aiKey)
+            appInsights
+                .setup(this.aiKey)
                 .setAutoCollectConsole(false)
                 .setAutoCollectDependencies(false)
                 .setAutoCollectExceptions(false)
@@ -131,7 +142,7 @@ class TelemetryReporter extends Disposable {
                 .setAutoDependencyCorrelation(false)
                 .setUseDiskRetryCaching(true)
                 .start();
-            this.client = ai.defaultClient;
+            this.client = appInsights.defaultClient;
         }
 
         this.setCommonProperties();

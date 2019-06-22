@@ -10,7 +10,8 @@ import {
 import { configuration } from './configuration';
 import { extensionOutputChannelName } from './constants';
 import { Container } from './container';
-import { OutputLevel } from './model/config';
+import { IOutputLevel } from './model/config';
+import { Reporter } from './telemetry';
 
 export interface LogCorrelationContext {
     readonly correlationId?: number;
@@ -30,7 +31,7 @@ export class Logger {
 
     static configure(
         context: ExtensionContext,
-        level?: OutputLevel,
+        level?: IOutputLevel,
         loggableFn?: (o: any) => string | undefined
     ) {
         this.customLoggableFn = loggableFn;
@@ -48,12 +49,12 @@ export class Logger {
 
         const section = 'outputLevel';
         if (initializing && Container.isDebugging) {
-            this.level = OutputLevel.Debug;
+            this.level = IOutputLevel.Debug;
         } else if (initializing || configuration.changed(e, section)) {
-            this.level = configuration.get<OutputLevel>(section);
+            this.level = configuration.get<IOutputLevel>(section);
         }
 
-        if (this.level === OutputLevel.Silent) {
+        if (this.level === IOutputLevel.Silent) {
             if (this.output !== undefined) {
                 this.output.dispose();
                 this.output = undefined;
@@ -65,16 +66,16 @@ export class Logger {
         }
     }
 
-    private static _level: OutputLevel = OutputLevel.Silent;
+    private static _level: IOutputLevel = IOutputLevel.Silent;
 
     static get level() {
         return this._level;
     }
 
-    static set level(value: OutputLevel) {
+    static set level(value: IOutputLevel) {
         this._level = value;
 
-        if (value === OutputLevel.Silent) {
+        if (value === IOutputLevel.Silent) {
             if (this.output !== undefined) {
                 this.output.dispose();
                 this.output = undefined;
@@ -97,8 +98,8 @@ export class Logger {
         ...params: any[]
     ): void {
         if (
-            this.level !== OutputLevel.Info &&
-            this.level !== OutputLevel.Debug
+            this.level !== IOutputLevel.Info &&
+            this.level !== IOutputLevel.Debug
         ) {
             return;
         }
@@ -125,8 +126,8 @@ export class Logger {
 
         if (
             this.output !== undefined &&
-            (this.level === OutputLevel.Info ||
-                this.level === OutputLevel.Debug)
+            (this.level === IOutputLevel.Info ||
+                this.level === IOutputLevel.Debug)
         ) {
             this.output.appendLine(
                 `${this.timestamp} ${message ||
@@ -145,7 +146,7 @@ export class Logger {
         contextOrMessage: LogCorrelationContext | string | undefined,
         ...params: any[]
     ): void {
-        if (this.level !== OutputLevel.Debug && !Container.isDebugging) {
+        if (this.level !== IOutputLevel.Debug && !Container.isDebugging) {
             return;
         }
 
@@ -169,7 +170,7 @@ export class Logger {
             );
         }
 
-        if (this.output !== undefined && this.level === OutputLevel.Debug) {
+        if (this.output !== undefined && this.level === IOutputLevel.Debug) {
             this.output.appendLine(
                 `${this.timestamp} ${message ||
                     emptyStr}${this.toLoggableParams(true, params)}`
@@ -189,7 +190,7 @@ export class Logger {
         contextOrMessage: LogCorrelationContext | string | undefined,
         ...params: any[]
     ): void {
-        if (this.level === OutputLevel.Silent && !Container.isDebugging) {
+        if (this.level === IOutputLevel.Silent && !Container.isDebugging) {
             return;
         }
 
@@ -227,14 +228,14 @@ export class Logger {
             );
         }
 
-        if (this.output !== undefined && this.level !== OutputLevel.Silent) {
+        if (this.output !== undefined && this.level !== IOutputLevel.Silent) {
             this.output.appendLine(
                 `${this.timestamp} ${message ||
                     emptyStr}${this.toLoggableParams(false, params)}\n${ex}`
             );
         }
 
-        // Telemetry.trackException(ex);
+        Reporter.trackException(ex);
     }
 
     static log(message: string, ...params: any[]): void;
@@ -248,8 +249,8 @@ export class Logger {
         ...params: any[]
     ): void {
         if (
-            this.level !== OutputLevel.Verbose &&
-            this.level !== OutputLevel.Debug &&
+            this.level !== IOutputLevel.Verbose &&
+            this.level !== IOutputLevel.Debug &&
             !Container.isDebugging
         ) {
             return;
@@ -277,8 +278,8 @@ export class Logger {
 
         if (
             this.output !== undefined &&
-            (this.level === OutputLevel.Verbose ||
-                this.level === OutputLevel.Debug)
+            (this.level === IOutputLevel.Verbose ||
+                this.level === IOutputLevel.Debug)
         ) {
             this.output.appendLine(
                 `${this.timestamp} ${message ||
@@ -297,7 +298,7 @@ export class Logger {
         contextOrMessage: LogCorrelationContext | string | undefined,
         ...params: any[]
     ): void {
-        if (this.level === OutputLevel.Silent && !Container.isDebugging) {
+        if (this.level === IOutputLevel.Silent && !Container.isDebugging) {
             return;
         }
 
@@ -321,7 +322,7 @@ export class Logger {
             );
         }
 
-        if (this.output !== undefined && this.level !== OutputLevel.Silent) {
+        if (this.output !== undefined && this.level !== IOutputLevel.Silent) {
             this.output.appendLine(
                 `${this.timestamp} ${message ||
                     emptyStr}${this.toLoggableParams(false, params)}`
@@ -357,7 +358,7 @@ export class Logger {
         if (
             params.length === 0 ||
             (debugOnly &&
-                this.level !== OutputLevel.Debug &&
+                this.level !== IOutputLevel.Debug &&
                 !Container.isDebugging)
         ) {
             return emptyStr;

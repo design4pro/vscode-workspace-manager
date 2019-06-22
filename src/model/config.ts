@@ -1,6 +1,6 @@
 'use strict';
 
-export enum OutputLevel {
+export enum IOutputLevel {
     Silent = 'silent',
     Errors = 'errors',
     Verbose = 'verbose',
@@ -9,20 +9,17 @@ export enum OutputLevel {
 }
 
 export interface IConfig {
-    outputLevel: OutputLevel;
-    enableCharles: boolean;
-    offlineMode: boolean;
-    showWelcomeOnInstall: boolean;
+    paths: string[];
+    codeExecutable: string;
+    codeInsidersExecutable: string;
+    showInActivityBar: boolean;
+    showInExplorer: boolean;
+    outputLevel: IOutputLevel;
+    advanced: IAdvancedConfig;
 }
 
-export interface Config {
-    outputLevel: OutputLevel;
-}
-
-export interface AdvancedConfig {
-    enableTelemetry: boolean;
-}
-
-export class ExtensionConfig {
-    public paths = null;
+export interface IAdvancedConfig {
+    telemetry: {
+        enabled: boolean;
+    };
 }

@@ -11,7 +11,7 @@ interface CommandConstructor {
     new (): AbstractCommand;
 }
 
-const registrableCommands: CommandConstructor[] = [];
+export const registrableCommands: CommandConstructor[] = [];
 
 export function Command(): ClassDecorator {
     return (target: any) => {
