@@ -1,0 +1,17 @@
+{
+	"configuration.title": "vscode-workspace-manager configuration",
+	"configuration.paths": "Paths of directories when `.code-workspace` files can be saved and then read from",
+	"configuration.codeExecutable": "Path to the executable file for VS Code",
+	"configuration.codeInsidersExecutable": "Path to the executable file for VS Code Insiders",
+	"configuration.showInActivityBar": "Whether or not to show the activity bar tree view container",
+	"configuration.showInExplorer": "Whether or not to show the list of workspaces in the explorer tree view container",
+	"command.saveWorkspace.title": "Workspace Manager: Zapisz Obszar Roboczy",
+	"command.switchWorkspace.title": "Workspace Manager: Przełącz Obszar Roboczy",
+	"command.switchWorkspaceInNewWindow.title": "Workspace Manager: Przełącz Obszar Roboczy w Nowym Oknie",
+	"command.deleteWorkspace.title": "Workspace Manager: Usuń Obszar Roboczy",
+	"command.reloadWorkspaces.title": "Workspace Manager: Odśwież Obszary Robocze",
+	"command.closeWorkspace.title": "Workspace Manager: Zamknij Obszar Roboczy",
+	"viewsContainers.activitybar.title": "Workspace Manager",
+	"views.vscodeWorkspaceManagerViewContainer.title": "Obszary Robocze",
+	"views.explorer.title": "Obszary Robocze"
+}

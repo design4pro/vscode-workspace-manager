@@ -1,0 +1,17 @@
+{
+    "configuration.title": "vscode-workspace-manager configuration",
+    "configuration.paths": "Paths of directories when `.code-workspace` files can be saved and then read from",
+    "configuration.codeExecutable": "Path to the executable file for VS Code",
+    "configuration.codeInsidersExecutable": "Path to the executable file for VS Code Insiders",
+    "configuration.showInActivityBar": "Whether or not to show the activity bar tree view container",
+    "configuration.showInExplorer": "Whether or not to show the list of workspaces in the explorer tree view container",
+    "command.saveWorkspace.title": "Workspace Manager: Save Workspace",
+    "command.switchWorkspace.title": "Workspace Manager: Switch Workspace",
+    "command.switchWorkspaceInNewWindow.title": "Workspace Manager: Switch Workspace in New Window",
+    "command.deleteWorkspace.title": "Workspace Manager: Delete Workspace",
+    "command.reloadWorkspaces.title": "Workspace Manager: Reload Workspaces",
+    "command.closeWorkspace.title": "Workspace Manager: Close Workspace",
+    "viewsContainers.activitybar.title": "Workspace Manager",
+    "views.vscodeWorkspaceManagerViewContainer.title": "Workspaces",
+    "views.explorer.title": "Workspaces"
+}
