@@ -4,6 +4,7 @@ import { existsSync, statSync } from 'fs';
 import { dirname, join } from 'path';
 import * as VError from 'verror';
 import { env, workspace } from 'vscode';
+import { extensionId } from '../constants';
 
 export function getApp() {
     try {
@@ -12,9 +13,7 @@ export function getApp() {
                 ? 'codeInsiders'
                 : 'code'
         }Executable`;
-        const app = <string>(
-            workspace.getConfiguration('workspace-manager').get(key)
-        );
+        const app = <string>workspace.getConfiguration(extensionId).get(key);
 
         if (app.search(/\s/) !== -1) {
             return `"${app}"`;

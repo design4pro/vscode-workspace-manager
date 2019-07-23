@@ -54,19 +54,17 @@ export abstract class AbstractCommand implements Disposable {
                 (...args: any[]) => this._execute(command, ...args),
                 this
             );
+        } else {
+            const subscriptions = (<any>command).map((cmd: string) =>
+                commands.registerCommand(
+                    cmd,
+                    (...args: any[]) => this._execute(cmd, ...args),
+                    this
+                )
+            );
 
-            return;
+            this._disposable = Disposable.from(...subscriptions);
         }
-
-        const subscriptions = (<any>command).map((cmd: string) =>
-            commands.registerCommand(
-                cmd,
-                (...args: any[]) => this._execute(cmd, ...args),
-                this
-            )
-        );
-
-        this._disposable = Disposable.from(...subscriptions);
     }
 
     dispose() {

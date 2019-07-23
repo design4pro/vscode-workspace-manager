@@ -4,53 +4,62 @@ import * as nls from 'vscode-nls';
 import { getWorkspaceEntries } from '../../util/getWorkspaceEntries';
 import { window, QuickPickItem, QuickPickOptions } from 'vscode';
 import { deleteWorkspace } from '../../util/deleteWorkspace';
+import { Command, Commands } from '../common';
+import { AbstractCommand } from '../abstractCommand';
 
 const localize = nls.loadMessageBundle();
 
-export async function deleteWorkspaceCommand() {
-    let workspaceEntries = await getWorkspaceEntries();
-
-    if (!workspaceEntries.length) {
-        const noWorkspacesFoundText = localize(
-            'noWorkspacesFound.text',
-            'No workspaces found'
-        );
-
-        window.showInformationMessage(noWorkspacesFoundText);
-
-        return;
+@Command()
+export class DeleteWorkspaceCommand extends AbstractCommand {
+    constructor() {
+        super(Commands.DeleteWorkspace);
     }
 
-    const workspaceItems = workspaceEntries.map(
-        entry =>
-            <QuickPickItem>{
-                label: entry.name,
-                description: entry.path
-            }
-    );
+    async execute() {
+        let workspaceEntries = await getWorkspaceEntries();
 
-    const options = <QuickPickOptions>{
-        matchOnDescription: false,
-        matchOnDetail: false,
-        placeHolder: `Choose a workspace to delete...`
-    };
-
-    window.showQuickPick(workspaceItems, options).then(
-        (workspaceItem?: QuickPickItem) => {
-            if (!workspaceItem) {
-                return;
-            }
-
-            const entry = workspaceEntries.find(
-                entry => entry.path === workspaceItem.description
+        if (!workspaceEntries.length) {
+            const noWorkspacesFoundText = localize(
+                'noWorkspacesFound.text',
+                'No workspaces entries found'
             );
 
-            if (!entry) {
-                return;
-            }
+            window.showInformationMessage(noWorkspacesFoundText);
 
-            deleteWorkspace(entry, true);
-        },
-        (reason: any) => {}
-    );
+            return;
+        }
+
+        const workspaceItems = workspaceEntries.map(
+            entry =>
+                <QuickPickItem>{
+                    label: entry.name,
+                    description: entry.path
+                }
+        );
+
+        const options = <QuickPickOptions>{
+            matchOnDescription: false,
+            matchOnDetail: false,
+            placeHolder: `Choose a workspace to delete...`
+        };
+
+        window.showQuickPick(workspaceItems, options).then(
+            (workspaceItem?: QuickPickItem) => {
+                if (!workspaceItem) {
+                    return;
+                }
+
+                const entry = workspaceEntries.find(
+                    entry => entry.path === workspaceItem.description
+                );
+
+                if (!entry) {
+                    return;
+                }
+
+                deleteWorkspace(entry, true);
+            },
+            (reason: any) => {}
+        );
+    }
 }

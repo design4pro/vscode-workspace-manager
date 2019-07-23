@@ -4,8 +4,13 @@ import { ExtensionContext } from 'vscode';
 import { AbstractView } from './abstractView';
 
 export enum Views {
-    ActiveBar = 'workspaceManagerViewInActivityBar',
-    Explorer = 'workspaceManagerViewInExplorer'
+    ActiveBar = 'workspaceManager.views.workspaceManager',
+    Explorer = 'workspaceManager.views.explorer'
+}
+
+export enum ViewsCommands {
+    ActiveBarRefresh = 'workspaceManager.views.workspaceManager.refresh',
+    ExplorerRefresh = 'workspaceManager.views.explorer.refresh'
 }
 
 interface ViewConstructor {

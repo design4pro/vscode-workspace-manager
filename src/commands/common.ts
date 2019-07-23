@@ -4,10 +4,14 @@ import { ExtensionContext } from 'vscode';
 import { AbstractCommand } from './abstractCommand';
 
 export enum Commands {
+    RefreshTreeData = 'workspaceManager.refreshTreeData',
     CacheWorkspace = 'workspaceManager.cacheWorkspace',
     CloseWorkspace = 'workspaceManager.closeWorkspace',
+    DeleteWorkspace = 'workspaceManager.deleteWorkspace',
+    SaveWorkspace = 'workspaceManager.saveWorkspace',
     SwitchWorkspace = 'workspaceManager.switchWorkspace',
-    SwitchToWorkspace = 'workspaceManager.switchToWorkspace'
+    SwitchToWorkspace = 'workspaceManager.switchToWorkspace',
+    SwitchWorkspaceInNewWindow = 'workspaceManager.switchWorkspaceInNewWindow'
 }
 
 interface CommandConstructor {

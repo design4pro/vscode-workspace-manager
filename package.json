@@ -151,11 +151,11 @@
                 }
             },
             {
-                "command": "workspaceManager.reloadWorkspaces",
-                "title": "%command.reloadWorkspaces.title%",
+                "command": "workspaceManager.refreshTreeData",
+                "title": "%command.refreshTreeData.title%",
                 "icon": {
-                    "light": "assets/icons/light/reload.svg",
-                    "dark": "assets/icons/dark/reload.svg"
+                    "light": "assets/icons/light/refresh.svg",
+                    "dark": "assets/icons/dark/refresh.svg"
                 }
             },
             {
@@ -174,26 +174,26 @@
         "viewsContainers": {
             "activitybar": [
                 {
-                    "id": "workspaceManagerViewContainer",
+                    "id": "workspaceManager",
                     "title": "%viewsContainers.activitybar.title%",
-                    "icon": "media/workspace-1.svg",
-                    "when": "!workspaceManagerEmpty"
+                    "icon": "media/workspace.svg",
+                    "when": "workspace-manager:enabled && !workspace-manager:empty"
                 }
             ]
         },
         "views": {
-            "workspaceManagerViewContainer": [
+            "workspaceManager": [
                 {
-                    "id": "workspaceManagerViewInActivityBar",
-                    "name": "%views.workspaceManagerViewContainer.title%",
-                    "when": "workspaceManagerViewInActivityBarShow && !workspaceManagerEmpty"
+                    "id": "workspaceManager.views.workspaceManager",
+                    "name": "%views.workspaceManager.title%",
+                    "when": "workspace-manager:enabled && workspace-manager:viewInActivityBarShow && !workspace-manager:empty"
                 }
             ],
             "explorer": [
                 {
-                    "id": "workspaceManagerViewInExplorer",
+                    "id": "workspaceManager.views.explorer",
                     "name": "%views.explorer.title%",
-                    "when": "workspaceManagerViewInExplorerShow && !workspaceManagerEmpty"
+                    "when": "workspace-manager:enabled && workspace-manager:viewInExplorerShow && !workspace-manager:empty"
                 }
             ]
         },
@@ -201,54 +201,54 @@
             "view/title": [
                 {
                     "command": "workspaceManager.saveWorkspace",
-                    "when": "view == workspaceManagerViewInActivityBar",
+                    "when": "view =~ /^workspaceManager\\.views\\.workspaceManager/",
                     "group": "navigation@1"
                 },
                 {
-                    "command": "workspaceManager.reloadWorkspaces",
-                    "when": "view == workspaceManagerViewInActivityBar",
+                    "command": "workspaceManager.refreshTreeData",
+                    "when": "view =~ /^workspaceManager\\.views\\.workspaceManager/",
                     "group": "navigation@2"
                 },
                 {
                     "command": "workspaceManager.closeWorkspace",
-                    "when": "view == workspaceManagerViewInActivityBar",
+                    "when": "view =~ /^workspaceManager\\.views\\.workspaceManager/",
                     "group": "navigation@3"
                 },
                 {
                     "command": "workspaceManager.saveWorkspace",
-                    "when": "view == workspaceManagerViewInExplorer",
+                    "when": "view =~ /^workspaceManager\\.views\\.explorer/",
                     "group": "navigation@1"
                 },
                 {
-                    "command": "workspaceManager.reloadWorkspaces",
-                    "when": "view == workspaceManagerViewInExplorer",
+                    "command": "workspaceManager.refreshTreeData",
+                    "when": "view =~ /^workspaceManager\\.views\\.explorer/",
                     "group": "navigation@2"
                 },
                 {
                     "command": "workspaceManager.closeWorkspace",
-                    "when": "view == workspaceManagerViewInExplorer",
+                    "when": "view =~ /^workspaceManager\\.views\\.explorer/",
                     "group": "navigation@3"
                 }
             ],
             "view/item/context": [
                 {
                     "command": "workspaceManager.switchWorkspaceInNewWindow",
-                    "when": "view == workspaceManagerViewInActivityBar",
+                    "when": "view =~ /^workspaceManager\\.views\\.workspaceManager/",
                     "group": "inline@1"
                 },
                 {
                     "command": "workspaceManager.deleteWorkspace",
-                    "when": "view == workspaceManagerViewInActivityBar",
+                    "when": "view =~ /^workspaceManager\\.views\\.workspaceManager/",
                     "group": "inline@2"
                 },
                 {
                     "command": "workspaceManager.switchWorkspaceInNewWindow",
-                    "when": "view == workspaceManagerViewInExplorer",
+                    "when": "view =~ /^workspaceManager\\.views\\.explorer/",
                     "group": "inline@1"
                 },
                 {
                     "command": "workspaceManager.deleteWorkspace",
-                    "when": "view == workspaceManagerViewInExplorer",
+                    "when": "view =~ /^workspaceManager\\.views\\.explorer/",
                     "group": "inline@2"
                 }
             ]
