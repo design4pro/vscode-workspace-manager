@@ -2,17 +2,18 @@
 
 import * as glob from 'fast-glob';
 import * as VError from 'verror';
+import { Cache } from '../cache/cache';
+import { CommandContext, extensionId, setCommandContext } from '../constants';
+import { notifier } from '../extension';
+import { Logger } from '../logger';
 import { WorkspaceEntry } from '../model/workspace';
 import { getWorkspaceEntryDirectories } from './getWorkspaceEntryDirectories';
-import { workspace, window } from 'vscode';
-import { Cache } from '../cache/cache';
-import { Logger } from '../logger';
-import { notifier } from '../extension';
+import { configuration } from '../configuration';
 
 export async function getWorkspaceEntries(
     fromCache: boolean = true
 ): Promise<WorkspaceEntry[]> {
-    const cache = new Cache();
+    const cache = new Cache(extensionId);
     const cacheKey = 'workspace-entries';
     const cachedEntries: WorkspaceEntry[] = cache.get<WorkspaceEntry[]>(
         cacheKey,
@@ -25,12 +26,15 @@ export async function getWorkspaceEntries(
         cachedEntries.length &&
         !cache.isExpired(cacheKey)
     ) {
+        setCommandContext(CommandContext.Empty, false);
+
         return await cachedEntries;
     }
 
-    const configuration = workspace.getConfiguration();
-    const excludeGlobPattern: string[] = configuration.get(
-        'workspace-manager.excludeGlobPattern'
+    const excludeGlobPattern: string[] = configuration.get<string[]>(
+        configuration.name('excludeGlobPattern').value,
+        null,
+        []
     );
     const directoryPaths = getWorkspaceEntryDirectories();
 
@@ -85,7 +89,7 @@ export async function getWorkspaceEntries(
                 Logger.info(
                     `All the workspece files in the directories [${directories.join(
                         ', '
-                    )}] has been found`
+                    )}] has been found [${entries.length}]`
                 );
 
                 entries.sort((a, b) => a.name.localeCompare(b.name));
@@ -100,6 +104,8 @@ export async function getWorkspaceEntries(
                     'file-submodule',
                     'Workspace entries cached (click to cache again)'
                 );
+
+                setCommandContext(CommandContext.Empty, !!!entries.length);
 
                 return entries;
             })

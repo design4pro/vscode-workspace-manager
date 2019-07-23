@@ -7,20 +7,17 @@ import { getWorkspaceEntries } from '../../util/getWorkspaceEntries';
 import { AbstractCommand } from '../abstractCommand';
 import { Command, Commands } from '../common';
 import { ISwitchToWorkspaceCommandArgs } from './switchToWorkspace';
+import { ISwitchWorkspaceCommandArgs } from './switchWorkspace';
 
 const localize = nls.loadMessageBundle();
 
-export interface ISwitchWorkspaceCommandArgs {
-    inNewWindow?: boolean;
-}
-
 @Command()
-export class SwitchWorkspaceCommand extends AbstractCommand {
+export class SwitchWorkspaceInNewWindowCommand extends AbstractCommand {
     constructor() {
-        super(Commands.SwitchWorkspace);
+        super(Commands.SwitchWorkspaceInNewWindow);
     }
 
-    async execute(args: ISwitchWorkspaceCommandArgs = {}) {
+    async execute(args: ISwitchWorkspaceCommandArgs = { inNewWindow: true }) {
         args = { ...args };
 
         const workspaceEntries = await getWorkspaceEntries();
@@ -71,9 +68,10 @@ export class SwitchWorkspaceCommand extends AbstractCommand {
                     inNewWindow: args.inNewWindow
                 };
 
-                commands.executeCommand(Commands.SwitchToWorkspace, [
+                commands.executeCommand(
+                    Commands.SwitchToWorkspace,
                     commandArgs
-                ]);
+                );
             },
             (reason: any) => {}
         );

@@ -4,7 +4,12 @@
 import { ExtensionContext, extensions } from 'vscode';
 import { registerCommands } from './commands';
 import { configuration, Configuration } from './configuration';
-import { extensionOutputChannelName, extensionQualifiedId } from './constants';
+import {
+    extensionOutputChannelName,
+    extensionQualifiedId,
+    CommandContext,
+    setCommandContext
+} from './constants';
 import { Container } from './container';
 import { Environment } from './environment';
 import { Logger } from './logger';
@@ -13,9 +18,6 @@ import { Notifier } from './notifier';
 import { state } from './state';
 import * as telemetry from './telemetry';
 import { cacheWorkspace } from './cache/cacheWorkspace';
-import { setWorkspaceManagerEmpty } from './util/context/setWorkspaceManagerEmpty';
-import { setWorkspaceManagerViewInActivityBarShow } from './util/context/setWorkspaceManagerViewInActivityBarShow';
-import { setWorkspaceManagerViewInExplorerShow } from './util/context/setWorkspaceManagerViewInExplorerShow';
 import { registerViews } from './views';
 
 // The example uses the file message format.
@@ -29,6 +31,9 @@ export const notifier: Notifier = new Notifier(
 // your extension is activated the very first time the command is executed
 export async function activate(context: ExtensionContext): Promise<void> {
     const start = process.hrtime();
+
+    setCommandContext(CommandContext.Enabled, true);
+
     state.context = context;
     state.environment = new Environment();
 
@@ -105,7 +110,6 @@ export async function activate(context: ExtensionContext): Promise<void> {
     //         () => closeWorkspaceCommand()
     //     )
     // );
-    // disposables.push(listenForConfigurationChanges());
 
     // const treeDataProvider = new TreeDataProvider();
 
@@ -140,10 +144,6 @@ export async function activate(context: ExtensionContext): Promise<void> {
     );
 
     await cacheWorkspace();
-
-    setWorkspaceManagerEmpty();
-    setWorkspaceManagerViewInActivityBarShow();
-    setWorkspaceManagerViewInExplorerShow();
 }
 
 // this method is called when your extension is deactivated

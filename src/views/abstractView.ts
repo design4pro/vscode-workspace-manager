@@ -2,11 +2,13 @@
 
 import * as uuid from 'uuid/v4';
 import * as VError from 'verror';
-import { Disposable, window } from 'vscode';
+import { Disposable, window, ConfigurationChangeEvent } from 'vscode';
 import { Logger } from '../logger';
 import { Reporter } from '../telemetry';
-import { WorkspaceExplorerTreeDataProvider } from '../util/explorer/workspaceExplorerTreeDataProvider';
 import { Views } from './common';
+import { TreeDataProvider } from '../util/explorer/treeDataProvider';
+import { Container } from '../container';
+import { configuration } from '../configuration';
 
 export abstract class AbstractView implements Disposable {
     protected trackSuccess: boolean = false;
@@ -14,20 +16,29 @@ export abstract class AbstractView implements Disposable {
 
     private _disposable: Disposable;
 
-    constructor(view: Views | Views[]) {
+    constructor(protected readonly view: Views | Views[]) {
         if (typeof view === 'string') {
             this._disposable = window.registerTreeDataProvider(
                 view,
                 this._execute(view)
             );
+        } else {
+            const subscriptions = (<any>view).map((view: string) =>
+                window.registerTreeDataProvider(view, this._execute(view))
+            );
 
-            return;
+            this._disposable = Disposable.from(...subscriptions);
         }
-        const subscriptions = (<any>view).map((view: string) =>
-            window.registerTreeDataProvider(view, this._execute(view))
+
+        this.registerCommands();
+
+        Container.context.subscriptions.push(
+            configuration.onDidChange(this.onConfigurationChanged, this)
         );
 
-        this._disposable = Disposable.from(...subscriptions);
+        setImmediate(() =>
+            this.onConfigurationChanged(configuration.initializingChangeEvent)
+        );
     }
 
     dispose() {
@@ -36,17 +47,36 @@ export abstract class AbstractView implements Disposable {
         }
     }
 
-    abstract execute(): WorkspaceExplorerTreeDataProvider;
+    protected abstract registerCommands(): void;
 
-    protected _execute(view: string): WorkspaceExplorerTreeDataProvider {
+    protected onConfigurationChanged(e: ConfigurationChangeEvent) {
+        if (
+            !configuration.changed(
+                e,
+                configuration.name('includeGlobPattern').value
+            ) &&
+            !configuration.changed(
+                e,
+                configuration.name('excludeGlobPattern').value
+            )
+        ) {
+            return;
+        }
+
+        if (!configuration.initializing(e)) {
+            void this.refresh();
+        }
+    }
+
+    abstract execute(): TreeDataProvider;
+
+    protected _execute(view: string): TreeDataProvider {
         const operationId = uuid();
         this.eventName = `view:${view}`;
 
         try {
             const start = process.hrtime();
-
             const result = this.execute();
-
             const elapsed = process.hrtime(start);
             const elapsedMs = elapsed[0] * 1e3 + elapsed[1] / 1e6;
 
@@ -73,5 +103,9 @@ export abstract class AbstractView implements Disposable {
                 });
             }
         }
+    }
+
+    refresh() {
+        this.execute().refresh();
     }
 }

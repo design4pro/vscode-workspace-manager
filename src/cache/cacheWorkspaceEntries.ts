@@ -12,7 +12,7 @@ export class CacheWorkspaceEntries {
             const workspaceEntries = await getWorkspaceEntries(false);
 
             if (!workspaceEntries || workspaceEntries.length === 0) {
-                Logger.log('No workspaces found');
+                Logger.log('No workspaces entries found without cache');
                 notifier.statusBarItem.hide();
                 return;
             }

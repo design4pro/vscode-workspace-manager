@@ -1,8 +1,10 @@
 'use strict';
 
 import { env, ExtensionContext, UriHandler } from 'vscode';
-import { configuration } from './configuration';
+import { configuration, ConfigurationWillChangeEvent } from './configuration';
 import { IConfig } from './model/config';
+import { CommandContext, setCommandContext } from './constants';
+import { cacheWorkspace } from './cache/cacheWorkspace';
 
 const isDebuggingRegex = /^--(debug|inspect)\b(-brk\b|(?!-))=?/;
 
@@ -15,6 +17,47 @@ export class Container {
         this._context = context;
         this._config = config;
         this._version = version;
+
+        context.subscriptions.push(
+            configuration.onWillChange(this.onConfigurationChanging, this)
+        );
+    }
+
+    private static onConfigurationChanging(e: ConfigurationWillChangeEvent) {
+        this._config = undefined;
+
+        if (
+            configuration.changed(
+                e.change,
+                configuration.name('includeGlobPattern').value
+            )
+        ) {
+            cacheWorkspace();
+        }
+
+        if (
+            configuration.changed(
+                e.change,
+                configuration.name('showInActivityBar').value
+            )
+        ) {
+            setCommandContext(
+                CommandContext.ViewInActivityBarShow,
+                Container.config.showInActivityBar
+            );
+        }
+
+        if (
+            configuration.changed(
+                e.change,
+                configuration.name('showInExplorer').value
+            )
+        ) {
+            setCommandContext(
+                CommandContext.ViewInExplorerShow,
+                Container.config.showInExplorer
+            );
+        }
     }
 
     static get machineId() {

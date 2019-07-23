@@ -1,14 +1,14 @@
 'use strict';
 
-import { Command, TreeItem, TreeItemCollapsibleState } from 'vscode';
-import { WorkspaceEntry } from '../../model/workspace';
+import * as vscode from 'vscode';
 import { ISwitchToWorkspaceCommandArgs } from '../../commands/workspace/switchToWorkspace';
+import { WorkspaceEntry } from '../../model/workspace';
 
-export class WorkspaceExplorerTreeItem extends TreeItem {
+export class TreeItem extends vscode.TreeItem {
     public readonly label: string;
 
     constructor(public readonly workspaceEntry: WorkspaceEntry) {
-        super(workspaceEntry.name, TreeItemCollapsibleState.None);
+        super(workspaceEntry.name, vscode.TreeItemCollapsibleState.None);
 
         this.label = workspaceEntry.name;
     }
@@ -21,7 +21,7 @@ export class WorkspaceExplorerTreeItem extends TreeItem {
         return this.workspaceEntry.path;
     }
 
-    get command(): Command {
+    get command(): vscode.Command {
         const args: ISwitchToWorkspaceCommandArgs = {
             workspaceEntry: this.workspaceEntry
         };

@@ -2,12 +2,13 @@
 
 import * as glob from 'fast-glob';
 import { existsSync, statSync } from 'fs';
-import { workspace } from 'vscode';
+import { configuration } from '../configuration';
 
 export function getWorkspaceEntryDirectories(): string[] {
-    const configuration = workspace.getConfiguration();
-    let includeGlobPattern: string[] = configuration.get(
-        'workspace-manager.includeGlobPattern'
+    let includeGlobPattern: string[] = configuration.get<string[]>(
+        configuration.name('includeGlobPattern').value,
+        null,
+        []
     );
 
     if (!includeGlobPattern || !includeGlobPattern.length) {

@@ -10,10 +10,10 @@
     "command.switchWorkspace.title": "Workspace Manager: Switch Workspace",
     "command.switchWorkspaceInNewWindow.title": "Workspace Manager: Switch Workspace in New Window",
     "command.deleteWorkspace.title": "Workspace Manager: Delete Workspace",
-    "command.reloadWorkspaces.title": "Workspace Manager: Reload Workspaces",
+    "command.refreshTreeData.title": "Workspace Manager: Reload Workspaces",
     "command.closeWorkspace.title": "Workspace Manager: Close Workspace",
     "command.cacheWorkspace.title": "Workspace Manager: Cache Workspace",
     "viewsContainers.activitybar.title": "Workspace Manager",
-    "views.workspaceManagerViewContainer.title": "Workspaces",
+    "views.workspaceManager.title": "Workspaces",
     "views.explorer.title": "Workspaces"
 }

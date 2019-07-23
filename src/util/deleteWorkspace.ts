@@ -1,9 +1,9 @@
 'use strict';
 
 import { unlinkSync } from 'fs';
-import { window } from 'vscode';
-import { refreshTreeDataCommand } from '../commands/common/refreshTreeData';
+import { window, commands } from 'vscode';
 import { WorkspaceEntry } from '../model/workspace';
+import { Commands } from '../commands/common';
 
 export function deleteWorkspace(
     workspaceEntry: WorkspaceEntry,
@@ -24,7 +24,7 @@ export function deleteWorkspace(
 
                     unlinkSync(workspaceEntry.path);
 
-                    refreshTreeDataCommand();
+                    commands.executeCommand(Commands.RefreshTreeData);
                 },
                 (reason: any) => {}
             );
