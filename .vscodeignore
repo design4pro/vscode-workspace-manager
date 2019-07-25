@@ -3,7 +3,11 @@
 out/test/**
 test/**
 src/**
+.commitlintrc.yml
 .gitignore
+.prettierrc.yml
+.releaserc.yml
+.travis.yml
 vsc-extension-quickstart.md
 **/tsconfig.json
 **/tslint.json
@@ -11,4 +15,6 @@ vsc-extension-quickstart.md
 **/*.ts
 *.code-workspace
 *.log
-gulpfile.js
+node_modules/**
+package-lock.json
+yarn.lock

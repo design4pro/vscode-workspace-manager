@@ -7,3 +7,4 @@
 *.log
 src/constants.json
 coverage/
+package-lock.json

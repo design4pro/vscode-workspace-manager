@@ -45,7 +45,6 @@
         "semver": "^6.1.2",
         "uuid": "^3.3.2",
         "verror": "^1.10.0",
-        "vscode": "^1.1.28",
         "vscode-nls": "^4.1.1"
     },
     "devDependencies": {
@@ -60,10 +59,8 @@
         "@types/node": "12.6.2",
         "decache": "^4.5.1",
         "husky": "^2.4.1",
-        "istanbul": "^0.4.5",
         "minimist": "^1.2.0",
         "prettier": "^1.18.2",
-        "remap-istanbul": "^0.13.0",
         "rimraf": "^2.6.3",
         "semantic-release": "^15.13.16",
         "semantic-release-vsce": "^2.2.8",
@@ -71,7 +68,8 @@
         "tslint": "^5.12.1",
         "tslint-plugin-prettier": "^2.0.1",
         "typescript": "^3.3.1",
-        "vsce": "^1.64.0",
+        "vsce": "^1.66.0",
+        "vscode": "^1.1.28",
         "vscode-nls-dev": "^3.2.6"
     },
     "husky": {

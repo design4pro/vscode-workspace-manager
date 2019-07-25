@@ -37,7 +37,7 @@ export function getWorkspaceEntryDirectories(): string[] {
     const pathsAfterGlobbingHash = uniquePaths
         .map(p => {
             try {
-                return glob.sync<string>([p], {
+                return glob.sync([p], {
                     cwd: '/',
                     onlyDirectories: true,
                     absolute: true
