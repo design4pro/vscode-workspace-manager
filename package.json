@@ -39,16 +39,16 @@
     },
     "dependencies": {
         "applicationinsights": "^1.4.0",
-        "lodash": "^4.17.11",
-        "mkdirp": "^0.5.1",
         "fast-glob": "^3.0.4",
+        "lodash": "^4.17.15",
+        "mkdirp": "^0.5.1",
         "semver": "^6.1.2",
         "uuid": "^3.3.2",
         "verror": "^1.10.0",
         "vscode-nls": "^4.1.1"
     },
     "devDependencies": {
-        "@commitlint/cli": "^8.0.0",
+        "@commitlint/cli": "^8.1.0",
         "@commitlint/config-conventional": "^8.0.0",
         "@commitlint/prompt-cli": "^8.0.0",
         "@semantic-release/changelog": "^3.0.4",
@@ -57,6 +57,8 @@
         "@types/mkdirp": "^0.5.2",
         "@types/mocha": "^2.2.42",
         "@types/node": "12.6.2",
+        "@types/uuid": "^3.4.5",
+        "@types/verror": "^1.10.3",
         "decache": "^4.5.1",
         "husky": "^2.4.1",
         "minimist": "^1.2.0",
@@ -124,8 +126,8 @@
                 "command": "workspaceManager.saveWorkspace",
                 "title": "%command.saveWorkspace.title%",
                 "icon": {
-                    "light": "assets/icons/light/save.svg",
-                    "dark": "assets/icons/dark/save.svg"
+                    "light": "resources/light/save.svg",
+                    "dark": "resources/dark/save.svg"
                 }
             },
             {
@@ -152,16 +154,16 @@
                 "command": "workspaceManager.refreshTreeData",
                 "title": "%command.refreshTreeData.title%",
                 "icon": {
-                    "light": "assets/icons/light/refresh.svg",
-                    "dark": "assets/icons/dark/refresh.svg"
+                    "light": "resources/light/refresh.svg",
+                    "dark": "resources/dark/refresh.svg"
                 }
             },
             {
                 "command": "workspaceManager.closeWorkspace",
                 "title": "%command.closeWorkspace.title%",
                 "icon": {
-                    "light": "assets/icons/light/close.svg",
-                    "dark": "assets/icons/dark/close.svg"
+                    "light": "resources/light/close.svg",
+                    "dark": "resources/dark/close.svg"
                 }
             },
             {

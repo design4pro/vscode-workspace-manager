@@ -25,7 +25,7 @@ export class SwitchWorkspaceCommand extends AbstractCommand {
 
         const workspaceEntries = await getWorkspaceEntries();
 
-        if (!workspaceEntries.length) {
+        if (!workspaceEntries || !workspaceEntries.length) {
             const noWorkspacesFoundText = localize(
                 'noWorkspacesFound.text',
                 'No workspaces entries found'

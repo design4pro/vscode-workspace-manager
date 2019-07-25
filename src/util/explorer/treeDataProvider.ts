@@ -25,7 +25,7 @@ export class TreeDataProvider implements vscode.TreeDataProvider<TreeItem> {
 
         let treeItems = [];
 
-        if (workspaceEntries.length) {
+        if (workspaceEntries && workspaceEntries.length) {
             treeItems = workspaceEntries.reduce(
                 (acc: TreeItem[], workspaceEntry: WorkspaceEntry) => (
                     acc.push(new TreeItem(workspaceEntry)), acc
