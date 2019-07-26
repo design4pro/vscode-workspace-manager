@@ -18,7 +18,7 @@ export class DeleteWorkspaceCommand extends AbstractCommand {
     async execute() {
         let workspaceEntries = await getWorkspaceEntries();
 
-        if (!workspaceEntries.length) {
+        if (!workspaceEntries || !workspaceEntries.length) {
             const noWorkspacesFoundText = localize(
                 'noWorkspacesFound.text',
                 'No workspaces entries found'

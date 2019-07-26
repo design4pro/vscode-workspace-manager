@@ -9,6 +9,7 @@ import { Logger } from '../logger';
 import { WorkspaceEntry } from '../model/workspace';
 import { getWorkspaceEntryDirectories } from './getWorkspaceEntryDirectories';
 import { configuration } from '../configuration';
+import { window } from 'vscode';
 
 export async function getWorkspaceEntries(
     fromCache: boolean = true
@@ -72,7 +73,7 @@ export async function getWorkspaceEntries(
             onlyFiles: true
         });
 
-        await stream
+        stream
             .on('data', path => {
                 notifier.notify(
                     'eye',
@@ -83,6 +84,7 @@ export async function getWorkspaceEntries(
             })
             .on('error', err => {
                 err = new VError(err, 'Reading stream error');
+                window.showInformationMessage(err);
                 throw err;
             })
             .on('end', () => {
@@ -117,8 +119,11 @@ export async function getWorkspaceEntries(
 
         timeoutId = setTimeout(() => {
             stream.pause();
-            Logger.info('Reading stream has been poused after 60s.');
-        }, 60000);
+            Logger.info('Reading stream has been poused after 10s.');
+            window.showInformationMessage(
+                'Reading stream has been poused after 10s.'
+            );
+        }, 10000);
     } catch (err) {
         err = new VError(err, 'Reading stream has been destroyed');
         throw err;

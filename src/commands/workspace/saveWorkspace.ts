@@ -27,7 +27,7 @@ export class SaveWorkspaceCommand extends AbstractCommand {
     async execute() {
         const workspaceEntryDirectories = getWorkspaceEntryDirectories();
 
-        if (!workspaceEntryDirectories.length) {
+        if (!workspaceEntryDirectories || !workspaceEntryDirectories.length) {
             window.showInformationMessage(
                 'No workspace directories have been configured'
             );

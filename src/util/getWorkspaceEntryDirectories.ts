@@ -15,6 +15,10 @@ export function getWorkspaceEntryDirectories(): string[] {
         return [];
     }
 
+    if (typeof includeGlobPattern === 'string') {
+        includeGlobPattern = (<string>includeGlobPattern).split(',');
+    }
+
     const userHome =
         process.env[process.platform === 'win32' ? 'USERPROFILE' : 'HOME'] ||
         '~';
