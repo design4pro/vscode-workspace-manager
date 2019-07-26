@@ -2,14 +2,14 @@
 
 import * as glob from 'fast-glob';
 import * as VError from 'verror';
+import { window } from 'vscode';
 import { Cache } from '../cache/cache';
+import { configuration } from '../configuration';
 import { CommandContext, extensionId, setCommandContext } from '../constants';
 import { notifier } from '../extension';
 import { Logger } from '../logger';
 import { WorkspaceEntry } from '../model/workspace';
 import { getWorkspaceEntryDirectories } from './getWorkspaceEntryDirectories';
-import { configuration } from '../configuration';
-import { window } from 'vscode';
 
 export async function getWorkspaceEntries(
     fromCache: boolean = true
