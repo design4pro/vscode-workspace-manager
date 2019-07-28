@@ -15,5 +15,11 @@ vsc-extension-quickstart.md
 **/*.ts
 *.code-workspace
 *.log
+node_modules
+!node_modules/uuid
+!node_modules/verror
+!node_modules/assert-plus
+!node_modules/extsprintf
+!node_modules/core-util-is
 package-lock.json
 yarn.lock

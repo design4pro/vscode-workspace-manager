@@ -26,15 +26,15 @@
     ],
     "main": "./out/src/extension.js",
     "scripts": {
-        "vscode:prepublish": "npm run compile",
-        "publish": "vsce publish",
-        "package": "vsce package",
+        "vscode:prepublish": "yarn run compile",
+        "publish": "vsce publish --yarn",
+        "package": "vsce package --yarn",
         "clean": "rimraf out",
-        "compile": "npm run clean && tsc -p ./",
+        "compile": "yarn run clean && tsc -p ./",
         "watch": "tsc -watch -p ./",
         "commit": "commit",
         "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "npm run compile",
+        "test": "yarn run compile",
         "release": "./node_modules/.bin/semantic-release"
     },
     "dependencies": {
