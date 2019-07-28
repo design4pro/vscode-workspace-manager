@@ -34,7 +34,7 @@
         "watch": "tsc -watch -p ./",
         "commit": "commit",
         "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "npm run compile && node ./node_modules/vscode/bin/test",
+        "test": "npm run compile",
         "release": "./node_modules/.bin/semantic-release"
     },
     "dependencies": {
