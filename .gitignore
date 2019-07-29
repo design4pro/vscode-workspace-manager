@@ -1,10 +1,8 @@
 /out
-/node_modules
+node_modules
 .vscode-test/
 *.vsix
 *.code-workspace
 *.lock
 *.log
-src/constants.json
-coverage/
 package-lock.json

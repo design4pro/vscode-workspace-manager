@@ -38,7 +38,7 @@ export type CommandContext =
 
 export abstract class AbstractCommand implements Disposable {
     protected trackSuccess: boolean = false;
-    protected eventName: string;
+    protected eventName?: string;
 
     protected readonly contextParsingOptions: CommandContextParsingOptions = {
         editor: false,

@@ -12,19 +12,20 @@ import { configuration } from '../configuration';
 
 export abstract class AbstractView implements Disposable {
     protected trackSuccess: boolean = false;
-    protected eventName: string;
+    protected eventName?: string;
 
     private _disposable: Disposable;
 
     constructor(protected readonly view: Views | Views[]) {
         if (typeof view === 'string') {
-            this._disposable = window.registerTreeDataProvider(
-                view,
-                this._execute(view)
-            );
+            this._disposable = window.registerTreeDataProvider(view, <
+                TreeDataProvider
+            >this._execute(view));
         } else {
             const subscriptions = (<any>view).map((view: string) =>
-                window.registerTreeDataProvider(view, this._execute(view))
+                window.registerTreeDataProvider(view, <TreeDataProvider>(
+                    this._execute(view)
+                ))
             );
 
             this._disposable = Disposable.from(...subscriptions);
@@ -70,7 +71,7 @@ export abstract class AbstractView implements Disposable {
 
     abstract execute(): TreeDataProvider;
 
-    protected _execute(view: string): TreeDataProvider {
+    protected _execute(view: string): TreeDataProvider | undefined {
         const operationId = uuid();
         this.eventName = `view:${view}`;
 

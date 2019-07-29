@@ -6,6 +6,7 @@ import { window, QuickPickItem, QuickPickOptions } from 'vscode';
 import { deleteWorkspace } from '../../util/deleteWorkspace';
 import { Command, Commands } from '../common';
 import { AbstractCommand } from '../abstractCommand';
+import { WorkspaceEntry } from '../../model/workspace';
 
 const localize = nls.loadMessageBundle();
 
@@ -45,11 +46,11 @@ export class DeleteWorkspaceCommand extends AbstractCommand {
 
         window.showQuickPick(workspaceItems, options).then(
             (workspaceItem?: QuickPickItem) => {
-                if (!workspaceItem) {
+                if (!workspaceItem || !workspaceEntries) {
                     return;
                 }
 
-                const entry = workspaceEntries.find(
+                const entry: WorkspaceEntry | undefined = workspaceEntries.find(
                     entry => entry.path === workspaceItem.description
                 );
 

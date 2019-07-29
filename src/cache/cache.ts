@@ -15,11 +15,11 @@ const now = (): number => Math.floor(Date.now() / 1000);
 export class Cache {
     context: ExtensionContext;
     namespace: string;
-    cache: object;
+    cache: any;
 
     constructor(namespace?: string) {
         // ExtensionContext
-        this.context = state.context;
+        this.context = <ExtensionContext>state.context;
 
         // Namespace of the context's globalState
         this.namespace = namespace || 'cache';
@@ -68,7 +68,7 @@ export class Cache {
      * @param {any} [defaultValue] - The optional default value to return if the cached item does not exist or is expired
      * @returns {any} Returns the cached value or optional defaultValue
      */
-    get<T>(key: string, defaultValue: T): T {
+    get<T>(key: string, defaultValue: T): T | undefined {
         // If doesn't exist
         if (typeof this.cache[key] === 'undefined') {
             // Return default value
@@ -88,7 +88,7 @@ export class Cache {
     }
 
     // Alias of get
-    fetch<T>(key: string, defaultValue: T): T {
+    fetch<T>(key: string, defaultValue: T): T | undefined {
         return this.get<T>(key, defaultValue);
     }
 
@@ -166,7 +166,7 @@ export class Cache {
      * @return {object}
      */
     all(): object {
-        let items = {};
+        let items: any = {};
 
         for (let key in this.cache) {
             items[key] = this.cache[key].value;
@@ -204,7 +204,7 @@ export class Cache {
      * @param {string} key - The unique key for the cached item
      * @return {number} Unix Timestamp in seconds
      */
-    getExpiration(key: string): number {
+    getExpiration(key: string): number | undefined {
         if (
             typeof this.cache[key] === 'undefined' ||
             typeof this.cache[key].expiration === 'undefined'

@@ -17,12 +17,12 @@ export const SUPPORTED_OS: string[] = Object.keys(OsType)
 export class Environment {
     public isPortable: boolean = false;
 
-    public USER_FOLDER: string = null;
+    public USER_FOLDER?: string;
 
-    public EXTENSION_FOLDER: string = null;
-    public PATH: string = null;
+    public EXTENSION_FOLDER?: string;
+    public PATH?: string;
 
-    public OsType: OsType = null;
+    public OsType: OsType;
 
     constructor() {
         this.isPortable = !!process.env.VSCODE_PORTABLE;
@@ -30,14 +30,18 @@ export class Environment {
         this.OsType = process.platform as OsType;
 
         if (!this.isPortable) {
-            this.PATH = resolve(
-                state.context.globalStoragePath,
-                '../../..'
-            ).concat(normalize('/'));
+            if (state.context) {
+                this.PATH = resolve(
+                    state.context.globalStoragePath,
+                    '../../..'
+                ).concat(normalize('/'));
+            }
 
-            this.USER_FOLDER = resolve(this.PATH, 'User').concat(
-                normalize('/')
-            );
+            if (this.PATH) {
+                this.USER_FOLDER = resolve(this.PATH, 'User').concat(
+                    normalize('/')
+                );
+            }
 
             this.EXTENSION_FOLDER = resolve(
                 extensions.all.filter(
@@ -48,13 +52,15 @@ export class Environment {
         } else {
             this.PATH = process.env.VSCODE_PORTABLE;
 
-            this.USER_FOLDER = resolve(this.PATH, 'user-data/User').concat(
-                normalize('/')
-            );
+            if (this.PATH) {
+                this.USER_FOLDER = resolve(this.PATH, 'user-data/User').concat(
+                    normalize('/')
+                );
 
-            this.EXTENSION_FOLDER = resolve(this.PATH, 'extensions').concat(
-                normalize('/')
-            );
+                this.EXTENSION_FOLDER = resolve(this.PATH, 'extensions').concat(
+                    normalize('/')
+                );
+            }
         }
     }
 }

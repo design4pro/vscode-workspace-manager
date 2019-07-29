@@ -58,7 +58,7 @@ export class SwitchWorkspaceCommand extends AbstractCommand {
                     return;
                 }
 
-                const entry: WorkspaceEntry = workspaceEntries.find(
+                const entry: WorkspaceEntry | undefined = workspaceEntries.find(
                     entry => entry.path === workspaceItem.description
                 );
 

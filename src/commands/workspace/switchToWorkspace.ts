@@ -23,7 +23,7 @@ export class SwitchToWorkspaceCommand extends AbstractCommand {
 
         const app = getApp();
         const command = `${app} ${args.inNewWindow ? '-n' : '-r'} "${
-            args.workspaceEntry.path
+            args.workspaceEntry!.path
         }"`;
 
         exec(command, onCommandRun);
