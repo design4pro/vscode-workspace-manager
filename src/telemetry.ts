@@ -8,7 +8,7 @@ import { APPINSIGHTS_KEY } from './constants';
 import { Logger } from './logger';
 
 class TelemetryReporter extends Disposable {
-    private client: appInsights.TelemetryClient;
+    private client?: appInsights.TelemetryClient;
     private userOptIn: boolean = false;
     private disposables: Disposable[] = [];
 
@@ -156,18 +156,20 @@ class TelemetryReporter extends Disposable {
     }
 
     private setCommonProperties() {
-        this.client.commonProperties = {
-            'common.os': os.platform(),
-            'common.platformversion': (os.release() || '').replace(
-                /^(\d+)(\.\d+)?(\.\d+)?(.*)/,
-                '$1$2$3'
-            ),
-            'common.extname': this.extensionId,
-            'common.extversion': this.extensionVersion,
-            'common.vscodemachineid': env.machineId,
-            'common.vscodesessionid': env.sessionId,
-            'common.vscodeversion': version
-        };
+        if (this.client) {
+            this.client.commonProperties = {
+                'common.os': os.platform(),
+                'common.platformversion': (os.release() || '').replace(
+                    /^(\d+)(\.\d+)?(\.\d+)?(.*)/,
+                    '$1$2$3'
+                ),
+                'common.extname': this.extensionId,
+                'common.extversion': this.extensionVersion,
+                'common.vscodemachineid': env.machineId,
+                'common.vscodesessionid': env.sessionId,
+                'common.vscodeversion': version
+            };
+        }
     }
 }
 

@@ -23,7 +23,7 @@ export class TreeDataProvider implements vscode.TreeDataProvider<TreeItem> {
     async getChildren(): Promise<TreeItem[]> {
         const workspaceEntries = await getWorkspaceEntries();
 
-        let treeItems = [];
+        let treeItems: TreeItem[] = [];
 
         if (workspaceEntries && workspaceEntries.length) {
             treeItems = workspaceEntries.reduce(

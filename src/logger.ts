@@ -30,17 +30,20 @@ export class Logger {
     static prefix = consolePrefix;
 
     static configure(
-        context: ExtensionContext,
-        level?: IOutputLevel,
+        context: ExtensionContext | null,
+        level: IOutputLevel = IOutputLevel.Silent,
         loggableFn?: (o: any) => string | undefined
     ) {
         this.customLoggableFn = loggableFn;
 
         this.level = level;
 
-        context.subscriptions.push(
-            configuration.onDidChange(this.onConfigurationChanged, this)
-        );
+        if (context) {
+            context.subscriptions.push(
+                configuration.onDidChange(this.onConfigurationChanged, this)
+            );
+        }
+
         this.onConfigurationChanged(configuration.initializingChangeEvent);
     }
 

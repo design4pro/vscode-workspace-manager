@@ -13,13 +13,12 @@ import { getWorkspaceEntryDirectories } from './getWorkspaceEntryDirectories';
 
 export async function getWorkspaceEntries(
     fromCache: boolean = true
-): Promise<WorkspaceEntry[]> {
+): Promise<WorkspaceEntry[] | undefined> {
     const cache = new Cache(extensionId);
     const cacheKey = 'workspace-entries';
-    const cachedEntries: WorkspaceEntry[] = cache.get<WorkspaceEntry[]>(
-        cacheKey,
-        []
-    );
+    const cachedEntries: WorkspaceEntry[] | undefined = cache.get<
+        WorkspaceEntry[]
+    >(cacheKey, []);
 
     if (
         fromCache &&
@@ -46,23 +45,27 @@ export async function getWorkspaceEntries(
     let timeoutId: NodeJS.Timer;
 
     const addPath = (path: string) => {
-        entries.push({
-            name: path
+        if (path) {
+            const name = (<any>path)
                 .split('\\')
                 .pop()
                 .split('/')
                 .pop()
-                .replace(/.code-workspace$/, ''),
-            path: path
-        });
+                .replace(/.code-workspace$/, '');
 
-        filesParsed++;
+            entries.push({
+                name: name,
+                path: path
+            });
 
-        notifier.notify(
-            'eye',
-            `Looking for workspace entries... [${filesParsed}]`,
-            false
-        );
+            filesParsed++;
+
+            notifier.notify(
+                'eye',
+                `Looking for workspace entries... [${filesParsed}]`,
+                false
+            );
+        }
     };
 
     try {
@@ -74,7 +77,7 @@ export async function getWorkspaceEntries(
         });
 
         stream
-            .on('data', path => {
+            .on('data', (path: string) => {
                 notifier.notify(
                     'eye',
                     `Looking for workspace entries... [${entries.length}]`,

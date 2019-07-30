@@ -1,15 +1,13 @@
 {
     "compilerOptions": {
-        "module": "commonjs",
-        "noImplicitAny": false,
-        "removeComments": false,
-        "noImplicitThis": true,
         "experimentalDecorators": true,
+        "module": "commonjs",
         "target": "es6",
         "outDir": "out",
-        "lib": ["es6"],
         "sourceMap": true,
-        "rootDir": "."
+        "strict": true,
+        "rootDir": "src",
+        "types": ["node"]
     },
     "include": ["src/**/*.ts"],
     "exclude": ["node_modules", ".vscode-test"]
