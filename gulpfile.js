@@ -67,11 +67,15 @@ const doCompile = function(buildNls) {
 };
 
 const vscePublishTask = function() {
-    return vsce.publish();
+    return vsce.publish({
+        useYarn: true
+    });
 };
 
 const vscePackageTask = function() {
-    return vsce.createVSIX();
+    return vsce.createVSIX({
+        useYarn: true
+    });
 };
 
 gulp.task('default', buildTask);
