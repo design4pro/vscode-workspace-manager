@@ -18,4 +18,8 @@ steps:
 - script: |
     npm install
     npm run release
-  displayName: 'npm install and build'
+  env:
+    GH_TOKEN: $(GH_TOKEN)
+    NPM_TOKEN: $(NPM_TOKEN)
+    VSCE_TOKEN: $(VSCE_TOKEN)
+  displayName: 'npm install and release'
