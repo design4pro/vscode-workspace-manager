@@ -1,7 +1,7 @@
 'use strict';
 
 import { commands, QuickPickItem, QuickPickOptions, window } from 'vscode';
-import * as nls from 'vscode-nls';
+// import * as nls from 'vscode-nls';
 import { WorkspaceEntry } from '../../model/workspace';
 import { getWorkspaceEntries } from '../../util/getWorkspaceEntries';
 import { AbstractCommand } from '../abstractCommand';
@@ -9,7 +9,7 @@ import { Command, Commands } from '../common';
 import { ISwitchToWorkspaceCommandArgs } from './switchToWorkspace';
 import { ISwitchWorkspaceCommandArgs } from './switchWorkspace';
 
-const localize = nls.loadMessageBundle();
+// const localize = nls.loadMessageBundle();
 
 @Command()
 export class SwitchWorkspaceInNewWindowCommand extends AbstractCommand {
@@ -23,12 +23,12 @@ export class SwitchWorkspaceInNewWindowCommand extends AbstractCommand {
         const workspaceEntries = await getWorkspaceEntries();
 
         if (!workspaceEntries || !workspaceEntries.length) {
-            const noWorkspacesFoundText = localize(
-                'noWorkspacesFound.text',
-                'No workspaces entries found'
-            );
+            // const noWorkspacesFoundText = localize(
+            //     'noWorkspacesFound.text',
+            //     'No workspaces entries found'
+            // );
 
-            window.showInformationMessage(noWorkspacesFoundText);
+            window.showInformationMessage('No workspaces entries found');
 
             return;
         }

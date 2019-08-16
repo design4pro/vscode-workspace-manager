@@ -3,10 +3,16 @@
 out/test/**
 test/**
 src/**
+node_modules/**/test/**
+node_modules
 **/*.map
 *.log
 *.lock
 *.vsix
 .gitignore
 tsconfig.json
+tslint.json
 vsc-extension-quickstart.md
+*.yml
+gulpfile.js
+webpack.config.js
