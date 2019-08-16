@@ -1,11 +1,11 @@
 'use strict';
 
+import { commands } from 'vscode';
+import { configuration } from '../../configuration';
+import { CommandContext, setCommandContext } from '../../constants';
 import { TreeDataProvider } from '../../util/explorer/treeDataProvider';
 import { AbstractView } from '../abstractView';
 import { View, Views, ViewsCommands } from '../common';
-import { commands } from 'vscode';
-import { configuration } from '../../configuration';
-import { setCommandContext, CommandContext } from '../../constants';
 
 @View()
 export class ActiveBar extends AbstractView {

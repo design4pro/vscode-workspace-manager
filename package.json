@@ -25,31 +25,28 @@
         "manager",
         "switch"
     ],
-    "main": "./out/extension.js",
+    "main": "./out/extension",
     "scripts": {
-        "vscode:prepublish": "yarn run compile",
-        "publish": "gulp publish",
-        "package": "gulp package",
-        "clean": "gulp clean",
-        "compile": "tsc -b",
-        "watch": "tsc -b -w",
+        "vscode:prepublish": "yarn run clean && yarn run compile",
+        "publish": "npx vsce publish --yarn",
+        "package": "npx vsce package --yarn",
+        "clean": "rimraf out/** && rimraf package.nls.*.json && rimraf workspace-manager-*.vsix",
+        "compile": "webpack --mode production",
+        "watch": "webpack --mode none --watch",
         "commit": "commit",
         "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "yarn run compile",
-        "test:compile": "yarn run compile",
-        "release": "./node_modules/.bin/semantic-release"
+        "test": "yarn run test:compile",
+        "test:compile": "tsc -p ./ && yarn run compile",
+        "release": "npx semantic-release"
     },
     "dependencies": {
-        "applicationinsights": "^1.4.0",
-        "fast-glob": "^3.0.4",
-        "lodash": "^4.17.15",
-        "mkdirp": "^0.5.1",
-        "path-dirname": "^1.0.2",
-        "semver": "^6.3.0",
-        "to-regex": "^3.0.2",
-        "uuid": "^3.3.2",
-        "verror": "^1.10.0",
-        "vscode-nls": "^4.1.1"
+        "applicationinsights": "1.4.1",
+        "fast-glob": "3.0.4",
+        "lodash": "4.17.15",
+        "mkdirp": "0.5.1",
+        "uuid": "3.3.2",
+        "verror": "1.10.0",
+        "vscode-nls": "4.1.1"
     },
     "devDependencies": {
         "@commitlint/cli": "^8.1.0",
@@ -63,25 +60,17 @@
         "@types/node": "12.6.2",
         "@types/uuid": "^3.4.5",
         "@types/verror": "^1.10.3",
-        "decache": "^4.5.1",
-        "del": "^5.0.0",
-        "event-stream": "^4.0.1",
-        "gulp": "^4.0.2",
-        "gulp-filter": "^6.0.0",
-        "gulp-sourcemaps": "^2.6.5",
-        "gulp-typescript": "^5.0.1",
         "husky": "^2.4.1",
-        "minimist": "^1.2.0",
         "prettier": "^1.18.2",
         "rimraf": "^2.6.3",
         "semantic-release": "^15.13.16",
         "semantic-release-vsce": "^2.2.8",
-        "tslint": "^5.12.1",
-        "tslint-plugin-prettier": "^2.0.1",
+        "ts-loader": "^6.0.4",
         "typescript": "^3.3.1",
-        "vsce": "^1.66.0",
-        "vscode": "^1.1.35",
-        "vscode-nls-dev": "^3.3.1"
+        "vscode": "^1.1.36",
+        "vscode-nls-dev": "^3.3.1",
+        "webpack": "^4.39.2",
+        "webpack-cli": "^3.3.6"
     },
     "husky": {
         "hooks": {
@@ -94,46 +83,46 @@
     "contributes": {
         "configuration": {
             "type": "object",
-            "title": "%configuration.title%",
+            "title": "Workspace Manager",
             "properties": {
                 "workspace-manager.includeGlobPattern": {
                     "type": "array",
                     "default": [
                         "~/**/*"
                     ],
-                    "description": "%configuration.includeGlobPattern%"
+                    "description": "Paths of directories when `.code-workspace` files can be saved and then read from"
                 },
                 "workspace-manager.excludeGlobPattern": {
                     "type": "array",
                     "default": [],
-                    "description": "%configuration.excludeGlobPattern%"
+                    "description": "A glob pattern that defines files and folders to exclude"
                 },
                 "workspace-manager.codeExecutable": {
                     "type": "string",
                     "default": "code",
-                    "description": "%configuration.codeExecutable%"
+                    "description": "Path to the executable file for VS Code"
                 },
                 "workspace-manager.codeInsidersExecutable": {
                     "type": "string",
                     "default": "code-insiders",
-                    "description": "%configuration.codeInsidersExecutable%"
+                    "description": "Path to the executable file for VS Code Insiders"
                 },
                 "workspace-manager.showInActivityBar": {
                     "type": "boolean",
                     "default": true,
-                    "description": "%configuration.showInActivityBar%"
+                    "description": "Whether or not to show the activity bar tree view container"
                 },
                 "workspace-manager.showInExplorer": {
                     "type": "boolean",
                     "default": true,
-                    "description": "%configuration.showInExplorer%"
+                    "description": "Whether or not to show the list of workspaces in the explorer tree view container"
                 }
             }
         },
         "commands": [
             {
                 "command": "workspaceManager.saveWorkspace",
-                "title": "%command.saveWorkspace.title%",
+                "title": "Workspace Manager: Save Workspace",
                 "icon": {
                     "light": "resources/light/save.svg",
                     "dark": "resources/dark/save.svg"
@@ -141,11 +130,11 @@
             },
             {
                 "command": "workspaceManager.switchWorkspace",
-                "title": "%command.switchWorkspace.title%"
+                "title": "Workspace Manager: Switch Workspace"
             },
             {
                 "command": "workspaceManager.switchWorkspaceInNewWindow",
-                "title": "%command.switchWorkspaceInNewWindow.title%",
+                "title": "Workspace Manager: Switch Workspace in New Window",
                 "icon": {
                     "light": "resources/light/new-window.svg",
                     "dark": "resources/dark/new-window.svg"
@@ -153,7 +142,7 @@
             },
             {
                 "command": "workspaceManager.deleteWorkspace",
-                "title": "%command.deleteWorkspace.title%",
+                "title": "Workspace Manager: Delete Workspace",
                 "icon": {
                     "light": "resources/light/delete.svg",
                     "dark": "resources/dark/delete.svg"
@@ -161,7 +150,7 @@
             },
             {
                 "command": "workspaceManager.refreshTreeData",
-                "title": "%command.refreshTreeData.title%",
+                "title": "Workspace Manager: Reload Workspaces",
                 "icon": {
                     "light": "resources/light/refresh.svg",
                     "dark": "resources/dark/refresh.svg"
@@ -169,7 +158,7 @@
             },
             {
                 "command": "workspaceManager.closeWorkspace",
-                "title": "%command.closeWorkspace.title%",
+                "title": "Workspace Manager: Close Workspace",
                 "icon": {
                     "light": "resources/light/close.svg",
                     "dark": "resources/dark/close.svg"
@@ -177,14 +166,14 @@
             },
             {
                 "command": "workspaceManager.cacheWorkspace",
-                "title": "%command.cacheWorkspace.title%"
+                "title": "Workspace Manager: Cache Workspace"
             }
         ],
         "viewsContainers": {
             "activitybar": [
                 {
                     "id": "workspaceManager",
-                    "title": "%viewsContainers.activitybar.title%",
+                    "title": "Workspace Manager",
                     "icon": "media/workspace.svg",
                     "when": "workspace-manager:enabled && !workspace-manager:empty"
                 }
@@ -194,14 +183,14 @@
             "workspaceManager": [
                 {
                     "id": "workspaceManager.views.workspaceManager",
-                    "name": "%views.workspaceManager.title%",
+                    "name": "Workspaces",
                     "when": "workspace-manager:enabled && workspace-manager:viewInActivityBarShow && !workspace-manager:empty"
                 }
             ],
             "explorer": [
                 {
                     "id": "workspaceManager.views.explorer",
-                    "name": "%views.explorer.title%",
+                    "name": "Workspaces",
                     "when": "workspace-manager:enabled && workspace-manager:viewInExplorerShow && !workspace-manager:empty"
                 }
             ]

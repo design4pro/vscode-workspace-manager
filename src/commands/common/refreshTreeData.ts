@@ -1,10 +1,10 @@
 'use strict';
 
-import { Command, Commands } from '../common';
-import { AbstractCommand } from '../abstractCommand';
+import { commands } from 'vscode';
 import { cacheWorkspace } from '../../cache/cacheWorkspace';
 import { ViewsCommands } from '../../views/common';
-import { commands } from 'vscode';
+import { AbstractCommand } from '../abstractCommand';
+import { Command, Commands } from '../common';
 
 @Command()
 export class RefreshTreeData extends AbstractCommand {

@@ -1,6 +1,6 @@
 'use strict';
 
-import * as nls from 'vscode-nls';
+// import * as nls from 'vscode-nls';
 import { getWorkspaceEntries } from '../../util/getWorkspaceEntries';
 import { window, QuickPickItem, QuickPickOptions } from 'vscode';
 import { deleteWorkspace } from '../../util/deleteWorkspace';
@@ -8,7 +8,7 @@ import { Command, Commands } from '../common';
 import { AbstractCommand } from '../abstractCommand';
 import { WorkspaceEntry } from '../../model/workspace';
 
-const localize = nls.loadMessageBundle();
+// const localize = nls.loadMessageBundle();
 
 @Command()
 export class DeleteWorkspaceCommand extends AbstractCommand {
@@ -20,12 +20,12 @@ export class DeleteWorkspaceCommand extends AbstractCommand {
         let workspaceEntries = await getWorkspaceEntries();
 
         if (!workspaceEntries || !workspaceEntries.length) {
-            const noWorkspacesFoundText = localize(
-                'noWorkspacesFound.text',
-                'No workspaces entries found'
-            );
+            // const noWorkspacesFoundText = localize(
+            //     'noWorkspacesFound.text',
+            //     'No workspaces entries found'
+            // );
 
-            window.showInformationMessage(noWorkspacesFoundText);
+            window.showInformationMessage('No workspaces entries found');
 
             return;
         }

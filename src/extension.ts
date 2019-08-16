@@ -19,6 +19,7 @@ import { state } from './state';
 import * as telemetry from './telemetry';
 import { cacheWorkspace } from './cache/cacheWorkspace';
 import { registerViews } from './views';
+// import { getExtension } from './util/getExtension';
 
 // The example uses the file message format.
 // const localize = nls.loadMessageBundle();
@@ -47,8 +48,8 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
     telemetry.activate(context);
 
-    const workspaceManager = extensions.getExtension(extensionQualifiedId)!;
-    const workspaceManagerVersion = workspaceManager.packageJSON.version;
+    // const workspaceManager = getExtension()!;
+    const workspaceManagerVersion = '1.0.1'; //workspaceManager.packageJSON.version;
 
     Configuration.configure(context);
 

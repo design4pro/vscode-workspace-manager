@@ -2,13 +2,13 @@
 
 import * as uuid from 'uuid/v4';
 import * as VError from 'verror';
-import { Disposable, window, ConfigurationChangeEvent } from 'vscode';
+import { ConfigurationChangeEvent, Disposable, window } from 'vscode';
+import { configuration } from '../configuration';
+import { Container } from '../container';
 import { Logger } from '../logger';
 import { Reporter } from '../telemetry';
-import { Views } from './common';
 import { TreeDataProvider } from '../util/explorer/treeDataProvider';
-import { Container } from '../container';
-import { configuration } from '../configuration';
+import { Views } from './common';
 
 export abstract class AbstractView implements Disposable {
     protected trackSuccess: boolean = false;
