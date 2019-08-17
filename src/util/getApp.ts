@@ -1,19 +1,19 @@
-'use strict';
-
-import { existsSync, statSync } from 'fs';
-import { dirname, join } from 'path';
+import * as fs from 'fs';
+import * as path from 'path';
 import * as VError from 'verror';
-import { env, workspace } from 'vscode';
+import * as vscode from 'vscode';
 import { extensionId } from '../constants';
 
 export function getApp() {
     try {
         const key = `${
-            env.appName.toLowerCase().search('insiders') !== -1
+            vscode.env.appName.toLowerCase().search('insiders') !== -1
                 ? 'codeInsiders'
                 : 'code'
         }Executable`;
-        const app = <string>workspace.getConfiguration(extensionId).get(key);
+        const app = <string>(
+            vscode.workspace.getConfiguration(extensionId).get(key)
+        );
 
         if (app.search(/\s/) !== -1) {
             return `"${app}"`;
@@ -23,15 +23,15 @@ export function getApp() {
             app === 'code' &&
             process.platform.toLocaleLowerCase().startsWith('win')
         ) {
-            const codeWindowsScriptPath = join(
-                dirname(process.execPath),
+            const codeWindowsScriptPath = path.join(
+                path.dirname(process.execPath),
                 'bin',
                 'code.cmd'
             );
 
             if (
-                existsSync(codeWindowsScriptPath) &&
-                statSync(codeWindowsScriptPath).isFile()
+                fs.existsSync(codeWindowsScriptPath) &&
+                fs.statSync(codeWindowsScriptPath).isFile()
             ) {
                 return `"${codeWindowsScriptPath}"`;
             }

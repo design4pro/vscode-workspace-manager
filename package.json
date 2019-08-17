@@ -4,6 +4,7 @@
     "description": "Workspace manager for Visual Studio Code",
     "version": "1.0.1",
     "publisher": "design4pro",
+    "icon": "resources/workspace.png",
     "homepage": "https://github.com/design4pro/vscode-workspace-manager",
     "repository": {
         "type": "git",
@@ -174,7 +175,7 @@
                 {
                     "id": "workspaceManager",
                     "title": "Workspace Manager",
-                    "icon": "media/workspace.svg",
+                    "icon": "resources/workspace.svg",
                     "when": "workspace-manager:enabled && !workspace-manager:empty"
                 }
             ]

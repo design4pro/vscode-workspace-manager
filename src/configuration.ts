@@ -1,15 +1,4 @@
-'use strict';
-
-import {
-    ConfigurationChangeEvent,
-    ConfigurationTarget,
-    Disposable,
-    Event,
-    EventEmitter,
-    ExtensionContext,
-    Uri,
-    workspace
-} from 'vscode';
+import * as vscode from 'vscode';
 import { extensionId } from './constants';
 import { Container } from './container';
 import { IConfig } from './model/config';
@@ -22,11 +11,13 @@ const emptyConfig: IConfig = new Proxy<IConfig>({} as IConfig, {
 });
 
 export interface ConfigurationWillChangeEvent {
-    change: ConfigurationChangeEvent;
-    transform?(e: ConfigurationChangeEvent): ConfigurationChangeEvent;
+    change: vscode.ConfigurationChangeEvent;
+    transform?(
+        e: vscode.ConfigurationChangeEvent
+    ): vscode.ConfigurationChangeEvent;
 }
 
-export class Configuration extends Disposable {
+export class Configuration extends vscode.Disposable {
     constructor() {
         super(() => this.dispose());
     }
@@ -35,31 +26,37 @@ export class Configuration extends Disposable {
         this._onDidChange.dispose();
     }
 
-    static configure(context: ExtensionContext) {
+    static configure(context: vscode.ExtensionContext) {
         context.subscriptions.push(
-            workspace.onDidChangeConfiguration(
+            vscode.workspace.onDidChangeConfiguration(
                 configuration.onConfigurationChanged,
                 configuration
             )
         );
     }
 
-    private _onDidChange = new EventEmitter<ConfigurationChangeEvent>();
-    get onDidChange(): Event<ConfigurationChangeEvent> {
+    private _onDidChange = new vscode.EventEmitter<
+        vscode.ConfigurationChangeEvent
+    >();
+    get onDidChange(): vscode.Event<vscode.ConfigurationChangeEvent> {
         return this._onDidChange.event;
     }
 
-    private _onDidChangeAny = new EventEmitter<ConfigurationChangeEvent>();
-    get onDidChangeAny(): Event<ConfigurationChangeEvent> {
+    private _onDidChangeAny = new vscode.EventEmitter<
+        vscode.ConfigurationChangeEvent
+    >();
+    get onDidChangeAny(): vscode.Event<vscode.ConfigurationChangeEvent> {
         return this._onDidChange.event;
     }
 
-    private _onWillChange = new EventEmitter<ConfigurationWillChangeEvent>();
-    get onWillChange(): Event<ConfigurationWillChangeEvent> {
+    private _onWillChange = new vscode.EventEmitter<
+        ConfigurationWillChangeEvent
+    >();
+    get onWillChange(): vscode.Event<ConfigurationWillChangeEvent> {
         return this._onWillChange.event;
     }
 
-    private onConfigurationChanged(e: ConfigurationChangeEvent) {
+    private onConfigurationChanged(e: vscode.ConfigurationChangeEvent) {
         if (!e.affectsConfiguration(extensionId, null!)) {
             this._onDidChangeAny.fire(e);
 
@@ -81,19 +78,19 @@ export class Configuration extends Disposable {
         this._onDidChange.fire(e);
     }
 
-    readonly initializingChangeEvent: ConfigurationChangeEvent = {
-        affectsConfiguration: (section: string, resource?: Uri) => true
+    readonly initializingChangeEvent: vscode.ConfigurationChangeEvent = {
+        affectsConfiguration: (section: string, resource?: vscode.Uri) => true
     };
 
-    get<T>(section?: string, resource?: Uri | null, defaultValue?: T) {
+    get<T>(section?: string, resource?: vscode.Uri | null, defaultValue?: T) {
         return defaultValue === undefined
-            ? workspace
+            ? vscode.workspace
                   .getConfiguration(
                       section === undefined ? undefined : extensionId,
                       resource!
                   )
                   .get<T>(section === undefined ? extensionId : section)!
-            : workspace
+            : vscode.workspace
                   .getConfiguration(
                       section === undefined ? undefined : extensionId,
                       resource!
@@ -104,28 +101,30 @@ export class Configuration extends Disposable {
                   )!;
     }
 
-    getAny<T>(section: string, resource?: Uri | null, defaultValue?: T) {
+    getAny<T>(section: string, resource?: vscode.Uri | null, defaultValue?: T) {
         return defaultValue === undefined
-            ? workspace.getConfiguration(undefined, resource!).get<T>(section)!
-            : workspace
+            ? vscode.workspace
+                  .getConfiguration(undefined, resource!)
+                  .get<T>(section)!
+            : vscode.workspace
                   .getConfiguration(undefined, resource!)
                   .get<T>(section, defaultValue)!;
     }
 
     changed(
-        e: ConfigurationChangeEvent,
+        e: vscode.ConfigurationChangeEvent,
         section: string,
-        resource?: Uri | null
+        resource?: vscode.Uri | null
     ) {
         return e.affectsConfiguration(`${extensionId}.${section}`, resource!);
     }
 
-    initializing(e: ConfigurationChangeEvent) {
+    initializing(e: vscode.ConfigurationChangeEvent) {
         return e === this.initializingChangeEvent;
     }
 
-    inspect(section?: string, resource?: Uri | null) {
-        return workspace
+    inspect(section?: string, resource?: vscode.Uri | null) {
+        return vscode.workspace
             .getConfiguration(
                 section === undefined ? undefined : extensionId,
                 resource!
@@ -133,8 +132,8 @@ export class Configuration extends Disposable {
             .inspect(section === undefined ? extensionId : section);
     }
 
-    inspectAny(section: string, resource?: Uri | null) {
-        return workspace
+    inspectAny(section: string, resource?: vscode.Uri | null) {
+        return vscode.workspace
             .getConfiguration(undefined, resource!)
             .inspect(section);
     }
@@ -146,13 +145,15 @@ export class Configuration extends Disposable {
     async update(
         section: string,
         value: any,
-        target: ConfigurationTarget,
-        resource?: Uri | null
+        target: vscode.ConfigurationTarget,
+        resource?: vscode.Uri | null
     ) {
-        return await workspace
+        return await vscode.workspace
             .getConfiguration(
                 extensionId,
-                target === ConfigurationTarget.Global ? undefined : resource!
+                target === vscode.ConfigurationTarget.Global
+                    ? undefined
+                    : resource!
             )
             .update(section, value, target);
     }
@@ -160,13 +161,15 @@ export class Configuration extends Disposable {
     updateAny(
         section: string,
         value: any,
-        target: ConfigurationTarget,
-        resource?: Uri | null
+        target: vscode.ConfigurationTarget,
+        resource?: vscode.Uri | null
     ) {
-        return workspace
+        return vscode.workspace
             .getConfiguration(
                 undefined,
-                target === ConfigurationTarget.Global ? undefined : resource!
+                target === vscode.ConfigurationTarget.Global
+                    ? undefined
+                    : resource!
             )
             .update(section, value, target);
     }
@@ -174,7 +177,7 @@ export class Configuration extends Disposable {
     async updateEffective(
         section: string,
         value: any,
-        resource: Uri | null = null
+        resource: vscode.Uri | null = null
     ) {
         const inspect = await configuration.inspect(section, resource)!;
 
@@ -186,7 +189,7 @@ export class Configuration extends Disposable {
             return void configuration.update(
                 section,
                 value,
-                ConfigurationTarget.WorkspaceFolder,
+                vscode.ConfigurationTarget.WorkspaceFolder,
                 resource
             );
         }
@@ -199,7 +202,7 @@ export class Configuration extends Disposable {
             return void configuration.update(
                 section,
                 value,
-                ConfigurationTarget.Workspace
+                vscode.ConfigurationTarget.Workspace
             );
         }
 
@@ -214,7 +217,7 @@ export class Configuration extends Disposable {
         return void configuration.update(
             section,
             value === inspect.defaultValue ? undefined : value,
-            ConfigurationTarget.Global
+            vscode.ConfigurationTarget.Global
         );
     }
 }

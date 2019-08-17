@@ -1,16 +1,15 @@
-'use strict';
-
 import * as appInsights from 'applicationinsights';
 import * as os from 'os';
-import { Disposable, env, ExtensionContext, version, workspace } from 'vscode';
+import * as vscode from 'vscode';
 import { configuration } from './configuration';
 import { APPINSIGHTS_KEY } from './constants';
 import { Logger } from './logger';
+import { getExtension } from './util/getExtension';
 
-class TelemetryReporter extends Disposable {
+class TelemetryReporter extends vscode.Disposable {
     private client?: appInsights.TelemetryClient;
     private userOptIn: boolean = false;
-    private disposables: Disposable[] = [];
+    private disposables: vscode.Disposable[] = [];
 
     constructor(
         public extensionId: string,
@@ -110,7 +109,7 @@ class TelemetryReporter extends Disposable {
     }
 
     private updateUserOptIn() {
-        const globalConfig = workspace.getConfiguration('telemetry');
+        const globalConfig = vscode.workspace.getConfiguration('telemetry');
         const globalOptIn = globalConfig.get<boolean>('enableTelemetry', true);
         const extensionOptIn = configuration.get<boolean>(
             configuration.name('advanced')('telemetry')('enabled').value
@@ -150,9 +149,9 @@ class TelemetryReporter extends Disposable {
 
         this.setCommonProperties();
         this.client.context.tags[this.client.context.keys.sessionId] =
-            env.sessionId;
+            vscode.env.sessionId;
         this.client.context.tags[this.client.context.keys.userId] =
-            env.machineId;
+            vscode.env.machineId;
     }
 
     private setCommonProperties() {
@@ -165,9 +164,9 @@ class TelemetryReporter extends Disposable {
                 ),
                 'common.extname': this.extensionId,
                 'common.extversion': this.extensionVersion,
-                'common.vscodemachineid': env.machineId,
-                'common.vscodesessionid': env.sessionId,
-                'common.vscodeversion': version
+                'common.vscodemachineid': vscode.env.machineId,
+                'common.vscodesessionid': vscode.env.sessionId,
+                'common.vscodeversion': vscode.version
             };
         }
     }
@@ -175,8 +174,10 @@ class TelemetryReporter extends Disposable {
 
 export let Reporter: TelemetryReporter;
 
-export function activate(ctx: ExtensionContext) {
-    const packageJson = require(ctx.asAbsolutePath('./package.json'));
+export function activate(ctx: vscode.ExtensionContext) {
+    const extension = getExtension()!;
+
+    const packageJson = extension.packageJSON;
 
     Reporter = new TelemetryReporter(
         `${packageJson.publisher}.${packageJson.name}`,

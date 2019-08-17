@@ -1,7 +1,5 @@
-'use strict';
-
-import { normalize, resolve } from 'path';
-import { extensions } from 'vscode';
+import * as path from 'path';
+import * as vscode from 'vscode';
 import { state } from './state';
 
 export enum OsType {
@@ -31,35 +29,36 @@ export class Environment {
 
         if (!this.isPortable) {
             if (state.context) {
-                this.PATH = resolve(
-                    state.context.globalStoragePath,
-                    '../../..'
-                ).concat(normalize('/'));
+                this.PATH = path
+                    .resolve(state.context.globalStoragePath, '../../..')
+                    .concat(path.normalize('/'));
             }
 
             if (this.PATH) {
-                this.USER_FOLDER = resolve(this.PATH, 'User').concat(
-                    normalize('/')
-                );
+                this.USER_FOLDER = path
+                    .resolve(this.PATH, 'User')
+                    .concat(path.normalize('/'));
             }
 
-            this.EXTENSION_FOLDER = resolve(
-                extensions.all.filter(
-                    extension => !extension.packageJSON.isBuiltin
-                )[0].extensionPath,
-                '..'
-            ).concat(normalize('/')); // Gets first non-builtin extension's path
+            this.EXTENSION_FOLDER = path
+                .resolve(
+                    vscode.extensions.all.filter(
+                        extension => !extension.packageJSON.isBuiltin
+                    )[0].extensionPath,
+                    '..'
+                )
+                .concat(path.normalize('/')); // Gets first non-builtin extension's path
         } else {
             this.PATH = process.env.VSCODE_PORTABLE;
 
             if (this.PATH) {
-                this.USER_FOLDER = resolve(this.PATH, 'user-data/User').concat(
-                    normalize('/')
-                );
+                this.USER_FOLDER = path
+                    .resolve(this.PATH, 'user-data/User')
+                    .concat(path.normalize('/'));
 
-                this.EXTENSION_FOLDER = resolve(this.PATH, 'extensions').concat(
-                    normalize('/')
-                );
+                this.EXTENSION_FOLDER = path
+                    .resolve(this.PATH, 'extensions')
+                    .concat(path.normalize('/'));
             }
         }
     }

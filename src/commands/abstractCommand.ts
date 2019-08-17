@@ -1,8 +1,6 @@
-'use strict';
-
 import * as uuid from 'uuid/v4';
 import * as VError from 'verror';
-import { commands, Disposable, TextEditor, Uri } from 'vscode';
+import * as vscode from 'vscode';
 import { Commands } from './common';
 import { Logger } from '../logger';
 import { Reporter } from '../telemetry';
@@ -14,8 +12,8 @@ export interface CommandContextParsingOptions {
 
 export interface CommandBaseContext {
     command: string;
-    editor?: TextEditor;
-    uri?: Uri;
+    editor?: vscode.TextEditor;
+    uri?: vscode.Uri;
 }
 
 export interface CommandUnknownContext extends CommandBaseContext {
@@ -28,7 +26,7 @@ export interface CommandUriContext extends CommandBaseContext {
 
 export interface CommandUrisContext extends CommandBaseContext {
     type: 'uris';
-    uris: Uri[];
+    uris: vscode.Uri[];
 }
 
 export type CommandContext =
@@ -36,7 +34,7 @@ export type CommandContext =
     | CommandUriContext
     | CommandUrisContext;
 
-export abstract class AbstractCommand implements Disposable {
+export abstract class AbstractCommand implements vscode.Disposable {
     protected trackSuccess: boolean = false;
     protected eventName?: string;
 
@@ -45,25 +43,25 @@ export abstract class AbstractCommand implements Disposable {
         uri: false
     };
 
-    private _disposable: Disposable;
+    private _disposable: vscode.Disposable;
 
     constructor(command: Commands | Commands[]) {
         if (typeof command === 'string') {
-            this._disposable = commands.registerCommand(
+            this._disposable = vscode.commands.registerCommand(
                 command,
                 (...args: any[]) => this._execute(command, ...args),
                 this
             );
         } else {
             const subscriptions = (<any>command).map((cmd: string) =>
-                commands.registerCommand(
+            vscode.commands.registerCommand(
                     cmd,
                     (...args: any[]) => this._execute(cmd, ...args),
                     this
                 )
             );
 
-            this._disposable = Disposable.from(...subscriptions);
+            this._disposable = vscode.Disposable.from(...subscriptions);
         }
     }
 
@@ -132,12 +130,12 @@ export abstract class AbstractCommand implements Disposable {
         options: CommandContextParsingOptions,
         ...args: any[]
     ): [CommandContext, any[]] {
-        let editor: TextEditor | undefined = undefined;
+        let editor: vscode.TextEditor | undefined = undefined;
 
         let firstArg = args[0];
 
-        if (options.uri && (firstArg === null || firstArg instanceof Uri)) {
-            const [uri, ...rest] = args as [Uri, any];
+        if (options.uri && (firstArg === null || firstArg instanceof vscode.Uri)) {
+            const [uri, ...rest] = args as [vscode.Uri, any];
 
             if (uri !== undefined) {
                 const uris = rest[0];
@@ -146,7 +144,7 @@ export abstract class AbstractCommand implements Disposable {
                     uris !== null &&
                     Array.isArray(uris) &&
                     uris.length !== 0 &&
-                    uris[0] instanceof Uri
+                    uris[0] instanceof vscode.Uri
                 ) {
                     return [
                         {

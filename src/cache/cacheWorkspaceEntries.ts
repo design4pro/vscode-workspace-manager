@@ -1,5 +1,3 @@
-'use strict';
-
 import { notifier } from '../extension';
 import { Logger } from '../logger';
 import { getWorkspaceEntries } from '../util/getWorkspaceEntries';

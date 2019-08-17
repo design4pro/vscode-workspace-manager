@@ -1,12 +1,4 @@
-'use strict';
-
-import {
-    ConfigurationChangeEvent,
-    ExtensionContext,
-    OutputChannel,
-    Uri,
-    window
-} from 'vscode';
+import * as vscode from 'vscode';
 import { configuration } from './configuration';
 import { extensionOutputChannelName } from './constants';
 import { Container } from './container';
@@ -24,13 +16,13 @@ const emptyStr = '';
 const consolePrefix = `[${extensionOutputChannelName}]`;
 
 export class Logger {
-    static output: OutputChannel | undefined;
+    static output: vscode.OutputChannel | undefined;
     static customLoggableFn: ((o: object) => string | undefined) | undefined;
 
     static prefix = consolePrefix;
 
     static configure(
-        context: ExtensionContext | null,
+        context: vscode.ExtensionContext | null,
         level: IOutputLevel = IOutputLevel.Silent,
         loggableFn?: (o: any) => string | undefined
     ) {
@@ -47,7 +39,7 @@ export class Logger {
         this.onConfigurationChanged(configuration.initializingChangeEvent);
     }
 
-    private static onConfigurationChanged(e: ConfigurationChangeEvent) {
+    private static onConfigurationChanged(e: vscode.ConfigurationChangeEvent) {
         const initializing = configuration.initializing(e);
 
         const section = 'outputLevel';
@@ -65,7 +57,7 @@ export class Logger {
         } else {
             this.output =
                 this.output ||
-                window.createOutputChannel(extensionOutputChannelName);
+                vscode.window.createOutputChannel(extensionOutputChannelName);
         }
     }
 
@@ -86,7 +78,7 @@ export class Logger {
         } else {
             this.output =
                 this.output ||
-                window.createOutputChannel(extensionOutputChannelName);
+                vscode.window.createOutputChannel(extensionOutputChannelName);
         }
     }
 
@@ -346,7 +338,7 @@ export class Logger {
                 return loggable;
             }
         }
-        if (p instanceof Uri) {
+        if (p instanceof vscode.Uri) {
             return `Uri(${p.toString(true)})`;
         }
 

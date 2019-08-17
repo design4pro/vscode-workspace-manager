@@ -1,5 +1,3 @@
-'use strict';
-
 import * as _ from 'lodash';
 import { CancellationToken, Disposable } from 'vscode';
 

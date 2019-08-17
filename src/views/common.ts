@@ -1,6 +1,4 @@
-'use strict';
-
-import { ExtensionContext } from 'vscode';
+import * as vscode from 'vscode';
 import { AbstractView } from './abstractView';
 
 export enum Views {
@@ -25,7 +23,7 @@ export function View(): ClassDecorator {
     };
 }
 
-export function registerViews(context: ExtensionContext): void {
+export function registerViews(context: vscode.ExtensionContext): void {
     for (const v of registrableViews) {
         context.subscriptions.push(new v());
     }

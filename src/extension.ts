@@ -1,12 +1,8 @@
-'use strict';
-
-// import * as nls from 'vscode-nls';
-import { ExtensionContext, extensions } from 'vscode';
+import * as vscode from 'vscode';
 import { registerCommands } from './commands';
 import { configuration, Configuration } from './configuration';
 import {
     extensionOutputChannelName,
-    extensionQualifiedId,
     CommandContext,
     setCommandContext
 } from './constants';
@@ -19,10 +15,7 @@ import { state } from './state';
 import * as telemetry from './telemetry';
 import { cacheWorkspace } from './cache/cacheWorkspace';
 import { registerViews } from './views';
-// import { getExtension } from './util/getExtension';
-
-// The example uses the file message format.
-// const localize = nls.loadMessageBundle();
+import { getExtension } from './util/getExtension';
 
 export const notifier: Notifier = new Notifier(
     'workspaceManager.cacheWorkspace'
@@ -30,7 +23,9 @@ export const notifier: Notifier = new Notifier(
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
-export async function activate(context: ExtensionContext): Promise<void> {
+export async function activate(
+    context: vscode.ExtensionContext
+): Promise<void> {
     const start = process.hrtime();
 
     setCommandContext(CommandContext.Enabled, true);
@@ -48,8 +43,8 @@ export async function activate(context: ExtensionContext): Promise<void> {
 
     telemetry.activate(context);
 
-    // const workspaceManager = getExtension()!;
-    const workspaceManagerVersion = '1.0.1'; //workspaceManager.packageJSON.version;
+    const workspaceManager = getExtension()!;
+    const workspaceManagerVersion = workspaceManager.packageJSON.version;
 
     Configuration.configure(context);
 

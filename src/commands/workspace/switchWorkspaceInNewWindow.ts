@@ -1,15 +1,10 @@
-'use strict';
-
-import { commands, QuickPickItem, QuickPickOptions, window } from 'vscode';
-// import * as nls from 'vscode-nls';
+import * as vscode from 'vscode';
 import { WorkspaceEntry } from '../../model/workspace';
 import { getWorkspaceEntries } from '../../util/getWorkspaceEntries';
 import { AbstractCommand } from '../abstractCommand';
 import { Command, Commands } from '../common';
 import { ISwitchToWorkspaceCommandArgs } from './switchToWorkspace';
 import { ISwitchWorkspaceCommandArgs } from './switchWorkspace';
-
-// const localize = nls.loadMessageBundle();
 
 @Command()
 export class SwitchWorkspaceInNewWindowCommand extends AbstractCommand {
@@ -23,25 +18,20 @@ export class SwitchWorkspaceInNewWindowCommand extends AbstractCommand {
         const workspaceEntries = await getWorkspaceEntries();
 
         if (!workspaceEntries || !workspaceEntries.length) {
-            // const noWorkspacesFoundText = localize(
-            //     'noWorkspacesFound.text',
-            //     'No workspaces entries found'
-            // );
-
-            window.showInformationMessage('No workspaces entries found');
+            vscode.window.showInformationMessage('No workspaces entries found');
 
             return;
         }
 
         const workspaceItems = workspaceEntries.map(
             entry =>
-                <QuickPickItem>{
+                <vscode.QuickPickItem>{
                     label: entry.name,
                     description: entry.path
                 }
         );
 
-        const options = <QuickPickOptions>{
+        const options = <vscode.QuickPickOptions>{
             matchOnDescription: false,
             matchOnDetail: false,
             placeHolder: `Choose a workspace to switch to${
@@ -49,8 +39,8 @@ export class SwitchWorkspaceInNewWindowCommand extends AbstractCommand {
             }...`
         };
 
-        window.showQuickPick(workspaceItems, options).then(
-            (workspaceItem?: QuickPickItem) => {
+        vscode.window.showQuickPick(workspaceItems, options).then(
+            (workspaceItem?: vscode.QuickPickItem) => {
                 if (!workspaceItem) {
                     return;
                 }
@@ -68,7 +58,7 @@ export class SwitchWorkspaceInNewWindowCommand extends AbstractCommand {
                     inNewWindow: args.inNewWindow
                 };
 
-                commands.executeCommand(
+                vscode.commands.executeCommand(
                     Commands.SwitchToWorkspace,
                     commandArgs
                 );

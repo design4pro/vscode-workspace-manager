@@ -1,5 +1,3 @@
-'use strict';
-
 export enum IOutputLevel {
     Silent = 'silent',
     Errors = 'errors',

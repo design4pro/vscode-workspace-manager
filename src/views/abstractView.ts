@@ -1,8 +1,6 @@
-'use strict';
-
 import * as uuid from 'uuid/v4';
 import * as VError from 'verror';
-import { ConfigurationChangeEvent, Disposable, window } from 'vscode';
+import * as vscode from 'vscode';
 import { configuration } from '../configuration';
 import { Container } from '../container';
 import { Logger } from '../logger';
@@ -10,25 +8,25 @@ import { Reporter } from '../telemetry';
 import { TreeDataProvider } from '../util/explorer/treeDataProvider';
 import { Views } from './common';
 
-export abstract class AbstractView implements Disposable {
+export abstract class AbstractView implements vscode.Disposable {
     protected trackSuccess: boolean = false;
     protected eventName?: string;
 
-    private _disposable: Disposable;
+    private _disposable: vscode.Disposable;
 
     constructor(protected readonly view: Views | Views[]) {
         if (typeof view === 'string') {
-            this._disposable = window.registerTreeDataProvider(view, <
+            this._disposable = vscode.window.registerTreeDataProvider(view, <
                 TreeDataProvider
             >this._execute(view));
         } else {
             const subscriptions = (<any>view).map((view: string) =>
-                window.registerTreeDataProvider(view, <TreeDataProvider>(
+            vscode.window.registerTreeDataProvider(view, <TreeDataProvider>(
                     this._execute(view)
                 ))
             );
 
-            this._disposable = Disposable.from(...subscriptions);
+            this._disposable = vscode.Disposable.from(...subscriptions);
         }
 
         this.registerCommands();
@@ -50,7 +48,7 @@ export abstract class AbstractView implements Disposable {
 
     protected abstract registerCommands(): void;
 
-    protected onConfigurationChanged(e: ConfigurationChangeEvent) {
+    protected onConfigurationChanged(e: vscode.ConfigurationChangeEvent) {
         if (
             !configuration.changed(
                 e,

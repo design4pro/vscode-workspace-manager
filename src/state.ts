@@ -1,5 +1,3 @@
-'use strict';
-
 import { IExtensionState } from './model/state';
 
 export const state: IExtensionState = {
