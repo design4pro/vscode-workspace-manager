@@ -1,6 +1,4 @@
-'use strict';
-
-import { ExtensionContext } from 'vscode';
+import * as vscode from 'vscode';
 import { state } from '../state';
 
 /**
@@ -13,13 +11,13 @@ import { state } from '../state';
 const now = (): number => Math.floor(Date.now() / 1000);
 
 export class Cache {
-    context: ExtensionContext;
+    context: vscode.ExtensionContext;
     namespace: string;
     cache: any;
 
     constructor(namespace?: string) {
         // ExtensionContext
-        this.context = <ExtensionContext>state.context;
+        this.context = <vscode.ExtensionContext>state.context;
 
         // Namespace of the context's globalState
         this.namespace = namespace || 'cache';

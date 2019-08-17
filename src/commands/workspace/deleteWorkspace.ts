@@ -1,14 +1,9 @@
-'use strict';
-
-// import * as nls from 'vscode-nls';
-import { getWorkspaceEntries } from '../../util/getWorkspaceEntries';
-import { window, QuickPickItem, QuickPickOptions } from 'vscode';
-import { deleteWorkspace } from '../../util/deleteWorkspace';
-import { Command, Commands } from '../common';
-import { AbstractCommand } from '../abstractCommand';
+import * as vscode from 'vscode';
 import { WorkspaceEntry } from '../../model/workspace';
-
-// const localize = nls.loadMessageBundle();
+import { deleteWorkspace } from '../../util/deleteWorkspace';
+import { getWorkspaceEntries } from '../../util/getWorkspaceEntries';
+import { AbstractCommand } from '../abstractCommand';
+import { Command, Commands } from '../common';
 
 @Command()
 export class DeleteWorkspaceCommand extends AbstractCommand {
@@ -20,32 +15,27 @@ export class DeleteWorkspaceCommand extends AbstractCommand {
         let workspaceEntries = await getWorkspaceEntries();
 
         if (!workspaceEntries || !workspaceEntries.length) {
-            // const noWorkspacesFoundText = localize(
-            //     'noWorkspacesFound.text',
-            //     'No workspaces entries found'
-            // );
-
-            window.showInformationMessage('No workspaces entries found');
+            vscode.window.showInformationMessage('No workspaces entries found');
 
             return;
         }
 
         const workspaceItems = workspaceEntries.map(
             entry =>
-                <QuickPickItem>{
+                <vscode.QuickPickItem>{
                     label: entry.name,
                     description: entry.path
                 }
         );
 
-        const options = <QuickPickOptions>{
+        const options = <vscode.QuickPickOptions>{
             matchOnDescription: false,
             matchOnDetail: false,
             placeHolder: `Choose a workspace to delete...`
         };
 
-        window.showQuickPick(workspaceItems, options).then(
-            (workspaceItem?: QuickPickItem) => {
+        vscode.window.showQuickPick(workspaceItems, options).then(
+            (workspaceItem?: vscode.QuickPickItem) => {
                 if (!workspaceItem || !workspaceEntries) {
                     return;
                 }

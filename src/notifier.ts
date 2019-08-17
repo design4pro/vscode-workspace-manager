@@ -1,17 +1,18 @@
-'use strict';
-
-import { StatusBarItem, window, StatusBarAlignment } from 'vscode';
+import * as vscode from 'vscode';
 
 export class Notifier {
-    statusBarItem: StatusBarItem;
+    statusBarItem: vscode.StatusBarItem;
     private timeoutId?: NodeJS.Timer;
 
     constructor(
         command?: string,
-        alignment?: StatusBarAlignment,
+        alignment?: vscode.StatusBarAlignment,
         priority?: number
     ) {
-        this.statusBarItem = window.createStatusBarItem(alignment, priority);
+        this.statusBarItem = vscode.window.createStatusBarItem(
+            alignment,
+            priority
+        );
         this.statusBarItem.command = command;
     }
 

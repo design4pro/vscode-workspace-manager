@@ -1,5 +1,3 @@
-'use strict';
-
 import * as vscode from 'vscode';
 import { ISwitchToWorkspaceCommandArgs } from '../../commands/workspace/switchToWorkspace';
 import { WorkspaceEntry } from '../../model/workspace';

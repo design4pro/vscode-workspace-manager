@@ -1,10 +1,8 @@
-'use strict';
-
-import { ExtensionContext } from 'vscode';
+import * as vscode from 'vscode';
 import { Environment } from '../environment';
 
 export interface IExtensionState {
-    context?: ExtensionContext;
+    context?: vscode.ExtensionContext;
     environment?: Environment;
     instanceID: string;
 }

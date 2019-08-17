@@ -1,6 +1,4 @@
-'use strict';
-
-import { commands } from 'vscode';
+import * as vscode from 'vscode';
 
 export const extensionId = 'workspace-manager';
 export const extensionOutputChannelName = 'Workspace Manager';
@@ -20,5 +18,5 @@ export enum CommandContext {
 }
 
 export function setCommandContext(key: CommandContext | string, value: any) {
-    return commands.executeCommand(BuiltInCommands.SetContext, key, value);
+    return vscode.commands.executeCommand(BuiltInCommands.SetContext, key, value);
 }

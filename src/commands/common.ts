@@ -1,6 +1,4 @@
-'use strict';
-
-import { ExtensionContext } from 'vscode';
+import * as vscode from 'vscode';
 import { AbstractCommand } from './abstractCommand';
 
 export enum Commands {
@@ -26,7 +24,7 @@ export function Command(): ClassDecorator {
     };
 }
 
-export function registerCommands(context: ExtensionContext): void {
+export function registerCommands(context: vscode.ExtensionContext): void {
     for (const c of registrableCommands) {
         context.subscriptions.push(new c());
     }

@@ -1,6 +1,4 @@
-'use strict';
-
-import { commands } from 'vscode';
+import * as vscode from 'vscode';
 import { cacheWorkspace } from '../../cache/cacheWorkspace';
 import { AbstractCommand } from '../abstractCommand';
 import { Command, Commands } from '../common';
@@ -16,6 +14,6 @@ export class CacheWorkspace extends AbstractCommand {
     async execute() {
         await cacheWorkspace();
 
-        commands.executeCommand(Commands.RefreshTreeData);
+        vscode.commands.executeCommand(Commands.RefreshTreeData);
     }
 }

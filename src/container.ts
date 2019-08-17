@@ -1,6 +1,4 @@
-'use strict';
-
-import { env, ExtensionContext, UriHandler } from 'vscode';
+import * as vscode from 'vscode';
 import { configuration, ConfigurationWillChangeEvent } from './configuration';
 import { IConfig } from './model/config';
 import { CommandContext, setCommandContext } from './constants';
@@ -10,7 +8,7 @@ const isDebuggingRegex = /^--(debug|inspect)\b(-brk\b|(?!-))=?/;
 
 export class Container {
     static initialize(
-        context: ExtensionContext,
+        context: vscode.ExtensionContext,
         config: IConfig,
         version: string
     ) {
@@ -61,7 +59,7 @@ export class Container {
     }
 
     static get machineId() {
-        return env.machineId;
+        return vscode.env.machineId;
     }
 
     private static _isDebugging: boolean | undefined;
@@ -79,7 +77,7 @@ export class Container {
         return this._isDebugging;
     }
 
-    private static _uriHandler: UriHandler;
+    private static _uriHandler: vscode.UriHandler;
     static get uriHandler() {
         return this._uriHandler;
     }
@@ -98,7 +96,7 @@ export class Container {
         return this._config;
     }
 
-    private static _context: ExtensionContext;
+    private static _context: vscode.ExtensionContext;
     static get context() {
         return this._context;
     }

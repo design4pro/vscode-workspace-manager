@@ -1,7 +1,5 @@
-'use strict';
-
-import { unlinkSync } from 'fs';
-import { window, commands } from 'vscode';
+import * as fs from 'fs';
+import * as vscode from 'vscode';
 import { WorkspaceEntry } from '../model/workspace';
 import { Commands } from '../commands/common';
 
@@ -10,7 +8,7 @@ export function deleteWorkspace(
     prompt: boolean
 ) {
     if (prompt) {
-        window
+        vscode.window
             .showInformationMessage(
                 `Are you sure you want to delete file ${workspaceEntry.path}?`,
                 'Yes',
@@ -22,13 +20,13 @@ export function deleteWorkspace(
                         return;
                     }
 
-                    unlinkSync(workspaceEntry.path);
+                    fs.unlinkSync(workspaceEntry.path);
 
-                    commands.executeCommand(Commands.RefreshTreeData);
+                    vscode.commands.executeCommand(Commands.RefreshTreeData);
                 },
                 (reason: any) => {}
             );
     } else {
-        unlinkSync(workspaceEntry.path);
+        fs.unlinkSync(workspaceEntry.path);
     }
 }

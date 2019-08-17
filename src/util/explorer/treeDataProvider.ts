@@ -1,5 +1,3 @@
-'use strict';
-
 import * as vscode from 'vscode';
 import { WorkspaceEntry } from '../../model/workspace';
 import { getWorkspaceEntries } from '../getWorkspaceEntries';

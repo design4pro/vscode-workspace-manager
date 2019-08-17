@@ -1,6 +1,4 @@
-'use strict';
-
-import { commands } from 'vscode';
+import * as vscode from 'vscode';
 import { configuration } from '../../configuration';
 import { CommandContext, setCommandContext } from '../../constants';
 import { TreeDataProvider } from '../../util/explorer/treeDataProvider';
@@ -16,7 +14,7 @@ export class Explorer extends AbstractView {
     }
 
     protected registerCommands() {
-        commands.registerCommand(ViewsCommands.ExplorerRefresh, () =>
+        vscode.commands.registerCommand(ViewsCommands.ExplorerRefresh, () =>
             this.refresh()
         );
     }

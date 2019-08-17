@@ -1,7 +1,5 @@
-'use strict';
-
 import * as glob from 'fast-glob';
-import { existsSync, statSync } from 'fs';
+import * as fs from 'fs';
 import { configuration } from '../configuration';
 
 export function getWorkspaceEntryDirectories(): string[] {
@@ -54,7 +52,7 @@ export function getWorkspaceEntryDirectories(): string[] {
         .concat(uniquePaths.map(p => p.replace(/(:?\*\*?\/?)+$/, '')))
         .filter(p => {
             try {
-                return existsSync(p) && statSync(p).isDirectory();
+                return fs.existsSync(p) && fs.statSync(p).isDirectory();
             } catch (err) {
                 return false;
             }

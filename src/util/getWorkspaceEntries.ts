@@ -1,8 +1,6 @@
-'use strict';
-
 import * as glob from 'fast-glob';
 import * as VError from 'verror';
-import { window } from 'vscode';
+import * as vscode from 'vscode';
 import { Cache } from '../cache/cache';
 import { configuration } from '../configuration';
 import { CommandContext, extensionId, setCommandContext } from '../constants';
@@ -87,7 +85,7 @@ export async function getWorkspaceEntries(
             })
             .on('error', err => {
                 err = new VError(err, 'Reading stream error');
-                window.showInformationMessage(err);
+                vscode.window.showInformationMessage(err);
                 throw err;
             })
             .on('end', () => {
@@ -123,7 +121,7 @@ export async function getWorkspaceEntries(
         timeoutId = setTimeout(() => {
             stream.pause();
             Logger.info('Reading stream has been poused after 10s.');
-            window.showInformationMessage(
+            vscode.window.showInformationMessage(
                 'Reading stream has been poused after 10s.'
             );
         }, 10000);

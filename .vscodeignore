@@ -3,8 +3,6 @@
 out/test/**
 test/**
 src/**
-i18n
-node_modules/**/test/**
 node_modules
 **/*.map
 *.log
@@ -16,5 +14,4 @@ tsconfig.json
 tslint.json
 vsc-extension-quickstart.md
 *.yml
-gulpfile.js
 webpack.config.js
