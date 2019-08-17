@@ -1,0 +1,50 @@
+{
+    "plugins": [
+        {
+            "@semantic-release/commit-analyzer": {
+                "preset": "angular"
+            }
+        },
+        {
+            "@semantic-release/commit-analyzer": {
+                "preset": "angular"
+            }
+        },
+        {
+            "@semantic-release/release-notes-generator": {
+                "preset": "angular"
+            }
+        },
+        {
+            "@semantic-release/changelog": {
+                "changelogFile": "CHANGELOG.md"
+            }
+        },
+        {
+            "@semantic-release/npm": {
+                "tarballDir": "dist"
+            }
+        },
+        {
+            "semantic-release-vsce": {
+                "packageVsix": "dist/vscode-workspace-manager.vsix"
+            }
+        },
+        {
+            "@semantic-release/github": {
+                "assets": [
+                    "dist/*.tgz",
+                    {
+                        "path": "dist/vscode-workspace-manager.vsix",
+                        "label": "vscode-workspace-manager.vsix"
+                    }
+                ]
+            }
+        },
+        {
+            "@semantic-release/git": {
+                "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+            }
+        }
+    ]
+}
