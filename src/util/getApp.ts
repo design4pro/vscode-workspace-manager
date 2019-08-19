@@ -2,7 +2,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as VError from 'verror';
 import * as vscode from 'vscode';
-import { extensionId } from '../constants';
+import { configuration } from '../configuration';
+import { IAdvancedConfig } from '../model/config';
 
 export function getApp() {
     try {
@@ -10,9 +11,12 @@ export function getApp() {
             vscode.env.appName.toLowerCase().search('insiders') !== -1
                 ? 'codeInsiders'
                 : 'code'
-        }Executable`;
-        const app = <string>(
-            vscode.workspace.getConfiguration(extensionId).get(key)
+        }Executable` as keyof IAdvancedConfig;
+
+        const app = configuration.get<string>(
+            configuration.name('advanced')(key).value,
+            null,
+            'code'
         );
 
         if (app.search(/\s/) !== -1) {

@@ -1,5 +1,4 @@
-import * as glob from 'fast-glob';
-import * as fs from 'fs';
+import { existsSync, statSync } from 'fs';
 import { configuration } from '../configuration';
 
 export function getWorkspaceEntryDirectories(): string[] {
@@ -37,22 +36,10 @@ export function getWorkspaceEntryDirectories(): string[] {
     const uniquePaths = Object.keys(pathsHash);
 
     const pathsAfterGlobbingHash = uniquePaths
-        .map(p => {
-            try {
-                return glob.sync([p], {
-                    cwd: '/',
-                    onlyDirectories: true,
-                    absolute: true
-                });
-            } catch (err) {
-                return [];
-            }
-        })
-        .reduce((acc, val) => acc.concat(val), [])
         .concat(uniquePaths.map(p => p.replace(/(:?\*\*?\/?)+$/, '')))
         .filter(p => {
             try {
-                return fs.existsSync(p) && fs.statSync(p).isDirectory();
+                return existsSync(p) && statSync(p).isDirectory();
             } catch (err) {
                 return false;
             }
