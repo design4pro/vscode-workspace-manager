@@ -86,32 +86,43 @@
             "type": "object",
             "title": "Workspace Manager",
             "properties": {
+                "workspace-manager.advanced.codeExecutable": {
+                    "type": "string",
+                    "default": "code",
+                    "description": "Path to the executable file for VS Code."
+                },
+                "workspace-manager.advanced.codeInsidersExecutable": {
+                    "type": "string",
+                    "default": "code-insiders",
+                    "description": "Path to the executable file for VS Code Insiders."
+                },
+                "workspace-manager.advanced.deep": {
+                    "type": "number",
+                    "default": "5",
+                    "description": "The maximum depth of a read directory relative to the start directory."
+                },
+                "workspace-manager.advanced.excludeGlobPattern": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "default": [],
+                    "description": "A glob pattern that defines files and folders to exclude."
+                },
                 "workspace-manager.includeGlobPattern": {
                     "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
                     "default": [
                         "~/**/*"
                     ],
-                    "description": "Paths of directories when `.code-workspace` files can be saved and then read from"
-                },
-                "workspace-manager.excludeGlobPattern": {
-                    "type": "array",
-                    "default": [],
-                    "description": "A glob pattern that defines files and folders to exclude"
-                },
-                "workspace-manager.codeExecutable": {
-                    "type": "string",
-                    "default": "code",
-                    "description": "Path to the executable file for VS Code"
-                },
-                "workspace-manager.codeInsidersExecutable": {
-                    "type": "string",
-                    "default": "code-insiders",
-                    "description": "Path to the executable file for VS Code Insiders"
+                    "description": "Paths of directories when `.code-workspace` files can be saved and then read from. You do not need to use `**/*` at the end."
                 },
                 "workspace-manager.showInActivityBar": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Whether or not to show the activity bar tree view container"
+                    "description": "Whether or not to show the activity bar tree view container."
                 },
                 "workspace-manager.showInExplorer": {
                     "type": "boolean",

@@ -21,7 +21,7 @@ export abstract class AbstractView implements vscode.Disposable {
             >this._execute(view));
         } else {
             const subscriptions = (<any>view).map((view: string) =>
-            vscode.window.registerTreeDataProvider(view, <TreeDataProvider>(
+                vscode.window.registerTreeDataProvider(view, <TreeDataProvider>(
                     this._execute(view)
                 ))
             );
@@ -56,7 +56,11 @@ export abstract class AbstractView implements vscode.Disposable {
             ) &&
             !configuration.changed(
                 e,
-                configuration.name('excludeGlobPattern').value
+                configuration.name('advanced')('excludeGlobPattern').value
+            ) &&
+            !configuration.changed(
+                e,
+                configuration.name('advanced')('deep').value
             )
         ) {
             return;

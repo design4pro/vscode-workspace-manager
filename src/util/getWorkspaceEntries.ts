@@ -1,6 +1,7 @@
 import * as glob from 'fast-glob';
 import * as VError from 'verror';
 import * as vscode from 'vscode';
+import { join } from 'path';
 import { Cache } from '../cache/cache';
 import { configuration } from '../configuration';
 import { CommandContext, extensionId, setCommandContext } from '../constants';
@@ -30,13 +31,20 @@ export async function getWorkspaceEntries(
     }
 
     const excludeGlobPattern: string[] = configuration.get<string[]>(
-        configuration.name('excludeGlobPattern').value,
+        configuration.name('advanced')('excludeGlobPattern').value,
         null,
         []
     );
+    const deep: number = configuration.get<number>(
+        configuration.name('advanced')('deep').value,
+        null,
+        5
+    );
     const directoryPaths = getWorkspaceEntryDirectories();
 
-    const directories = directoryPaths.map(dir => `${dir}**/*.code-workspace`);
+    const directories = directoryPaths
+        .map(dir => join(dir, '**/*.code-workspace'))
+        .filter((path, index, arr) => arr.indexOf(path) == index);
 
     let entries: WorkspaceEntry[] = [];
     let filesParsed: number = 0;
@@ -71,8 +79,34 @@ export async function getWorkspaceEntries(
 
         const stream = glob.stream(directories, {
             ignore: ['**/node_modules/**', ...excludeGlobPattern],
+            deep: deep,
             onlyFiles: true
         });
+
+        const onEnd = () => {
+            Logger.info(
+                `All the workspece files in the directories [${directories.join(
+                    ', '
+                )}] has been found [${entries.length}]`
+            );
+
+            entries.sort((a, b) => a.name.localeCompare(b.name));
+
+            cache.update(cacheKey, entries);
+
+            if (timeoutId) {
+                clearTimeout(timeoutId);
+            }
+
+            notifier.notify(
+                'file-submodule',
+                'Workspace entries cached (click to cache again)'
+            );
+
+            setCommandContext(CommandContext.Empty, !!!entries.length);
+
+            return entries;
+        };
 
         stream
             .on('data', (path: string) => {
@@ -88,30 +122,8 @@ export async function getWorkspaceEntries(
                 vscode.window.showInformationMessage(err);
                 throw err;
             })
-            .on('end', () => {
-                Logger.info(
-                    `All the workspece files in the directories [${directories.join(
-                        ', '
-                    )}] has been found [${entries.length}]`
-                );
-
-                entries.sort((a, b) => a.name.localeCompare(b.name));
-
-                cache.update(cacheKey, entries);
-
-                if (timeoutId) {
-                    clearTimeout(timeoutId);
-                }
-
-                notifier.notify(
-                    'file-submodule',
-                    'Workspace entries cached (click to cache again)'
-                );
-
-                setCommandContext(CommandContext.Empty, !!!entries.length);
-
-                return entries;
-            })
+            .on('pause', onEnd)
+            .on('end', onEnd)
             .on('close', () => {
                 Logger.info(
                     'Stream has been destroyed and file has been closed'

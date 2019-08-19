@@ -8,9 +8,6 @@ export enum IOutputLevel {
 
 export interface IConfig {
     includeGlobPattern: string | string[];
-    excludeGlobPattern: string | string[];
-    codeExecutable: string;
-    codeInsidersExecutable: string;
     showInActivityBar: boolean;
     showInExplorer: boolean;
     outputLevel: IOutputLevel;
@@ -18,6 +15,10 @@ export interface IConfig {
 }
 
 export interface IAdvancedConfig {
+    codeExecutable: string;
+    codeInsidersExecutable: string;
+    deep: number;
+    excludeGlobPattern: string | string[];
     telemetry: {
         enabled: boolean;
     };
