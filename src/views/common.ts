@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { AbstractView } from './abstractView';
+import { TreeDataProvider } from '../util/explorer/treeDataProvider';
 
 export enum Views {
     ActiveBar = 'workspaceManager.views.workspaceManager',
@@ -11,8 +12,10 @@ export enum ViewsCommands {
     ExplorerRefresh = 'workspaceManager.views.explorer.refresh'
 }
 
+const treeData = new TreeDataProvider();
+
 interface ViewConstructor {
-    new (): AbstractView;
+    new (treeData: TreeDataProvider): AbstractView;
 }
 
 export const registrableViews: ViewConstructor[] = [];
@@ -25,6 +28,6 @@ export function View(): ClassDecorator {
 
 export function registerViews(context: vscode.ExtensionContext): void {
     for (const v of registrableViews) {
-        context.subscriptions.push(new v());
+        context.subscriptions.push(new v(treeData));
     }
 }

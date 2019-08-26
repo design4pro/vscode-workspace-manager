@@ -114,7 +114,7 @@ export class SaveWorkspaceCommand extends AbstractCommand {
                                     );
 
                                     vscode.commands.executeCommand(
-                                        Commands.RefreshTreeData
+                                        Commands.CacheWorkspace
                                     );
 
                                     vscode.commands.executeCommand(

@@ -14,7 +14,10 @@ export abstract class AbstractView implements vscode.Disposable {
 
     private _disposable: vscode.Disposable;
 
-    constructor(protected readonly view: Views | Views[]) {
+    constructor(
+        protected readonly view: Views | Views[],
+        protected treeData: TreeDataProvider
+    ) {
         if (typeof view === 'string') {
             this._disposable = vscode.window.registerTreeDataProvider(view, <
                 TreeDataProvider
@@ -71,15 +74,13 @@ export abstract class AbstractView implements vscode.Disposable {
         }
     }
 
-    abstract execute(): TreeDataProvider;
-
     protected _execute(view: string): TreeDataProvider | undefined {
         const operationId = uuid();
         this.eventName = `view:${view}`;
 
         try {
             const start = process.hrtime();
-            const result = this.execute();
+            const result = this.treeData;
             const elapsed = process.hrtime(start);
             const elapsedMs = elapsed[0] * 1e3 + elapsed[1] / 1e6;
 
@@ -109,6 +110,6 @@ export abstract class AbstractView implements vscode.Disposable {
     }
 
     refresh() {
-        this.execute().refresh();
+        this.treeData.refresh();
     }
 }

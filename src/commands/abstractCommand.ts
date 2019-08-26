@@ -54,7 +54,7 @@ export abstract class AbstractCommand implements vscode.Disposable {
             );
         } else {
             const subscriptions = (<any>command).map((cmd: string) =>
-            vscode.commands.registerCommand(
+                vscode.commands.registerCommand(
                     cmd,
                     (...args: any[]) => this._execute(cmd, ...args),
                     this
@@ -75,10 +75,13 @@ export abstract class AbstractCommand implements vscode.Disposable {
         context: CommandContext,
         ...args: any[]
     ): Promise<any> {
-        return this.execute(...args);
+        return this.execute(context, ...args);
     }
 
-    abstract async execute(...args: any[]): Promise<any>;
+    abstract async execute(
+        context?: CommandContext,
+        ...args: any[]
+    ): Promise<any>;
 
     protected async _execute(command: string, ...args: any[]): Promise<any> {
         const operationId = uuid();
@@ -134,7 +137,10 @@ export abstract class AbstractCommand implements vscode.Disposable {
 
         let firstArg = args[0];
 
-        if (options.uri && (firstArg === null || firstArg instanceof vscode.Uri)) {
+        if (
+            options.uri &&
+            (firstArg === null || firstArg instanceof vscode.Uri)
+        ) {
             const [uri, ...rest] = args as [vscode.Uri, any];
 
             if (uri !== undefined) {

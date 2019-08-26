@@ -1,14 +1,16 @@
 import * as glob from 'fast-glob';
+import { join } from 'path';
+import { readFile } from 'fs';
 import * as VError from 'verror';
 import * as vscode from 'vscode';
-import { join } from 'path';
 import { Cache } from '../cache/cache';
 import { configuration } from '../configuration';
 import { CommandContext, extensionId, setCommandContext } from '../constants';
-import { notifier } from '../extension';
 import { Logger } from '../logger';
 import { WorkspaceEntry } from '../model/workspace';
+import { statusBarCache } from './statusBar/cache';
 import { getWorkspaceEntryDirectories } from './getWorkspaceEntryDirectories';
+import { Commands } from '../commands/common';
 
 export async function getWorkspaceEntries(
     fromCache: boolean = true
@@ -52,30 +54,43 @@ export async function getWorkspaceEntries(
 
     const addPath = (path: string) => {
         if (path) {
-            const name = (<any>path)
-                .split('\\')
-                .pop()
-                .split('/')
-                .pop()
-                .replace(/.code-workspace$/, '');
+            readFile(path, (err: any, data) => {
+                if (err) {
+                    err = new VError(err, 'Reading stream error');
+                    vscode.window.showInformationMessage(err);
+                    throw err;
+                }
 
-            entries.push({
-                name: name,
-                path: path
+                const content = JSON.parse(data.toString());
+
+                const rootPath = content.folders[0].path;
+
+                const name = (<any>path)
+                    .split('\\')
+                    .pop()
+                    .split('/')
+                    .pop()
+                    .replace(/.code-workspace$/, '');
+
+                entries.push({
+                    name: name,
+                    path: path,
+                    rootPath: rootPath
+                });
+
+                filesParsed++;
+
+                statusBarCache.notify(
+                    'eye',
+                    `Looking for workspace entries... [${filesParsed}]`,
+                    false
+                );
             });
-
-            filesParsed++;
-
-            notifier.notify(
-                'eye',
-                `Looking for workspace entries... [${filesParsed}]`,
-                false
-            );
         }
     };
 
     try {
-        notifier.notify('eye', 'Looking for workspace entries...', false);
+        statusBarCache.notify('eye', 'Looking for workspace entries...', false);
 
         const stream = glob.stream(directories, {
             ignore: ['**/node_modules/**', ...excludeGlobPattern],
@@ -98,19 +113,21 @@ export async function getWorkspaceEntries(
                 clearTimeout(timeoutId);
             }
 
-            notifier.notify(
+            statusBarCache.notify(
                 'file-submodule',
                 'Workspace entries cached (click to cache again)'
             );
 
             setCommandContext(CommandContext.Empty, !!!entries.length);
 
+            vscode.commands.executeCommand(Commands.RefreshTreeData);
+
             return entries;
         };
 
         stream
             .on('data', (path: string) => {
-                notifier.notify(
+                statusBarCache.notify(
                     'eye',
                     `Looking for workspace entries... [${entries.length}]`,
                     false

@@ -1,6 +1,7 @@
-import { notifier } from '../extension';
 import { Logger } from '../logger';
 import { getWorkspaceEntries } from '../util/getWorkspaceEntries';
+import { statusBarCache } from '../util/statusBar/cache';
+import { statusBarWorkspace } from '../util/statusBar/workspace';
 
 export class CacheWorkspaceEntries {
     static caching: boolean = false;
@@ -11,19 +12,21 @@ export class CacheWorkspaceEntries {
 
             if (!workspaceEntries || workspaceEntries.length === 0) {
                 Logger.log('No workspaces entries found without cache');
-                notifier.statusBarItem.hide();
+                statusBarCache.statusBarItem.hide();
                 return;
             }
         } catch (err) {
-            notifier.notify(
+            statusBarCache.notify(
                 'alert',
                 'Failed to cache the workspace entries (click for another attempt)'
             );
         } finally {
-            notifier.notify(
+            statusBarCache.notify(
                 'file-submodule',
                 'Workspace entries cached (click to cache again)'
             );
+
+            statusBarWorkspace.notify();
         }
     }
 }

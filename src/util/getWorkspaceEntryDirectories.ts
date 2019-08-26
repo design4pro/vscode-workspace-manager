@@ -1,5 +1,6 @@
 import { existsSync, statSync } from 'fs';
 import { configuration } from '../configuration';
+import { untildify } from './untildify';
 
 export function getWorkspaceEntryDirectories(): string[] {
     let includeGlobPattern: string[] = configuration.get<string[]>(
@@ -16,13 +17,9 @@ export function getWorkspaceEntryDirectories(): string[] {
         includeGlobPattern = (<string>includeGlobPattern).split(',');
     }
 
-    const userHome =
-        process.env[process.platform === 'win32' ? 'USERPROFILE' : 'HOME'] ||
-        '~';
-
     includeGlobPattern = includeGlobPattern
         .filter(p => typeof p === 'string')
-        .map(p => p.replace('~', userHome));
+        .map(p => untildify(p));
 
     if (!includeGlobPattern.length) {
         return [];

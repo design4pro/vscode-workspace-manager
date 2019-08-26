@@ -22,7 +22,7 @@ export function deleteWorkspace(
 
                     fs.unlinkSync(workspaceEntry.path);
 
-                    vscode.commands.executeCommand(Commands.RefreshTreeData);
+                    vscode.commands.executeCommand(Commands.CacheWorkspace);
                 },
                 (reason: any) => {}
             );

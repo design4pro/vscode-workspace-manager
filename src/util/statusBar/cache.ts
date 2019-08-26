@@ -1,13 +1,14 @@
 import * as vscode from 'vscode';
+import { Commands } from '../../commands/common';
 
-export class Notifier {
+export class StatusBarCache {
     statusBarItem: vscode.StatusBarItem;
     private timeoutId?: NodeJS.Timer;
 
     constructor(
-        command?: string,
+        command: string = Commands.CacheWorkspace,
         alignment?: vscode.StatusBarAlignment,
-        priority?: number
+        priority: number = 0
     ) {
         this.statusBarItem = vscode.window.createStatusBarItem(
             alignment,
@@ -33,3 +34,5 @@ export class Notifier {
         }
     }
 }
+
+export const statusBarCache: StatusBarCache = new StatusBarCache();

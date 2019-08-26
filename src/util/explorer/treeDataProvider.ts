@@ -3,7 +3,15 @@ import { WorkspaceEntry } from '../../model/workspace';
 import { getWorkspaceEntries } from '../getWorkspaceEntries';
 import { TreeItem } from './treeItem';
 
+class NoWorkspaces extends vscode.TreeItem {
+    constructor() {
+        super('No workspaces found', vscode.TreeItemCollapsibleState.None);
+        this.contextValue = 'noscripts';
+    }
+}
+
 export class TreeDataProvider implements vscode.TreeDataProvider<TreeItem> {
+    private workspaceTree: TreeItem[] | NoWorkspaces[] | null = null;
     private _onDidChangeTreeData: vscode.EventEmitter<
         TreeItem | undefined
     > = new vscode.EventEmitter<TreeItem | undefined>();
@@ -11,6 +19,7 @@ export class TreeDataProvider implements vscode.TreeDataProvider<TreeItem> {
         ._onDidChangeTreeData.event;
 
     refresh(): void {
+        this.workspaceTree = null;
         this._onDidChangeTreeData.fire();
     }
 
@@ -19,19 +28,25 @@ export class TreeDataProvider implements vscode.TreeDataProvider<TreeItem> {
     }
 
     async getChildren(): Promise<TreeItem[]> {
-        const workspaceEntries = await getWorkspaceEntries();
+        if (!this.workspaceTree) {
+            const workspaceEntries = await getWorkspaceEntries();
 
-        let treeItems: TreeItem[] = [];
-
-        if (workspaceEntries && workspaceEntries.length) {
-            treeItems = workspaceEntries.reduce(
-                (acc: TreeItem[], workspaceEntry: WorkspaceEntry) => (
-                    acc.push(new TreeItem(workspaceEntry)), acc
-                ),
-                []
-            );
+            if (workspaceEntries && workspaceEntries.length) {
+                this.workspaceTree = workspaceEntries.reduce(
+                    (acc: TreeItem[], workspaceEntry: WorkspaceEntry) => (
+                        acc.push(new TreeItem(workspaceEntry)), acc
+                    ),
+                    []
+                );
+            } else {
+                this.workspaceTree = [new NoWorkspaces()];
+            }
         }
 
-        return Promise.resolve(treeItems);
+        if (this.workspaceTree) {
+            return <TreeItem[]>this.workspaceTree;
+        }
+
+        return [];
     }
 }

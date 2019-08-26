@@ -1,25 +1,20 @@
 import * as vscode from 'vscode';
+import { cacheWorkspace } from './cache/cacheWorkspace';
 import { registerCommands } from './commands';
 import { configuration, Configuration } from './configuration';
 import {
-    extensionOutputChannelName,
     CommandContext,
+    extensionOutputChannelName,
     setCommandContext
 } from './constants';
 import { Container } from './container';
 import { Environment } from './environment';
 import { Logger } from './logger';
 import { IConfig, IOutputLevel } from './model/config';
-import { Notifier } from './notifier';
 import { state } from './state';
 import * as telemetry from './telemetry';
-import { cacheWorkspace } from './cache/cacheWorkspace';
-import { registerViews } from './views';
 import { getExtension } from './util/getExtension';
-
-export const notifier: Notifier = new Notifier(
-    'workspaceManager.cacheWorkspace'
-);
+import { registerViews } from './views';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
