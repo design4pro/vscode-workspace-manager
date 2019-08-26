@@ -9,6 +9,7 @@ export async function cacheWorkspace(): Promise<void> {
     }
 
     CacheWorkspaceEntries.caching = true;
+
     try {
         await CacheWorkspaceEntries.execute();
     } catch (err) {

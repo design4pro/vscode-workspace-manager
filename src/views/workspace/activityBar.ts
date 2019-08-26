@@ -7,8 +7,8 @@ import { View, Views, ViewsCommands } from '../common';
 
 @View()
 export class ActiveBar extends AbstractView {
-    constructor() {
-        super(Views.ActiveBar);
+    constructor(treeData: TreeDataProvider) {
+        super(Views.ActiveBar, treeData);
 
         setCommandContext(CommandContext.ViewInActivityBarShow, this.canShow);
     }
@@ -17,10 +17,6 @@ export class ActiveBar extends AbstractView {
         vscode.commands.registerCommand(ViewsCommands.ActiveBarRefresh, () =>
             this.refresh()
         );
-    }
-
-    execute(): TreeDataProvider {
-        return new TreeDataProvider();
     }
 
     get canShow(): boolean {

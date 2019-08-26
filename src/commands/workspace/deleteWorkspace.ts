@@ -12,7 +12,7 @@ export class DeleteWorkspaceCommand extends AbstractCommand {
     }
 
     async execute() {
-        let workspaceEntries = await getWorkspaceEntries();
+        const workspaceEntries = await getWorkspaceEntries();
 
         if (!workspaceEntries || !workspaceEntries.length) {
             vscode.window.showInformationMessage('No workspaces entries found');

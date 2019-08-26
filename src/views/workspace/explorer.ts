@@ -7,8 +7,8 @@ import { View, Views, ViewsCommands } from '../common';
 
 @View()
 export class Explorer extends AbstractView {
-    constructor() {
-        super(Views.Explorer);
+    constructor(treeData: TreeDataProvider) {
+        super(Views.Explorer, treeData);
 
         setCommandContext(CommandContext.ViewInExplorerShow, this.canShow);
     }
@@ -18,11 +18,6 @@ export class Explorer extends AbstractView {
             this.refresh()
         );
     }
-
-    execute(): TreeDataProvider {
-        return new TreeDataProvider();
-    }
-
     get canShow(): boolean {
         return configuration.get<boolean>(
             configuration.name('showInExplorer').value,

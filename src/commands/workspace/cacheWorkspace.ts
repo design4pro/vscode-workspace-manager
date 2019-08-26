@@ -13,7 +13,5 @@ export class CacheWorkspace extends AbstractCommand {
 
     async execute() {
         await cacheWorkspace();
-
-        vscode.commands.executeCommand(Commands.RefreshTreeData);
     }
 }

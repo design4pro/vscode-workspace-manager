@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { WorkspaceEntry } from '../../model/workspace';
 import { getWorkspaceEntries } from '../../util/getWorkspaceEntries';
-import { AbstractCommand } from '../abstractCommand';
+import { AbstractCommand, CommandContext } from '../abstractCommand';
 import { Command, Commands } from '../common';
 import { ISwitchToWorkspaceCommandArgs } from './switchToWorkspace';
 
@@ -15,7 +15,10 @@ export class SwitchWorkspaceCommand extends AbstractCommand {
         super(Commands.SwitchWorkspace);
     }
 
-    async execute(args: ISwitchWorkspaceCommandArgs = {}) {
+    async execute(
+        context?: CommandContext,
+        args: ISwitchWorkspaceCommandArgs = {}
+    ) {
         args = { ...args };
 
         const workspaceEntries = await getWorkspaceEntries();
@@ -61,9 +64,10 @@ export class SwitchWorkspaceCommand extends AbstractCommand {
                     inNewWindow: args.inNewWindow
                 };
 
-                vscode.commands.executeCommand(Commands.SwitchToWorkspace, [
+                vscode.commands.executeCommand(
+                    Commands.SwitchToWorkspace,
                     commandArgs
-                ]);
+                );
             },
             (reason: any) => {}
         );

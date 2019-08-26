@@ -2,7 +2,7 @@ import { exec } from 'child_process';
 import { WorkspaceEntry } from '../../model/workspace';
 import { getApp } from '../../util/getApp';
 import { onCommandRun } from '../../util/onCommandRun';
-import { AbstractCommand } from '../abstractCommand';
+import { AbstractCommand, CommandContext } from '../abstractCommand';
 import { Command, Commands } from '../common';
 
 export interface ISwitchToWorkspaceCommandArgs {
@@ -16,7 +16,10 @@ export class SwitchToWorkspaceCommand extends AbstractCommand {
         super(Commands.SwitchToWorkspace);
     }
 
-    async execute(args: ISwitchToWorkspaceCommandArgs = {}) {
+    async execute(
+        context?: CommandContext,
+        args: ISwitchToWorkspaceCommandArgs = {}
+    ) {
         args = { ...args };
 
         const app = getApp();
