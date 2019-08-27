@@ -1,6 +1,6 @@
-import * as vscode from 'vscode';
-import * as path from 'path';
 import { sortBy } from 'lodash';
+import * as path from 'path';
+import * as vscode from 'vscode';
 
 function absolute(s: string) {
     return path.isAbsolute
