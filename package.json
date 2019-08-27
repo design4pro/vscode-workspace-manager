@@ -29,8 +29,8 @@
     "main": "./out/extension",
     "scripts": {
         "vscode:prepublish": "yarn run clean && yarn run compile",
-        "publish": "npx vsce publish --yarn",
-        "package": "npx vsce package --yarn",
+        "vsce:publish": "npx vsce publish --yarn",
+        "vsce:package": "npx vsce package --yarn",
         "clean": "rimraf out/** && rimraf package.nls.*.json && rimraf workspace-manager-*.vsix",
         "compile": "webpack --mode production",
         "watch": "webpack --mode none --watch",
