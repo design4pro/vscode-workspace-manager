@@ -1,9 +1,9 @@
 import * as uuid from 'uuid/v4';
 import * as VError from 'verror';
 import * as vscode from 'vscode';
-import { Commands } from './common';
 import { Logger } from '../logger';
 import { Reporter } from '../telemetry';
+import { Commands } from './common';
 
 export interface CommandContextParsingOptions {
     editor: boolean;

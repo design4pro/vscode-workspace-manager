@@ -114,7 +114,7 @@
                         "type": "string"
                     },
                     "default": [],
-                    "description": "A glob pattern that defines files and folders to exclude."
+                    "description": "A glob pattern that defines files and folders to exclude. `node_modules` directory is ignored by default."
                 },
                 "workspace-manager.includeGlobPattern": {
                     "type": "array",

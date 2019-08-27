@@ -1,5 +1,5 @@
-import * as vscode from 'vscode';
 import * as VError from 'verror';
+import * as vscode from 'vscode';
 import { extensionQualifiedId } from '../constants';
 import { Logger } from '../logger';
 

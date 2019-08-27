@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as vscode from 'vscode';
-import { WorkspaceEntry } from '../model/workspace';
 import { Commands } from '../commands/common';
+import { WorkspaceEntry } from '../model/workspace';
 
 export function deleteWorkspace(
     workspaceEntry: WorkspaceEntry,
