@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/design4pro/vscode-workspace-manager/compare/v1.3.1...v1.3.2) (2019-08-27)
+
+
+### Bug Fixes
+
+* **workspace:** workspace settings parser ([7745d14](https://github.com/design4pro/vscode-workspace-manager/commit/7745d14))
+
 ## [1.3.1](https://github.com/design4pro/vscode-workspace-manager/compare/v1.3.0...v1.3.1) (2019-08-27)
 
 
