@@ -11,6 +11,7 @@ import { WorkspaceEntry } from '../model/workspace';
 import { statusBarCache } from './statusBar/cache';
 import { getWorkspaceEntryDirectories } from './getWorkspaceEntryDirectories';
 import { Commands } from '../commands/common';
+import { parse } from './json';
 
 export async function getWorkspaceEntries(
     fromCache: boolean = true
@@ -61,8 +62,7 @@ export async function getWorkspaceEntries(
                     throw err;
                 }
 
-                const content = JSON.parse(data.toString());
-
+                const content = parse(data.toString());
                 const rootPath = content.folders[0].path;
 
                 const name = (<any>path)

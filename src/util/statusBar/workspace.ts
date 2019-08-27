@@ -1,8 +1,8 @@
-import * as vscode from 'vscode';
 import { debounce } from 'lodash';
+import * as vscode from 'vscode';
+import { Commands } from '../../commands/common';
 import { getActiveRootPath } from '../getPath';
 import { getWorkspaceByRootPath } from '../getWorkspace';
-import { Commands } from '../../commands/common';
 
 export class StatusBarWorkspace {
     statusBarItem: vscode.StatusBarItem;
@@ -34,7 +34,7 @@ export class StatusBarWorkspace {
 
         this.statusBarItem.show();
         this.statusBarItem.text = workspace.name;
-        this.statusBarItem.tooltip = rootPath || 'No workspace opened';
+        this.statusBarItem.tooltip = workspace.path || 'No workspace opened';
     }
 }
 
