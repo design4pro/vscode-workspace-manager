@@ -26,15 +26,17 @@ export class StatusBarWorkspace {
 
     async notify() {
         const rootPath = getActiveRootPath();
+
         const workspace = await getWorkspaceByRootPath(<string>rootPath);
 
-        if (!workspace) {
-            return;
-        }
-
         this.statusBarItem.show();
-        this.statusBarItem.text = workspace.name;
-        this.statusBarItem.tooltip = workspace.path || 'No workspace opened';
+
+        if (workspace) {
+            this.statusBarItem.text = workspace.name;
+            this.statusBarItem.tooltip = workspace.path;
+        } else {
+            this.statusBarItem.text = 'No workspace opened';
+        }
     }
 }
 

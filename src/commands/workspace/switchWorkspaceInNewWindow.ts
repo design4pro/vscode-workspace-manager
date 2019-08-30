@@ -17,6 +17,13 @@ export class SwitchWorkspaceInNewWindowCommand extends AbstractCommand {
     ) {
         args = { ...args };
 
+        if (
+            context &&
+            context.command === Commands.SwitchWorkspaceInNewWindow
+        ) {
+            args.inNewWindow = true;
+        }
+
         const workspaceEntries = await getWorkspaceEntries();
 
         if (!workspaceEntries || !workspaceEntries.length) {
