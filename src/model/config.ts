@@ -11,7 +11,6 @@ export interface IConfig {
     openInNewWindowWhenClickingInStatusBar: boolean;
     view: IViewConfig;
     advanced: IAdvancedConfig;
-    workspace: IWorkspaceConfig;
 }
 
 export interface IViewConfig {
@@ -31,8 +30,4 @@ export interface IAdvancedConfig {
     telemetry: {
         enabled: boolean;
     };
-}
-
-export interface IWorkspaceConfig {
-    favorite: boolean;
 }

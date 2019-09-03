@@ -1,6 +1,6 @@
+import * as vscode from 'vscode';
 import { AbstractCommand, CommandContext } from '../abstractCommand';
 import { Command, Commands } from '../common';
-import * as vscode from 'vscode';
 
 @Command()
 export class OpenWorkspaceSettings extends AbstractCommand {

@@ -1,12 +1,11 @@
-import * as vscode from 'vscode';
 import { isEqual } from 'lodash';
+import * as vscode from 'vscode';
+import { configuration } from '../../configuration';
+import { Container } from '../../container';
 import { WorkspaceEntry } from '../../model/workspace';
+import { getWorkspaceByRootPath } from '../getWorkspace';
 import { getWorkspaceEntries } from '../getWorkspaceEntries';
 import { TreeItem } from './treeItem';
-import { configuration } from '../../configuration';
-import { getActiveRootPath } from '../getPath';
-import { getWorkspaceByRootPath } from '../getWorkspace';
-import { Container } from '../../container';
 
 class NoWorkspaces extends vscode.TreeItem {
     constructor() {
@@ -43,10 +42,7 @@ export class TreeDataProvider implements vscode.TreeDataProvider<TreeItem> {
             );
 
             if (workspaceEntries && workspaceEntries.length) {
-                const rootPath = getActiveRootPath();
-                const activeWorkspace = await getWorkspaceByRootPath(<string>(
-                    rootPath
-                ));
+                const activeWorkspace = await getWorkspaceByRootPath();
 
                 this.workspaceTree = workspaceEntries.reduce(
                     (acc: TreeItem[], workspaceEntry: WorkspaceEntry) => {
@@ -55,6 +51,8 @@ export class TreeDataProvider implements vscode.TreeDataProvider<TreeItem> {
                             activeWorkspace
                         );
                         const item = new TreeItem(workspaceEntry);
+
+                        console.log(workspaceEntry);
 
                         if (isActive) {
                             item.iconPath = {

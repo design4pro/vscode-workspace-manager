@@ -1,7 +1,8 @@
+import * as VError from 'verror';
+import { window } from 'vscode';
 import { configuration } from '../../configuration';
 import { AbstractCommand } from '../abstractCommand';
 import { Command, Commands } from '../common';
-import { ConfigurationTarget, window } from 'vscode';
 
 @Command()
 export class AddToFavorites extends AbstractCommand {
@@ -12,34 +13,25 @@ export class AddToFavorites extends AbstractCommand {
     }
 
     async execute() {
-        const isFavorite = configuration.get(
-            configuration.name('workspace')('favorite').value,
-            null,
-            false
-        );
+        const isFavorite = await configuration.getWorkspace('favorite', false);
 
-        configuration
-            .update(
-                configuration.name('workspace')('favorite').value,
-                !isFavorite,
-                ConfigurationTarget.Workspace
-            )
-            .then(
-                value => {
-                    if (isFavorite) {
-                        window.showInformationMessage(
-                            'Workspace removed from favorite!'
-                        );
-                    } else {
-                        window.showInformationMessage(
-                            'Workspace added to favorite!'
-                        );
-                    }
-                },
-                value =>
-                    window.showErrorMessage(
-                        'Could not add the workspace to favorite!'
-                    )
+        try {
+            await configuration.updateWorkspace('favorite', !isFavorite);
+
+            if (isFavorite) {
+                window.showInformationMessage(
+                    'Workspace removed from favorite!'
+                );
+            } else {
+                window.showInformationMessage('Workspace added to favorite!');
+            }
+        } catch (error) {
+            error = new VError(
+                error,
+                'Could not add the workspace to favorite!'
             );
+            window.showErrorMessage(error);
+            throw error;
+        }
     }
 }

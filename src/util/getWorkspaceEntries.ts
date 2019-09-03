@@ -1,17 +1,17 @@
 import * as glob from 'fast-glob';
-import { join } from 'path';
 import { readFile } from 'fs';
+import { join } from 'path';
 import * as VError from 'verror';
 import * as vscode from 'vscode';
 import { Cache } from '../cache/cache';
+import { Commands } from '../commands/common';
 import { configuration } from '../configuration';
 import { CommandContext, extensionId, setCommandContext } from '../constants';
 import { Logger } from '../logger';
 import { WorkspaceEntry } from '../model/workspace';
-import { statusBarCache } from './statusBar/cache';
 import { getWorkspaceEntryDirectories } from './getWorkspaceEntryDirectories';
-import { Commands } from '../commands/common';
-import { parse } from './json';
+import { getConfigurationValue, parse } from './json';
+import { statusBarCache } from './statusBar/cache';
 
 export async function getWorkspaceEntries(
     fromCache: boolean = true
@@ -58,16 +58,18 @@ export async function getWorkspaceEntries(
             readFile(path, (err: any, data) => {
                 if (err) {
                     err = new VError(err, 'Reading stream error');
-                    vscode.window.showInformationMessage(err);
+                    vscode.window.showErrorMessage(err);
                     throw err;
                 }
 
                 const content = parse(data.toString());
                 const rootPath = content.folders[0].path;
 
-                const isFavorite = !!content.settings[
-                    'workspace-manager.workspace.favorite'
-                ];
+                const isFavorite = !!getConfigurationValue(
+                    content.settings,
+                    `${extensionId}.favorite`,
+                    false
+                );
 
                 const name = (<any>path)
                     .split('\\')
@@ -79,7 +81,8 @@ export async function getWorkspaceEntries(
                 entries.push({
                     name,
                     path,
-                    rootPath
+                    rootPath,
+                    isFavorite
                 });
 
                 filesParsed++;

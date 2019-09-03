@@ -5,10 +5,6 @@ import { AbstractCommand, CommandContext } from '../abstractCommand';
 import { Command, Commands } from '../common';
 import { ISwitchToWorkspaceCommandArgs } from './switchToWorkspace';
 
-export interface ISwitchWorkspaceCommandArgs {
-    inNewWindow?: boolean;
-}
-
 @Command()
 export class SwitchWorkspaceCommand extends AbstractCommand {
     constructor() {
@@ -17,7 +13,7 @@ export class SwitchWorkspaceCommand extends AbstractCommand {
 
     async execute(
         context?: CommandContext,
-        args: ISwitchWorkspaceCommandArgs = {}
+        args: ISwitchToWorkspaceCommandArgs = {}
     ) {
         args = { ...args };
 
@@ -29,47 +25,69 @@ export class SwitchWorkspaceCommand extends AbstractCommand {
             return;
         }
 
-        const workspaceItems = workspaceEntries.map(
-            entry =>
-                <vscode.QuickPickItem>{
-                    label: entry.name,
-                    description: entry.path
-                }
-        );
+        if (args.workspaceEntry && args.workspaceEntry.path) {
+            const entry: WorkspaceEntry | undefined = workspaceEntries.find(
+                entry => entry.path === args.workspaceEntry!.path
+            );
 
-        const options = <vscode.QuickPickOptions>{
-            matchOnDescription: false,
-            matchOnDetail: false,
-            placeHolder: `Choose a workspace to switch to${
-                args.inNewWindow ? ' in a new window' : ''
-            }...`
-        };
+            if (!entry) {
+                return;
+            }
 
-        vscode.window.showQuickPick(workspaceItems, options).then(
-            (workspaceItem?: vscode.QuickPickItem) => {
-                if (!workspaceItem) {
-                    return;
-                }
+            const commandArgs: ISwitchToWorkspaceCommandArgs = {
+                workspaceEntry: entry,
+                inNewWindow: args.inNewWindow
+            };
 
-                const entry: WorkspaceEntry | undefined = workspaceEntries.find(
-                    entry => entry.path === workspaceItem.description
-                );
+            vscode.commands.executeCommand(
+                Commands.SwitchToWorkspace,
+                commandArgs
+            );
+        } else {
+            const workspaceItems = workspaceEntries.map(
+                entry =>
+                    <vscode.QuickPickItem>{
+                        label: entry.name,
+                        description: entry.path
+                    }
+            );
 
-                if (!entry) {
-                    return;
-                }
+            const options = <vscode.QuickPickOptions>{
+                matchOnDescription: false,
+                matchOnDetail: false,
+                placeHolder: `Choose a workspace to switch to${
+                    args.inNewWindow ? ' in a new window' : ''
+                }...`
+            };
 
-                const commandArgs: ISwitchToWorkspaceCommandArgs = {
-                    workspaceEntry: entry,
-                    inNewWindow: args.inNewWindow
-                };
+            vscode.window.showQuickPick(workspaceItems, options).then(
+                (workspaceItem?: vscode.QuickPickItem) => {
+                    if (!workspaceItem) {
+                        return;
+                    }
 
-                vscode.commands.executeCommand(
-                    Commands.SwitchToWorkspace,
-                    commandArgs
-                );
-            },
-            (reason: any) => {}
-        );
+                    const entry:
+                        | WorkspaceEntry
+                        | undefined = workspaceEntries.find(
+                        entry => entry.path === workspaceItem.description
+                    );
+
+                    if (!entry) {
+                        return;
+                    }
+
+                    const commandArgs: ISwitchToWorkspaceCommandArgs = {
+                        workspaceEntry: entry,
+                        inNewWindow: args.inNewWindow
+                    };
+
+                    vscode.commands.executeCommand(
+                        Commands.SwitchToWorkspace,
+                        commandArgs
+                    );
+                },
+                (reason: any) => {}
+            );
+        }
     }
 }

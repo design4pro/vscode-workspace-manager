@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as mkdirp from 'mkdirp';
 import * as path from 'path';
+import * as VError from 'verror';
 import * as vscode from 'vscode';
 import { WorkspaceEntry } from '../../model/workspace';
 import { getFirstWorkspaceFolderName } from '../../util/getFirstWorkspaceFolderName';
@@ -100,10 +101,14 @@ export class SaveWorkspaceCommand extends AbstractCommand {
                                 })
                             );
 
-                            const workspaceFileContent = JSON.stringify({
-                                folders: workspaceFolderPaths,
-                                settings: {}
-                            });
+                            const workspaceFileContent = JSON.stringify(
+                                {
+                                    folders: workspaceFolderPaths,
+                                    settings: {}
+                                },
+                                null,
+                                4
+                            );
 
                             const workspaceFilePathSaveFunc = () => {
                                 try {
@@ -124,10 +129,11 @@ export class SaveWorkspaceCommand extends AbstractCommand {
                                         }
                                     );
                                 } catch (error) {
-                                    vscode.window.showErrorMessage(
-                                        'Error while trying to save workspace ' +
-                                            `${workspaceFileName} to ${workspaceFilePath}: ${error.message}`
+                                    error = new VError(
+                                        error,
+                                        `Error while trying to save workspace settings to ${workspaceFilePath}`
                                     );
+                                    vscode.window.showErrorMessage(error);
                                 }
                             };
 

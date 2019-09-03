@@ -1,9 +1,10 @@
 import { dirname, join } from 'path';
 import { WorkspaceEntry } from '../model/workspace';
+import { getActiveRootPath } from './getPath';
 import { getWorkspaceEntries } from './getWorkspaceEntries';
 
 export async function getWorkspaceByRootPath(
-    path: string
+    path: string | undefined = getActiveRootPath()
 ): Promise<WorkspaceEntry | undefined> {
     const workspaceEntries = await getWorkspaceEntries();
 

@@ -1,7 +1,6 @@
 import { debounce } from 'lodash';
 import * as vscode from 'vscode';
 import { configuration } from '../../configuration';
-import { getActiveRootPath } from '../getPath';
 import { getWorkspaceByRootPath } from '../getWorkspace';
 import { Commands } from './../../commands/common';
 
@@ -26,8 +25,7 @@ export class StatusBarWorkspace {
     }
 
     async notify() {
-        const rootPath = getActiveRootPath();
-        const workspace = await getWorkspaceByRootPath(<string>rootPath);
+        const workspace = await getWorkspaceByRootPath();
 
         if (!this.canShow) {
             this.statusBarItem.hide();
