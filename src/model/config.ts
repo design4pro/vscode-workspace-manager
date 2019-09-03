@@ -8,10 +8,18 @@ export enum IOutputLevel {
 
 export interface IConfig {
     includeGlobPattern: string | string[];
+    openInNewWindowWhenClickingInStatusBar: boolean;
+    view: IViewConfig;
+    advanced: IAdvancedConfig;
+    workspace: IWorkspaceConfig;
+}
+
+export interface IViewConfig {
     showInActivityBar: boolean;
     showInExplorer: boolean;
-    outputLevel: IOutputLevel;
-    advanced: IAdvancedConfig;
+    showWorkspaceRefreshIconInStatusBar: boolean;
+    showWorkspaceNameInStatusBar: boolean;
+    removeCurrentWorkspaceFromList: boolean;
 }
 
 export interface IAdvancedConfig {
@@ -19,7 +27,12 @@ export interface IAdvancedConfig {
     codeInsidersExecutable: string;
     deep: number;
     excludeGlobPattern: string | string[];
+    outputLevel: IOutputLevel;
     telemetry: {
         enabled: boolean;
     };
+}
+
+export interface IWorkspaceConfig {
+    favorite: boolean;
 }

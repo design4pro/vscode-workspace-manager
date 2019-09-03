@@ -1,8 +1,9 @@
 import { debounce } from 'lodash';
 import * as vscode from 'vscode';
-import { Commands } from '../../commands/common';
+import { configuration } from '../../configuration';
 import { getActiveRootPath } from '../getPath';
 import { getWorkspaceByRootPath } from '../getWorkspace';
+import { Commands } from './../../commands/common';
 
 export class StatusBarWorkspace {
     statusBarItem: vscode.StatusBarItem;
@@ -26,10 +27,13 @@ export class StatusBarWorkspace {
 
     async notify() {
         const rootPath = getActiveRootPath();
-
         const workspace = await getWorkspaceByRootPath(<string>rootPath);
 
-        this.statusBarItem.show();
+        if (!this.canShow) {
+            this.statusBarItem.hide();
+
+            return;
+        }
 
         if (workspace) {
             this.statusBarItem.text = workspace.name;
@@ -37,6 +41,34 @@ export class StatusBarWorkspace {
         } else {
             this.statusBarItem.text = 'No workspace opened';
         }
+
+        const openInNewWindow: boolean = configuration.get(
+            configuration.name('openInNewWindowWhenClickingInStatusBar').value,
+            null,
+            true
+        );
+
+        if (openInNewWindow) {
+            this.statusBarItem.command = Commands.SwitchWorkspaceInNewWindow;
+        }
+
+        this.statusBarItem.show();
+    }
+
+    toggle() {
+        if (!this.canShow) {
+            this.statusBarItem.hide();
+        } else {
+            this.statusBarItem.show();
+        }
+    }
+
+    get canShow(): boolean {
+        return configuration.get(
+            configuration.name('view')('showWorkspaceNameInStatusBar').value,
+            null,
+            true
+        );
     }
 }
 

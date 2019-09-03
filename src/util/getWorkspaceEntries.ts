@@ -65,6 +65,10 @@ export async function getWorkspaceEntries(
                 const content = parse(data.toString());
                 const rootPath = content.folders[0].path;
 
+                const isFavorite = !!content.settings[
+                    'workspace-manager.workspace.favorite'
+                ];
+
                 const name = (<any>path)
                     .split('\\')
                     .pop()
@@ -73,9 +77,9 @@ export async function getWorkspaceEntries(
                     .replace(/.code-workspace$/, '');
 
                 entries.push({
-                    name: name,
-                    path: path,
-                    rootPath: rootPath
+                    name,
+                    path,
+                    rootPath
                 });
 
                 filesParsed++;
@@ -114,7 +118,7 @@ export async function getWorkspaceEntries(
             }
 
             statusBarCache.notify(
-                'file-submodule',
+                'sync',
                 'Workspace entries cached (click to cache again)'
             );
 

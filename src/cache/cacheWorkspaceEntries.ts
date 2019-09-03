@@ -22,7 +22,7 @@ export class CacheWorkspaceEntries {
             );
         } finally {
             statusBarCache.notify(
-                'file-submodule',
+                'sync',
                 'Workspace entries cached (click to cache again)'
             );
 

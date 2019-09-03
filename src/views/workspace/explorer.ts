@@ -20,7 +20,7 @@ export class Explorer extends AbstractView {
     }
     get canShow(): boolean {
         return configuration.get<boolean>(
-            configuration.name('showInExplorer').value,
+            configuration.name('view')('showInExplorer').value,
             null,
             true
         );

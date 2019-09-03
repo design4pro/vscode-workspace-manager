@@ -31,7 +31,7 @@ export async function activate(
     Logger.configure(
         context,
         configuration.get<IOutputLevel>(
-            configuration.name('outputLevel').value
+            configuration.name('advanced')('outputLevel').value
         ),
         o => undefined
     );

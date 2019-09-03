@@ -11,21 +11,22 @@ export async function getWorkspaceByRootPath(
         return;
     }
 
-    return workspaceEntries.find(workspace => {
-        let rootPath = workspace.rootPath;
+    return workspaceEntries.find(entry => {
+        let rootPath = entry.rootPath;
 
-        if (workspace.rootPath.startsWith('.')) {
-            rootPath = dirname(workspace.path);
+        if (entry.rootPath.startsWith('.')) {
+            rootPath = dirname(entry.path);
 
             if (rootPath === path) return true;
 
-            rootPath = join(rootPath, workspace.rootPath);
+            rootPath = join(rootPath, entry.rootPath);
 
             if (rootPath.endsWith('/')) {
                 rootPath = rootPath.slice(0, -1);
             }
         }
 
-        return rootPath === path;
+        if (rootPath === path || (path && path.startsWith(rootPath)))
+            return true;
     });
 }

@@ -59,6 +59,11 @@ export abstract class AbstractView implements vscode.Disposable {
             ) &&
             !configuration.changed(
                 e,
+                configuration.name('view')('removeCurrentWorkspaceFromList')
+                    .value
+            ) &&
+            !configuration.changed(
+                e,
                 configuration.name('advanced')('excludeGlobPattern').value
             ) &&
             !configuration.changed(

@@ -3,6 +3,10 @@ import { configuration, ConfigurationWillChangeEvent } from './configuration';
 import { IConfig } from './model/config';
 import { CommandContext, setCommandContext } from './constants';
 import { cacheWorkspace } from './cache/cacheWorkspace';
+import { Commands } from './commands/common';
+import { ViewsCommands } from './views/common';
+import { statusBarWorkspace } from './util/statusBar/workspace';
+import { statusBarCache } from './util/statusBar/cache';
 
 const isDebuggingRegex = /^--(debug|inspect)\b(-brk\b|(?!-))=?/;
 
@@ -36,25 +40,45 @@ export class Container {
         if (
             configuration.changed(
                 e.change,
-                configuration.name('showInActivityBar').value
+                configuration.name('view')('showInActivityBar').value
             )
         ) {
             setCommandContext(
                 CommandContext.ViewInActivityBarShow,
-                Container.config.showInActivityBar
+                Container.config.view.showInActivityBar
             );
         }
 
         if (
             configuration.changed(
                 e.change,
-                configuration.name('showInExplorer').value
+                configuration.name('view')('showInExplorer').value
             )
         ) {
             setCommandContext(
                 CommandContext.ViewInExplorerShow,
-                Container.config.showInExplorer
+                Container.config.view.showInExplorer
             );
+        }
+
+        if (
+            configuration.changed(
+                e.change,
+                configuration.name('view')(
+                    'showWorkspaceRefreshIconInStatusBar'
+                ).value
+            )
+        ) {
+            statusBarCache.toggle();
+        }
+
+        if (
+            configuration.changed(
+                e.change,
+                configuration.name('view')('showWorkspaceNameInStatusBar').value
+            )
+        ) {
+            statusBarWorkspace.toggle();
         }
     }
 

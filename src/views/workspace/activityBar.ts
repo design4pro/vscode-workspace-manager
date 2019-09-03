@@ -21,7 +21,7 @@ export class ActiveBar extends AbstractView {
 
     get canShow(): boolean {
         return configuration.get<boolean>(
-            configuration.name('showInActivityBar').value,
+            configuration.name('view')('showInActivityBar').value,
             null,
             true
         );
