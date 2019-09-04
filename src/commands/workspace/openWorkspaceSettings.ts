@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { BuiltInCommands } from '../../constants';
 import { AbstractCommand, CommandContext } from '../abstractCommand';
 import { Command, Commands } from '../common';
 
@@ -14,7 +15,7 @@ export class OpenWorkspaceSettings extends AbstractCommand {
         if (args && args.workspaceEntry) {
             const uri = vscode.Uri.file(args.workspaceEntry.path);
 
-            vscode.commands.executeCommand('vscode.open', uri).then(
+            vscode.commands.executeCommand(BuiltInCommands.OpenFile, uri).then(
                 value => ({}), // done
                 value =>
                     vscode.window.showErrorMessage(

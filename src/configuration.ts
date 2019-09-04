@@ -117,9 +117,12 @@ export class Configuration extends vscode.Disposable {
 
     async getWorkspace<T>(
         section: string,
-        defaultValue?: T
+        defaultValue?: T,
+        workspaceFilePath?: string
     ): Promise<T | undefined> {
-        const workspaceConfiguration = await this.getWorkspaceConfiguration();
+        const workspaceConfiguration = await this.getWorkspaceConfiguration(
+            workspaceFilePath
+        );
 
         if (workspaceConfiguration) {
             return getConfigurationValue<T>(
@@ -242,8 +245,14 @@ export class Configuration extends vscode.Disposable {
         );
     }
 
-    async updateWorkspace(section: string, value: any) {
-        const workspaceConfiguration = await this.getWorkspaceConfiguration();
+    async updateWorkspace(
+        section: string,
+        value: any,
+        workspaceFilePath?: string
+    ) {
+        const workspaceConfiguration = await this.getWorkspaceConfiguration(
+            workspaceFilePath
+        );
 
         if (workspaceConfiguration) {
             addToValueTree(
@@ -253,27 +262,32 @@ export class Configuration extends vscode.Disposable {
                 vscode.window.showErrorMessage
             );
 
-            await this.saveWorkspaceConfiguration(workspaceConfiguration);
+            await this.saveWorkspaceConfiguration(
+                workspaceConfiguration,
+                workspaceFilePath
+            );
         }
     }
 
-    async getWorkspaceConfiguration() {
-        const activeWorkspace = await getWorkspaceByRootPath();
+    async getWorkspaceConfiguration(workspaceFilePath?: string) {
+        if (!workspaceFilePath) {
+            const activeWorkspace = await getWorkspaceByRootPath();
 
-        if (!activeWorkspace) {
-            vscode.window.showErrorMessage(
-                'Could not read current workspace settings'
-            );
-            return;
+            if (!activeWorkspace) {
+                vscode.window.showErrorMessage(
+                    'Could not read current workspace settings'
+                );
+                return;
+            }
+
+            workspaceFilePath = activeWorkspace.path;
         }
-
-        const workspaceFilePath = activeWorkspace.path;
 
         try {
             const data = await readFileSync(workspaceFilePath);
 
             const workspaceFileContent: {
-                folders: vscode.WorkspaceFolder[];
+                folders: any;
                 settings: any;
             } = parse(data.toString());
 
@@ -288,17 +302,19 @@ export class Configuration extends vscode.Disposable {
         }
     }
 
-    async saveWorkspaceConfiguration(content: any) {
-        const activeWorkspace = await getWorkspaceByRootPath();
+    async saveWorkspaceConfiguration(content: any, workspaceFilePath?: string) {
+        if (!workspaceFilePath) {
+            const activeWorkspace = await getWorkspaceByRootPath();
 
-        if (!activeWorkspace) {
-            vscode.window.showErrorMessage(
-                'Could not update current workspace settings!'
-            );
-            return;
+            if (!activeWorkspace) {
+                vscode.window.showErrorMessage(
+                    'Could not update current workspace settings!'
+                );
+                return;
+            }
+
+            workspaceFilePath = activeWorkspace.path;
         }
-
-        const workspaceFilePath = activeWorkspace.path;
 
         try {
             const json = JSON.stringify(content, null, 4);

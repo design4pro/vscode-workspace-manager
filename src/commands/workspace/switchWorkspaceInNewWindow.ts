@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
+import { IWorkspaceCommandArgs } from '../../model/workspace';
 import { AbstractCommand, CommandContext } from '../abstractCommand';
 import { Command, Commands } from '../common';
-import { ISwitchToWorkspaceCommandArgs } from './switchToWorkspace';
 
 @Command()
 export class SwitchWorkspaceInNewWindowCommand extends AbstractCommand {
@@ -11,7 +11,7 @@ export class SwitchWorkspaceInNewWindowCommand extends AbstractCommand {
 
     async execute(
         context?: CommandContext,
-        args: ISwitchToWorkspaceCommandArgs = { inNewWindow: true }
+        args: IWorkspaceCommandArgs = { inNewWindow: true }
     ) {
         args = { ...args };
 

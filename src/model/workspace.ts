@@ -4,3 +4,8 @@ export interface WorkspaceEntry {
     rootPath: string;
     isFavorite?: boolean;
 }
+
+export interface IWorkspaceCommandArgs {
+    workspaceEntry?: WorkspaceEntry;
+    inNewWindow?: boolean;
+}

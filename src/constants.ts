@@ -7,7 +7,9 @@ export const GlobalStateVersionKey = 'workspaceManagerVersion';
 export const APPINSIGHTS_KEY = '842bc896-71b0-47ba-936e-c9f4c07e0c15';
 
 export enum BuiltInCommands {
-    SetContext = 'setContext'
+    SetContext = 'setContext',
+    OpenFile = 'vscode.open',
+    CloseFolder = 'workbench.action.closeFolder'
 }
 
 export enum CommandContext {
@@ -18,5 +20,9 @@ export enum CommandContext {
 }
 
 export function setCommandContext(key: CommandContext | string, value: any) {
-    return vscode.commands.executeCommand(BuiltInCommands.SetContext, key, value);
+    return vscode.commands.executeCommand(
+        BuiltInCommands.SetContext,
+        key,
+        value
+    );
 }

@@ -7,6 +7,10 @@ import { getWorkspaceByRootPath } from '../getWorkspace';
 import { getWorkspaceEntries } from '../getWorkspaceEntries';
 import { TreeItem } from './treeItem';
 
+export enum ResourceType {
+    WorkspaceEntry = 'workspaceManager.workspaceEntry'
+}
+
 class NoWorkspaces extends vscode.TreeItem {
     constructor() {
         super('No workspaces found', vscode.TreeItemCollapsibleState.None);
@@ -50,29 +54,7 @@ export class TreeDataProvider implements vscode.TreeDataProvider<TreeItem> {
                             workspaceEntry,
                             activeWorkspace
                         );
-                        const item = new TreeItem(workspaceEntry);
-
-                        console.log(workspaceEntry);
-
-                        if (isActive) {
-                            item.iconPath = {
-                                dark: Container.context.asAbsolutePath(
-                                    'resources/dark/folder-active.svg'
-                                ),
-                                light: Container.context.asAbsolutePath(
-                                    'resources/light/folder-active.svg'
-                                )
-                            };
-                        } else {
-                            item.iconPath = {
-                                dark: Container.context.asAbsolutePath(
-                                    'resources/dark/folder.svg'
-                                ),
-                                light: Container.context.asAbsolutePath(
-                                    'resources/light/folder.svg'
-                                )
-                            };
-                        }
+                        const item = new TreeItem(workspaceEntry, isActive);
 
                         if (isActive && removeWorkspaceFromList) {
                             return acc;

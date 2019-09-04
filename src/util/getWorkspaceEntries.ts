@@ -53,20 +53,17 @@ export async function getWorkspaceEntries(
     let filesParsed: number = 0;
     let timeoutId: NodeJS.Timer;
 
-    const addPath = (path: string) => {
+    const addPath = async (path: string) => {
         if (path) {
-            readFile(path, (err: any, data) => {
-                if (err) {
-                    err = new VError(err, 'Reading stream error');
-                    vscode.window.showErrorMessage(err);
-                    throw err;
-                }
+            const workspaceConfiguration = await configuration.getWorkspaceConfiguration(
+                path
+            );
 
-                const content = parse(data.toString());
-                const rootPath = content.folders[0].path;
+            if (workspaceConfiguration) {
+                const rootPath = workspaceConfiguration.folders[0].path;
 
-                const isFavorite = !!getConfigurationValue(
-                    content.settings,
+                const isFavorite = !!getConfigurationValue<boolean>(
+                    workspaceConfiguration.settings,
                     `${extensionId}.favorite`,
                     false
                 );
@@ -92,7 +89,7 @@ export async function getWorkspaceEntries(
                     `Looking for workspace entries... [${filesParsed}]`,
                     false
                 );
-            });
+            }
         }
     };
 

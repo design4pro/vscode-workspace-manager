@@ -155,11 +155,6 @@
                     },
                     "default": [],
                     "description": "A glob pattern that defines files and folders to exclude. `node_modules` directory is ignored by default."
-                },
-                "workspace-manager.workspace.favorite": {
-                    "type": "boolean",
-                    "default": "false",
-                    "scope": "window"
                 }
             }
         },
@@ -315,22 +310,27 @@
                 {
                     "command": "workspaceManager.switchWorkspace",
                     "when": "view =~ /^workspaceManager\\.views/",
-                    "group": "navigation"
+                    "group": "navigation@1"
                 },
                 {
                     "command": "workspaceManager.switchWorkspaceInNewWindow",
                     "when": "view =~ /^workspaceManager\\.views/",
-                    "group": "navigation"
+                    "group": "navigation@2"
+                },
+                {
+                    "command": "workspaceManager.addToFavorites",
+                    "when": "view =~ /^workspaceManager\\.views/",
+                    "group": "2_workspace@1"
                 },
                 {
                     "command": "workspaceManager.openWorkspaceSettings",
                     "when": "view =~ /^workspaceManager\\.views/",
-                    "group": "2_workspace"
+                    "group": "2_workspace@2"
                 },
                 {
                     "command": "workspaceManager.refreshTreeData",
                     "when": "view =~ /^workspaceManager\\.views/",
-                    "group": "z_commands"
+                    "group": "z_commands@1"
                 }
             ]
         },
