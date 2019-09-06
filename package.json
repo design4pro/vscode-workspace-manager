@@ -211,11 +211,20 @@
             },
             {
                 "command": "workspaceManager.addToFavorites",
-                "title": "Add To Favorites",
+                "title": "Add to Favorites",
                 "category": "Workspace Manager",
                 "icon": {
                     "light": "resources/light/favorite.svg",
                     "dark": "resources/dark/favorite.svg"
+                }
+            },
+            {
+                "command": "workspaceManager.removeFromFavorites",
+                "title": "Remove from Favorites",
+                "category": "Workspace Manager",
+                "icon": {
+                    "light": "resources/light/favorite-active.svg",
+                    "dark": "resources/dark/favorite-active.svg"
                 }
             },
             {
@@ -276,11 +285,6 @@
             ],
             "view/title": [
                 {
-                    "command": "workspaceManager.addToFavorites",
-                    "when": "view =~ /^workspaceManager\\.views/",
-                    "group": "navigation@1"
-                },
-                {
                     "command": "workspaceManager.saveWorkspace",
                     "when": "view =~ /^workspaceManager\\.views/",
                     "group": "navigation@2"
@@ -298,14 +302,24 @@
             ],
             "view/item/context": [
                 {
+                    "command": "workspaceManager.addToFavorites",
+                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspaceEntry\\b(?!.*\\b\\+favorite\\b)/",
+                    "group": "inline@1"
+                },
+                {
+                    "command": "workspaceManager.removeFromFavorites",
+                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspaceEntry\\b(?=.*\\b\\+favorite\\b)/",
+                    "group": "inline@1"
+                },
+                {
                     "command": "workspaceManager.switchWorkspaceInNewWindow",
                     "when": "view =~ /^workspaceManager\\.views/",
-                    "group": "inline@1"
+                    "group": "inline@2"
                 },
                 {
                     "command": "workspaceManager.deleteWorkspace",
                     "when": "view =~ /^workspaceManager\\.views/",
-                    "group": "inline@2"
+                    "group": "inline@3"
                 },
                 {
                     "command": "workspaceManager.switchWorkspace",
@@ -319,7 +333,12 @@
                 },
                 {
                     "command": "workspaceManager.addToFavorites",
-                    "when": "view =~ /^workspaceManager\\.views/",
+                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspaceEntry\\b(?!.*\\b\\+favorite\\b)/",
+                    "group": "2_workspace@1"
+                },
+                {
+                    "command": "workspaceManager.removeFromFavorites",
+                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspaceEntry\\b(?=.*\\b\\+favorite\\b)/",
                     "group": "2_workspace@1"
                 },
                 {

@@ -1,5 +1,5 @@
 import * as glob from 'fast-glob';
-import { readFile } from 'fs';
+import * as uuid from 'uuid';
 import { join } from 'path';
 import * as VError from 'verror';
 import * as vscode from 'vscode';
@@ -61,6 +61,7 @@ export async function getWorkspaceEntries(
 
             if (workspaceConfiguration) {
                 const rootPath = workspaceConfiguration.folders[0].path;
+                const workspaceId = uuid();
 
                 const isFavorite = !!getConfigurationValue<boolean>(
                     workspaceConfiguration.settings,
@@ -76,10 +77,11 @@ export async function getWorkspaceEntries(
                     .replace(/.code-workspace$/, '');
 
                 entries.push({
+                    id: workspaceId,
                     name,
                     path,
                     rootPath,
-                    isFavorite
+                    favorite: isFavorite
                 });
 
                 filesParsed++;

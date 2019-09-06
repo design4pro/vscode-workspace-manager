@@ -1,8 +1,10 @@
 export interface WorkspaceEntry {
+    id: string;
     name: string;
     path: string;
     rootPath: string;
-    isFavorite?: boolean;
+    favorite?: boolean;
+    active?: boolean;
 }
 
 export interface IWorkspaceCommandArgs {

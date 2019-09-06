@@ -8,6 +8,7 @@ export enum Commands {
     CloseWorkspace = 'workspaceManager.closeWorkspace',
     DeleteWorkspace = 'workspaceManager.deleteWorkspace',
     OpenWorkspaceSettings = 'workspaceManager.openWorkspaceSettings',
+    RemoveFromFavorites = 'workspaceManager.removeFromFavorites',
     SaveWorkspace = 'workspaceManager.saveWorkspace',
     SwitchWorkspace = 'workspaceManager.switchWorkspace',
     SwitchToWorkspace = 'workspaceManager.switchToWorkspace',

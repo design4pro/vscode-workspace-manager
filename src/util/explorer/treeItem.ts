@@ -6,13 +6,16 @@ import { Container } from '../../container';
 export class TreeItem extends vscode.TreeItem {
     public readonly label: string;
 
-    constructor(
-        public readonly workspaceEntry: WorkspaceEntry,
-        public readonly active?: boolean
-    ) {
+    constructor(public readonly workspaceEntry: WorkspaceEntry) {
         super(workspaceEntry.name, vscode.TreeItemCollapsibleState.None);
 
         this.label = workspaceEntry.name;
+    }
+
+    get id(): string {
+        return `workspaceManager:worksapceEntry(${this.workspaceEntry.id})${
+            this.favorite ? '+favorite' : ''
+        }`;
     }
 
     get description(): string {
@@ -20,7 +23,7 @@ export class TreeItem extends vscode.TreeItem {
     }
 
     get tooltip(): string {
-        return this.workspaceEntry.path;
+        return `${this.workspaceEntry.name}\n${this.workspaceEntry.path}`;
     }
 
     get command(): vscode.Command {
@@ -42,7 +45,7 @@ export class TreeItem extends vscode.TreeItem {
             contextValue += '+active';
         }
 
-        if (this.workspaceEntry.isFavorite) {
+        if (this.favorite) {
             contextValue += '+favorite';
         }
 
@@ -56,7 +59,7 @@ export class TreeItem extends vscode.TreeItem {
             iconSuffix += '-active';
         }
 
-        if (this.workspaceEntry.isFavorite) {
+        if (this.favorite) {
             iconSuffix += '-favorite';
         }
 
@@ -68,5 +71,13 @@ export class TreeItem extends vscode.TreeItem {
                 `resources/light/folder${iconSuffix}.svg`
             )
         };
+    }
+
+    get favorite(): boolean {
+        return !!this.workspaceEntry.favorite;
+    }
+
+    get active(): boolean {
+        return !!this.workspaceEntry.active;
     }
 }

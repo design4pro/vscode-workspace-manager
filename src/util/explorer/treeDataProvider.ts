@@ -1,14 +1,13 @@
 import { isEqual } from 'lodash';
 import * as vscode from 'vscode';
 import { configuration } from '../../configuration';
-import { Container } from '../../container';
 import { WorkspaceEntry } from '../../model/workspace';
 import { getWorkspaceByRootPath } from '../getWorkspace';
 import { getWorkspaceEntries } from '../getWorkspaceEntries';
 import { TreeItem } from './treeItem';
 
 export enum ResourceType {
-    WorkspaceEntry = 'workspaceManager.workspaceEntry'
+    WorkspaceEntry = 'workspaceManager:workspaceEntry'
 }
 
 class NoWorkspaces extends vscode.TreeItem {
@@ -54,7 +53,9 @@ export class TreeDataProvider implements vscode.TreeDataProvider<TreeItem> {
                             workspaceEntry,
                             activeWorkspace
                         );
-                        const item = new TreeItem(workspaceEntry, isActive);
+                        workspaceEntry.active = isActive;
+
+                        const item = new TreeItem(workspaceEntry);
 
                         if (isActive && removeWorkspaceFromList) {
                             return acc;

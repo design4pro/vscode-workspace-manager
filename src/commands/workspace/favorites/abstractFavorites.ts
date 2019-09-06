@@ -1,27 +1,22 @@
 import * as VError from 'verror';
 import { commands, window } from 'vscode';
-import { configuration } from '../../configuration';
-import { IWorkspaceCommandArgs } from '../../model/workspace';
-import { AbstractCommand, CommandContext } from '../abstractCommand';
-import { Command, Commands } from '../common';
+import { configuration } from '../../../configuration';
+import { IWorkspaceCommandArgs } from '../../../model/workspace';
+import { AbstractCommand, CommandContext } from '../../abstractCommand';
+import { Commands } from '../../common';
 
-@Command()
-export class AddToFavorites extends AbstractCommand {
+export abstract class AbstractFavorites extends AbstractCommand {
     protected trackSuccess = true;
-
-    constructor() {
-        super(Commands.AddToFavorites);
-    }
 
     async execute(context?: CommandContext, args: IWorkspaceCommandArgs = {}) {
         args = { ...args };
 
-        console.log(args);
-
         let workspaceFilePath;
+        let workspaceName;
 
         if (args.workspaceEntry) {
             workspaceFilePath = args.workspaceEntry.path;
+            workspaceName = args.workspaceEntry.name;
         }
 
         const isFavorite = await configuration.getWorkspace(
@@ -41,15 +36,17 @@ export class AddToFavorites extends AbstractCommand {
 
             if (isFavorite) {
                 window.showInformationMessage(
-                    'Workspace removed from favorite!'
+                    `Workspace '${workspaceName}' removed from favorites!`
                 );
             } else {
-                window.showInformationMessage('Workspace added to favorite!');
+                window.showInformationMessage(
+                    `Workspace '${workspaceName}' added to favorites!`
+                );
             }
         } catch (error) {
             error = new VError(
                 error,
-                'Could not add the workspace to favorite!'
+                'Could not add the workspace to favorites!'
             );
             window.showErrorMessage(error);
             throw error;
