@@ -108,30 +108,54 @@
                     "default": true,
                     "description": "Whether or not to open the workspaces in new window when you click the workspace name in the Status Bar"
                 },
-                "workspace-manager.view.showInActivityBar": {
+                "workspace-manager.views.showInActivityBar": {
                     "type": "boolean",
                     "default": true,
                     "description": "Whether or not to show the activity bar tree view container."
                 },
-                "workspace-manager.view.showInExplorer": {
+                "workspace-manager.views.showInExplorer": {
                     "type": "boolean",
                     "default": true,
                     "description": "Whether or not to show the list of workspaces in the explorer tree view container"
                 },
-                "workspace-manager.view.showWorkspaceRefreshIconInStatusBar": {
+                "workspace-manager.views.showWorkspaceRefreshIconInStatusBar": {
                     "type": "boolean",
                     "default": true,
                     "description": "Whether or not to show the workspaces refresh icon in the Status Bar"
                 },
-                "workspace-manager.view.showWorkspaceNameInStatusBar": {
+                "workspace-manager.views.showWorkspaceNameInStatusBar": {
                     "type": "boolean",
                     "default": true,
                     "description": "Whether or not to show the workspaces name in the Status Bar"
                 },
-                "workspace-manager.view.removeCurrentWorkspaceFromList": {
+                "workspace-manager.views.removeCurrentWorkspaceFromList": {
                     "type": "boolean",
                     "default": true,
                     "description": "Whether or not to hide the workspaces in the list of available workspaces"
+                },
+                "workspace-manager.views.workspaces.compact": {
+                    "type": "boolean",
+                    "default": false,
+                    "markdownDescription": "Specifies whether to show the _Workspaces_ view in a compact display density",
+                    "scope": "window"
+                },
+                "workspace-manager.views.workspaces.enabled": {
+                    "type": "boolean",
+                    "default": true,
+                    "markdownDescription": "Specifies whether to show the _Workspaces_ view",
+                    "scope": "window"
+                },
+                "workspace-manager.views.groups.compact": {
+                    "type": "boolean",
+                    "default": false,
+                    "markdownDescription": "Specifies whether to show the _Groups_ view in a compact display density",
+                    "scope": "window"
+                },
+                "workspace-manager.views.groups.enabled": {
+                    "type": "boolean",
+                    "default": true,
+                    "markdownDescription": "Specifies whether to show the _Groups_ view",
+                    "scope": "window"
                 },
                 "workspace-manager.advanced.codeExecutable": {
                     "type": "string",
@@ -251,16 +275,21 @@
         "views": {
             "workspaceManager": [
                 {
-                    "id": "workspaceManager.views.workspaceManager",
+                    "id": "workspaceManager.views.workspaces:workspaceManager",
                     "name": "Workspaces",
-                    "when": "workspace-manager:enabled && workspace-manager:viewInActivityBarShow"
+                    "when": "config.workspace-manager.views.workspaces.enabled"
+                },
+                {
+                    "id": "workspaceManager.views.groups:workspaceManager",
+                    "name": "Groups",
+                    "when": "config.workspace-manager.views.groups.enabled"
                 }
             ],
             "explorer": [
                 {
-                    "id": "workspaceManager.views.explorer",
+                    "id": "workspaceManager.views.workspaces:explorer",
                     "name": "Workspaces",
-                    "when": "workspace-manager:enabled && workspace-manager:viewInExplorerShow && !workspace-manager:empty"
+                    "when": "workspace-manager:enabled && config.workspace-manager.views.workspaces.enabled && !workspace-manager:empty"
                 }
             ]
         },
@@ -303,52 +332,52 @@
             "view/item/context": [
                 {
                     "command": "workspaceManager.addToFavorites",
-                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspaceEntry\\b(?!.*\\b\\+favorite\\b)/",
+                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace\\b(?!.*\\b\\+favorite\\b)/",
                     "group": "inline@1"
                 },
                 {
                     "command": "workspaceManager.removeFromFavorites",
-                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspaceEntry\\b(?=.*\\b\\+favorite\\b)/",
+                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace\\b(?=.*\\b\\+favorite\\b)/",
                     "group": "inline@1"
                 },
                 {
                     "command": "workspaceManager.switchWorkspaceInNewWindow",
-                    "when": "view =~ /^workspaceManager\\.views/",
+                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace/",
                     "group": "inline@2"
                 },
                 {
                     "command": "workspaceManager.deleteWorkspace",
-                    "when": "view =~ /^workspaceManager\\.views/",
+                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace/",
                     "group": "inline@3"
                 },
                 {
                     "command": "workspaceManager.switchWorkspace",
-                    "when": "view =~ /^workspaceManager\\.views/",
+                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace/",
                     "group": "navigation@1"
                 },
                 {
                     "command": "workspaceManager.switchWorkspaceInNewWindow",
-                    "when": "view =~ /^workspaceManager\\.views/",
+                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace/",
                     "group": "navigation@2"
                 },
                 {
                     "command": "workspaceManager.addToFavorites",
-                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspaceEntry\\b(?!.*\\b\\+favorite\\b)/",
+                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace\\b(?!.*\\b\\+favorite\\b)/",
                     "group": "2_workspace@1"
                 },
                 {
                     "command": "workspaceManager.removeFromFavorites",
-                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspaceEntry\\b(?=.*\\b\\+favorite\\b)/",
+                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace\\b(?=.*\\b\\+favorite\\b)/",
                     "group": "2_workspace@1"
                 },
                 {
                     "command": "workspaceManager.openWorkspaceSettings",
-                    "when": "view =~ /^workspaceManager\\.views/",
+                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace/",
                     "group": "2_workspace@2"
                 },
                 {
                     "command": "workspaceManager.refreshTreeData",
-                    "when": "view =~ /^workspaceManager\\.views/",
+                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace/",
                     "group": "z_commands@1"
                 }
             ]

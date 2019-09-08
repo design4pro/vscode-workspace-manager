@@ -5,6 +5,7 @@ import { configuration, Configuration } from './configuration';
 import {
     CommandContext,
     extensionOutputChannelName,
+    GlyphChars,
     setCommandContext
 } from './constants';
 import { Container } from './container';
@@ -12,9 +13,9 @@ import { Environment } from './environment';
 import { Logger } from './logger';
 import { IConfig, IOutputLevel } from './model/config';
 import { state } from './state';
+import { Strings } from './system';
 import * as telemetry from './telemetry';
 import { getExtension } from './util/getExtension';
-import { registerViews } from './views';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -49,7 +50,6 @@ export async function activate(
         Container.initialize(context, cfg, workspaceManagerVersion);
 
         registerCommands(context);
-        registerViews(context);
     } catch (e) {
         Logger.error(e, 'Error initializing atlascode!');
     }
@@ -63,7 +63,9 @@ export async function activate(
     );
 
     Logger.log(
-        `${extensionOutputChannelName} (v${workspaceManagerVersion}) activated`
+        `${extensionOutputChannelName} (v${workspaceManagerVersion}) activated ${
+            GlyphChars.Dot
+        } ${Strings.getDurationMilliseconds(start)} ms`
     );
 
     await cacheWorkspace();

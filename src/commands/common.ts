@@ -2,7 +2,6 @@ import * as vscode from 'vscode';
 import { AbstractCommand } from './abstractCommand';
 
 export enum Commands {
-    RefreshTreeData = 'workspaceManager.refreshTreeData',
     AddToFavorites = 'workspaceManager.addToFavorites',
     CacheWorkspace = 'workspaceManager.cacheWorkspace',
     CloseWorkspace = 'workspaceManager.closeWorkspace',

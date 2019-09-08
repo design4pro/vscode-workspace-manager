@@ -283,6 +283,56 @@ export class Logger {
         }
     }
 
+    static logWithDebugParams(message: string, ...params: any[]): void;
+    static logWithDebugParams(
+        context: LogCorrelationContext | undefined,
+        message: string,
+        ...params: any[]
+    ): void;
+    static logWithDebugParams(
+        contextOrMessage: LogCorrelationContext | string | undefined,
+        ...params: any[]
+    ): void {
+        if (
+            this.level !== IOutputLevel.Verbose &&
+            this.level !== IOutputLevel.Debug &&
+            !Container.isDebugging
+        ) {
+            return;
+        }
+
+        let message;
+        if (typeof contextOrMessage === 'string') {
+            message = contextOrMessage;
+        } else {
+            message = params.shift();
+
+            if (contextOrMessage !== undefined) {
+                message = `${contextOrMessage.prefix} ${message || emptyStr}`;
+            }
+        }
+
+        if (Container.isDebugging) {
+            console.log(
+                this.timestamp,
+                this.prefix,
+                message || emptyStr,
+                ...params
+            );
+        }
+
+        if (
+            this.output !== undefined &&
+            (this.level === IOutputLevel.Verbose ||
+                this.level === IOutputLevel.Debug)
+        ) {
+            this.output.appendLine(
+                `${this.timestamp} ${message ||
+                    emptyStr}${this.toLoggableParams(true, params)}`
+            );
+        }
+    }
+
     static warn(message: string, ...params: any[]): void;
     static warn(
         context: LogCorrelationContext | undefined,
@@ -347,6 +397,29 @@ export class Logger {
         } catch {
             return '<error>';
         }
+    }
+
+    static toLoggableName(instance: Function | object) {
+        let name;
+        if (typeof instance === 'function') {
+            if (
+                instance.prototype == null ||
+                instance.prototype.constructor == null
+            ) {
+                return instance.name;
+            }
+
+            name = instance.prototype.constructor.name;
+        } else {
+            name =
+                instance.constructor != null
+                    ? instance.constructor.name
+                    : emptyStr;
+        }
+
+        // Strip webpack module name (since I never name classes with an _)
+        const index = name.indexOf('_');
+        return index === -1 ? name : name.substr(index + 1);
     }
 
     private static toLoggableParams(debugOnly: boolean, params: any[]) {

@@ -1,12 +1,13 @@
 import * as vscode from 'vscode';
-import { configuration, ConfigurationWillChangeEvent } from './configuration';
-import { IConfig } from './model/config';
-import { CommandContext, setCommandContext } from './constants';
 import { cacheWorkspace } from './cache/cacheWorkspace';
-import { Commands } from './commands/common';
-import { ViewsCommands } from './views/common';
-import { statusBarWorkspace } from './util/statusBar/workspace';
+import { configuration, ConfigurationWillChangeEvent } from './configuration';
+import { CommandContext, setCommandContext } from './constants';
+import { IConfig } from './model/config';
 import { statusBarCache } from './util/statusBar/cache';
+import { statusBarWorkspace } from './util/statusBar/workspace';
+import { GroupsView } from './views/groupsView';
+import { ViewCommands } from './views/viewCommands';
+import { WorkspacesView } from './views/workspacesView';
 
 const isDebuggingRegex = /^--(debug|inspect)\b(-brk\b|(?!-))=?/;
 
@@ -19,6 +20,11 @@ export class Container {
         this._context = context;
         this._config = config;
         this._version = version;
+
+        context.subscriptions.push(
+            (this._workspacesView = new WorkspacesView())
+        );
+        context.subscriptions.push((this._groupsView = new GroupsView()));
 
         context.subscriptions.push(
             configuration.onWillChange(this.onConfigurationChanging, this)
@@ -40,31 +46,31 @@ export class Container {
         if (
             configuration.changed(
                 e.change,
-                configuration.name('view')('showInActivityBar').value
+                configuration.name('views')('showInActivityBar').value
             )
         ) {
             setCommandContext(
                 CommandContext.ViewInActivityBarShow,
-                Container.config.view.showInActivityBar
+                Container.config.views.showInActivityBar
             );
         }
 
         if (
             configuration.changed(
                 e.change,
-                configuration.name('view')('showInExplorer').value
+                configuration.name('views')('showInExplorer').value
             )
         ) {
             setCommandContext(
                 CommandContext.ViewInExplorerShow,
-                Container.config.view.showInExplorer
+                Container.config.views.showInExplorer
             );
         }
 
         if (
             configuration.changed(
                 e.change,
-                configuration.name('view')(
+                configuration.name('views')(
                     'showWorkspaceRefreshIconInStatusBar'
                 ).value
             )
@@ -75,7 +81,8 @@ export class Container {
         if (
             configuration.changed(
                 e.change,
-                configuration.name('view')('showWorkspaceNameInStatusBar').value
+                configuration.name('views')('showWorkspaceNameInStatusBar')
+                    .value
             )
         ) {
             statusBarWorkspace.toggle();
@@ -127,5 +134,35 @@ export class Container {
 
     static resetConfig() {
         this._config = undefined;
+    }
+
+    private static _workspacesView: WorkspacesView | undefined;
+    static get workspacesView(): WorkspacesView {
+        if (this._workspacesView === undefined) {
+            this._context.subscriptions.push(
+                (this._workspacesView = new WorkspacesView())
+            );
+        }
+
+        return this._workspacesView;
+    }
+
+    private static _groupsView: GroupsView | undefined;
+    static get groupsView(): GroupsView {
+        if (this._groupsView === undefined) {
+            this._context.subscriptions.push(
+                (this._groupsView = new GroupsView())
+            );
+        }
+
+        return this._groupsView;
+    }
+
+    private static _viewCommands: ViewCommands | undefined;
+    static get viewCommands() {
+        if (this._viewCommands === undefined) {
+            this._viewCommands = new ViewCommands();
+        }
+        return this._viewCommands;
     }
 }

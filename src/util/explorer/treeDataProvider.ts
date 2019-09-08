@@ -38,26 +38,26 @@ export class TreeDataProvider implements vscode.TreeDataProvider<TreeItem> {
         if (!this.workspaceTree) {
             const workspaceEntries = await getWorkspaceEntries();
             const removeWorkspaceFromList: boolean = configuration.get(
-                configuration.name('view')('removeCurrentWorkspaceFromList')
+                configuration.name('views')('removeCurrentWorkspaceFromList')
                     .value,
                 null,
                 true
             );
 
             if (workspaceEntries && workspaceEntries.length) {
-                const activeWorkspace = await getWorkspaceByRootPath();
+                const currentWorkspace = await getWorkspaceByRootPath();
 
                 this.workspaceTree = workspaceEntries.reduce(
                     (acc: TreeItem[], workspaceEntry: WorkspaceEntry) => {
-                        const isActive = isEqual(
+                        const isCurrent = isEqual(
                             workspaceEntry,
-                            activeWorkspace
+                            currentWorkspace
                         );
-                        workspaceEntry.active = isActive;
+                        workspaceEntry.current = isCurrent;
 
                         const item = new TreeItem(workspaceEntry);
 
-                        if (isActive && removeWorkspaceFromList) {
+                        if (isCurrent && removeWorkspaceFromList) {
                             return acc;
                         }
 

@@ -9,7 +9,7 @@ export enum IOutputLevel {
 export interface IConfig {
     includeGlobPattern: string | string[];
     openInNewWindowWhenClickingInStatusBar: boolean;
-    view: IViewConfig;
+    views: IViewConfig;
     advanced: IAdvancedConfig;
 }
 
@@ -19,6 +19,8 @@ export interface IViewConfig {
     showWorkspaceRefreshIconInStatusBar: boolean;
     showWorkspaceNameInStatusBar: boolean;
     removeCurrentWorkspaceFromList: boolean;
+    groups: ITreeViewConfig;
+    workspaces: ITreeViewConfig;
 }
 
 export interface IAdvancedConfig {
@@ -30,4 +32,9 @@ export interface IAdvancedConfig {
     telemetry: {
         enabled: boolean;
     };
+}
+
+export interface ITreeViewConfig {
+    compact: boolean;
+    enabled: boolean;
 }
