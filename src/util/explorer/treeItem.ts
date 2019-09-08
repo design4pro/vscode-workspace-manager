@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
+import { Container } from '../../container';
 import { IWorkspaceCommandArgs, WorkspaceEntry } from '../../model/workspace';
 import { ResourceType } from './treeDataProvider';
-import { Container } from '../../container';
 
 export class TreeItem extends vscode.TreeItem {
     public readonly label: string;
@@ -41,8 +41,8 @@ export class TreeItem extends vscode.TreeItem {
     get contextValue() {
         let contextValue: string = ResourceType.WorkspaceEntry;
 
-        if (this.active) {
-            contextValue += '+active';
+        if (this.current) {
+            contextValue += '+current';
         }
 
         if (this.favorite) {
@@ -55,8 +55,8 @@ export class TreeItem extends vscode.TreeItem {
     get iconPath() {
         let iconSuffix = '';
 
-        if (this.active) {
-            iconSuffix += '-active';
+        if (this.current) {
+            iconSuffix += '-current';
         }
 
         if (this.favorite) {
@@ -77,7 +77,7 @@ export class TreeItem extends vscode.TreeItem {
         return !!this.workspaceEntry.favorite;
     }
 
-    get active(): boolean {
-        return !!this.workspaceEntry.active;
+    get current(): boolean {
+        return !!this.workspaceEntry.current;
     }
 }

@@ -1,16 +1,21 @@
 import * as glob from 'fast-glob';
-import * as uuid from 'uuid';
 import { join } from 'path';
+import * as uuid from 'uuid';
 import * as VError from 'verror';
 import * as vscode from 'vscode';
 import { Cache } from '../cache/cache';
 import { Commands } from '../commands/common';
 import { configuration } from '../configuration';
-import { CommandContext, extensionId, setCommandContext } from '../constants';
+import {
+    CommandContext,
+    extensionId,
+    setCommandContext,
+    extensionOutputChannelName
+} from '../constants';
 import { Logger } from '../logger';
 import { WorkspaceEntry } from '../model/workspace';
 import { getWorkspaceEntryDirectories } from './getWorkspaceEntryDirectories';
-import { getConfigurationValue, parse } from './json';
+import { getConfigurationValue } from './json';
 import { statusBarCache } from './statusBar/cache';
 
 export async function getWorkspaceEntries(
@@ -69,6 +74,12 @@ export async function getWorkspaceEntries(
                     false
                 );
 
+                const group = getConfigurationValue<string | undefined>(
+                    workspaceConfiguration.settings,
+                    `${extensionId}.group`,
+                    undefined
+                );
+
                 const name = (<any>path)
                     .split('\\')
                     .pop()
@@ -81,6 +92,8 @@ export async function getWorkspaceEntries(
                     name,
                     path,
                     rootPath,
+                    group,
+                    current: false,
                     favorite: isFavorite
                 });
 
@@ -126,8 +139,6 @@ export async function getWorkspaceEntries(
 
             setCommandContext(CommandContext.Empty, !!!entries.length);
 
-            vscode.commands.executeCommand(Commands.RefreshTreeData);
-
             return entries;
         };
 
@@ -141,7 +152,10 @@ export async function getWorkspaceEntries(
                 addPath(path);
             })
             .on('error', err => {
-                err = new VError(err, 'Reading stream error');
+                err = new VError(
+                    err,
+                    '${extensionOutputChannelName}\nReading stream error'
+                );
                 vscode.window.showInformationMessage(err);
                 throw err;
             })
@@ -149,7 +163,7 @@ export async function getWorkspaceEntries(
             .on('end', onEnd)
             .on('close', () => {
                 Logger.info(
-                    'Stream has been destroyed and file has been closed'
+                    `Stream has been destroyed and file has been closed`
                 );
             });
 
@@ -157,7 +171,7 @@ export async function getWorkspaceEntries(
             stream.pause();
             Logger.info('Reading stream has been poused after 10s.');
             vscode.window.showInformationMessage(
-                'Reading stream has been poused after 10s.'
+                `${extensionOutputChannelName}\nReading stream has been poused after 10s.`
             );
         }, 10000);
     } catch (err) {
