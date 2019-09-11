@@ -3,9 +3,9 @@ import * as VError from 'verror';
 import * as vscode from 'vscode';
 import { extensionId } from './constants';
 import { Container } from './container';
-import { IConfig } from './model/config';
+import { IConfig } from './config';
 import { Functions } from './system/function';
-import { getWorkspaceByRootPath } from './util/getWorkspace';
+import { getWorkspaceByRootPath } from './util/getWorkspaceByRootPath';
 import { addToValueTree, getConfigurationValue, parse } from './util/json';
 
 const emptyConfig: IConfig = new Proxy<IConfig>({} as IConfig, {
@@ -280,7 +280,7 @@ export class Configuration extends vscode.Disposable {
                 return;
             }
 
-            workspaceFilePath = activeWorkspace.path;
+            workspaceFilePath = activeWorkspace.getPath();
         }
 
         try {
@@ -313,7 +313,7 @@ export class Configuration extends vscode.Disposable {
                 return;
             }
 
-            workspaceFilePath = activeWorkspace.path;
+            workspaceFilePath = activeWorkspace.getPath();
         }
 
         try {

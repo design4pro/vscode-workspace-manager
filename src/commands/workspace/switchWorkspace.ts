@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { IWorkspaceCommandArgs, WorkspaceEntry } from '../../model/workspace';
-import { getWorkspaceEntries } from '../../util/getWorkspaceEntries';
+import { IWorkspaceCommandArgs, Workspace } from '../../model/workspace';
+import { getWorkspaces } from '../../util/getWorkspaces';
 import { AbstractCommand, CommandContext } from '../abstractCommand';
 import { Command, Commands } from '../common';
 
@@ -13,17 +13,17 @@ export class SwitchWorkspaceCommand extends AbstractCommand {
     async execute(context?: CommandContext, args: IWorkspaceCommandArgs = {}) {
         args = { ...args };
 
-        const workspaceEntries = await getWorkspaceEntries();
+        const workspaces = await getWorkspaces();
 
-        if (!workspaceEntries || !workspaceEntries.length) {
+        if (!workspaces || !workspaces.length) {
             vscode.window.showInformationMessage('No workspaces entries found');
 
             return;
         }
 
-        if (args.workspaceEntry && args.workspaceEntry.path) {
-            const entry: WorkspaceEntry | undefined = workspaceEntries.find(
-                entry => entry.path === args.workspaceEntry!.path
+        if (args.workspace && args.workspace.getPath()) {
+            const entry: Workspace | undefined = workspaces.find(
+                entry => entry.getPath() === args.workspace!.getPath()
             );
 
             if (!entry) {
@@ -31,7 +31,7 @@ export class SwitchWorkspaceCommand extends AbstractCommand {
             }
 
             const commandArgs: IWorkspaceCommandArgs = {
-                workspaceEntry: entry,
+                workspace: entry,
                 inNewWindow: args.inNewWindow
             };
 
@@ -40,11 +40,11 @@ export class SwitchWorkspaceCommand extends AbstractCommand {
                 commandArgs
             );
         } else {
-            const workspaceItems = workspaceEntries.map(
+            const workspaceItems = workspaces.map(
                 entry =>
                     <vscode.QuickPickItem>{
-                        label: entry.name,
-                        description: entry.path
+                        label: entry.getName(),
+                        description: entry.getPath()
                     }
             );
 
@@ -62,10 +62,8 @@ export class SwitchWorkspaceCommand extends AbstractCommand {
                         return;
                     }
 
-                    const entry:
-                        | WorkspaceEntry
-                        | undefined = workspaceEntries.find(
-                        entry => entry.path === workspaceItem.description
+                    const entry: Workspace | undefined = workspaces.find(
+                        entry => entry.getPath() === workspaceItem.description
                     );
 
                     if (!entry) {
@@ -73,7 +71,7 @@ export class SwitchWorkspaceCommand extends AbstractCommand {
                     }
 
                     const commandArgs: IWorkspaceCommandArgs = {
-                        workspaceEntry: entry,
+                        workspace: entry,
                         inNewWindow: args.inNewWindow
                     };
 

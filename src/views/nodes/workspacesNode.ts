@@ -1,16 +1,16 @@
 import { isEqual } from 'lodash';
 import { TreeItem, TreeItemCollapsibleState } from 'vscode';
 import { configuration } from '../../configuration';
-import { WorkspaceEntry } from '../../model/workspace';
-import { getWorkspaceByRootPath } from '../../util/getWorkspace';
-import { getWorkspaceEntries } from '../../util/getWorkspaceEntries';
+import { Workspace } from '../../model/workspace';
+import { getWorkspaceByRootPath } from '../../util/getWorkspaceByRootPath';
+import { getWorkspaces } from '../../util/getWorkspaces';
 import { WorkspacesView } from '../workspacesView';
 import { MessageNode } from './common';
 import { ResourceType, ViewNode } from './viewNode';
 import { WorkspaceNode } from './workspaceNode';
 
 export class WorkspacesNode extends ViewNode<WorkspacesView> {
-    private _children: (WorkspaceNode | MessageNode)[] | undefined;
+    private _children: (WorkspaceNode | MessageNode)[] = [];
 
     constructor(view: WorkspacesView) {
         super(undefined, view);
@@ -18,9 +18,9 @@ export class WorkspacesNode extends ViewNode<WorkspacesView> {
 
     async getChildren(): Promise<ViewNode[]> {
         if (this._children === undefined) {
-            const workspaceEntries = await this.getWorkspaces();
+            const workspaces = await this.getWorkspaces();
 
-            this._children = workspaceEntries;
+            this._children = workspaces;
         }
 
         return this._children;
@@ -36,13 +36,13 @@ export class WorkspacesNode extends ViewNode<WorkspacesView> {
     async refresh(reset: boolean = false) {
         if (this._children === undefined) return;
 
-        const workspaceEntries = await this.getWorkspaces();
+        const workspaces = await this.getWorkspaces();
 
-        this._children = workspaceEntries;
+        this._children = workspaces;
     }
 
     private async getWorkspaces() {
-        const workspaceEntries = await getWorkspaceEntries();
+        const workspaces = await getWorkspaces();
 
         const removeWorkspaceFromList: boolean = configuration.get(
             configuration.name('views')('removeCurrentWorkspaceFromList').value,
@@ -50,7 +50,7 @@ export class WorkspacesNode extends ViewNode<WorkspacesView> {
             true
         );
 
-        if (!workspaceEntries || workspaceEntries.length === 0) {
+        if (!workspaces || workspaces.length === 0) {
             return [
                 new MessageNode(
                     this.view,
@@ -62,16 +62,16 @@ export class WorkspacesNode extends ViewNode<WorkspacesView> {
 
         const currentWorkspace = await getWorkspaceByRootPath();
 
-        return workspaceEntries.reduce(
-            (acc: WorkspaceNode[], workspaceEntry: WorkspaceEntry) => {
-                const isCurrent = isEqual(workspaceEntry, currentWorkspace);
-                workspaceEntry.current = isCurrent;
+        return workspaces.reduce(
+            (acc: WorkspaceNode[], workspace: Workspace) => {
+                const isCurrent = isEqual(workspace, currentWorkspace);
+                // workspace.current = isCurrent;
 
                 const item = new WorkspaceNode(
-                    workspaceEntry.group,
+                    workspace.group,
                     this.view,
                     this,
-                    workspaceEntry
+                    workspace
                 );
 
                 if (isCurrent && removeWorkspaceFromList) {

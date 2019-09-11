@@ -4,38 +4,38 @@ import * as uuid from 'uuid';
 import * as VError from 'verror';
 import * as vscode from 'vscode';
 import { Cache } from '../cache/cache';
-import { Commands } from '../commands/common';
 import { configuration } from '../configuration';
 import {
     CommandContext,
     extensionId,
-    setCommandContext,
-    extensionOutputChannelName
+    extensionOutputChannelName,
+    setCommandContext
 } from '../constants';
 import { Logger } from '../logger';
-import { WorkspaceEntry } from '../model/workspace';
-import { getWorkspaceEntryDirectories } from './getWorkspaceEntryDirectories';
+import { Workspace, WorkspaceEntry } from '../model/workspace';
+import { getWorkspacesDirectories } from './getWorkspacesDirectories';
 import { getConfigurationValue } from './json';
 import { statusBarCache } from './statusBar/cache';
 
-export async function getWorkspaceEntries(
+export async function getWorkspaces(
     fromCache: boolean = true
-): Promise<WorkspaceEntry[] | undefined> {
+): Promise<Workspace[] | undefined> {
     const cache = new Cache(extensionId);
     const cacheKey = 'workspace-entries';
-    const cachedEntries: WorkspaceEntry[] | undefined = cache.get<
-        WorkspaceEntry[]
-    >(cacheKey, []);
+    const cachedWorkspaces: Workspace[] | undefined = cache.get<Workspace[]>(
+        cacheKey,
+        []
+    );
 
     if (
         fromCache &&
-        cachedEntries &&
-        cachedEntries.length &&
+        cachedWorkspaces &&
+        cachedWorkspaces.length &&
         !cache.isExpired(cacheKey)
     ) {
         setCommandContext(CommandContext.Empty, false);
 
-        return await cachedEntries;
+        return await cachedWorkspaces;
     }
 
     const excludeGlobPattern: string[] = configuration.get<string[]>(
@@ -48,13 +48,13 @@ export async function getWorkspaceEntries(
         null,
         5
     );
-    const directoryPaths = getWorkspaceEntryDirectories();
+    const directoryPaths = getWorkspacesDirectories();
 
     const directories = directoryPaths
         .map(dir => join(dir, '**/*.code-workspace'))
         .filter((path, index, arr) => arr.indexOf(path) == index);
 
-    let entries: WorkspaceEntry[] = [];
+    let entries: Workspace[] = [];
     let filesParsed: number = 0;
     let timeoutId: NodeJS.Timer;
 
@@ -87,7 +87,7 @@ export async function getWorkspaceEntries(
                     .pop()
                     .replace(/.code-workspace$/, '');
 
-                entries.push({
+                const workspaceEntry: WorkspaceEntry = {
                     id: workspaceId,
                     name,
                     path,
@@ -95,7 +95,11 @@ export async function getWorkspaceEntries(
                     group,
                     current: false,
                     favorite: isFavorite
-                });
+                };
+
+                const workspace = new Workspace(workspaceEntry);
+
+                entries.push(workspace);
 
                 filesParsed++;
 
@@ -124,7 +128,7 @@ export async function getWorkspaceEntries(
                 )}] has been found [${entries.length}]`
             );
 
-            entries.sort((a, b) => a.name.localeCompare(b.name));
+            entries.sort((a, b) => a.getName().localeCompare(b.getName()));
 
             cache.update(cacheKey, entries);
 

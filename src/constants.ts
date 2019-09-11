@@ -70,3 +70,11 @@ export enum GlyphChars {
     SquareWithTopShadow = '\u2750',
     ZeroWidthSpace = '\u200b'
 }
+
+export interface FavoriteWorkspaces {
+    [id: string]: boolean;
+}
+
+export enum WorkspaceState {
+    FavoriteWorkspaces = 'workspace-manager:favorite:workspaces'
+}

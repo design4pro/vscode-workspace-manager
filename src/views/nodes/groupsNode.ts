@@ -1,5 +1,5 @@
 import { TreeItem, TreeItemCollapsibleState } from 'vscode';
-import { getWorkspaceEntries } from '../../util/getWorkspaceEntries';
+import { getWorkspaces } from '../../util/getWorkspaces';
 import { GroupsView } from '../groupsView';
 import { MessageNode } from './common';
 import { GroupNode } from './groupNode';
@@ -14,11 +14,9 @@ export class GroupsNode extends ViewNode<GroupsView> {
 
     async getChildren(): Promise<ViewNode[]> {
         if (this._children === undefined) {
-            const workspaceEntries = await getWorkspaceEntries();
+            const workspaces = await getWorkspaces();
 
-            console.log(workspaceEntries);
-
-            if (!workspaceEntries || workspaceEntries.length === 0) {
+            if (!workspaces || workspaces.length === 0) {
                 return [
                     new MessageNode(
                         this.view,
@@ -30,14 +28,14 @@ export class GroupsNode extends ViewNode<GroupsView> {
 
             const groups: string[] = [];
 
-            workspaceEntries.map(r => {
+            workspaces.map(r => {
                 if (r.group && !groups.includes(r.group)) {
                     groups.push(r.group);
                 }
             });
 
             this._children = groups.map(
-                r => new GroupNode(r, this.view, this, workspaceEntries)
+                r => new GroupNode(r, this.view, this, workspaces)
             );
 
             if (this._children.length === 0) {
@@ -67,17 +65,17 @@ export class GroupsNode extends ViewNode<GroupsView> {
     async refresh(reset: boolean = false) {
         if (this._children === undefined) return;
 
-        const workspaceEntries = await getWorkspaceEntries();
+        const workspaces = await getWorkspaces();
 
         if (
-            !workspaceEntries ||
-            (workspaceEntries.length === 0 &&
+            !workspaces ||
+            (workspaces.length === 0 &&
                 (this._children === undefined || this._children.length === 0))
         ) {
             return;
         }
 
-        if (workspaceEntries.length === 0) {
+        if (workspaces.length === 0) {
             this._children = [
                 new MessageNode(
                     this.view,
@@ -90,14 +88,14 @@ export class GroupsNode extends ViewNode<GroupsView> {
 
         const groups: string[] = [];
 
-        workspaceEntries.map(r => {
+        workspaces.map(r => {
             if (r.group && !groups.includes(r.group)) {
                 groups.push(r.group);
             }
         });
 
         this._children = groups.map(
-            r => new GroupNode(r, this.view, this, workspaceEntries)
+            r => new GroupNode(r, this.view, this, workspaces)
         );
     }
 }

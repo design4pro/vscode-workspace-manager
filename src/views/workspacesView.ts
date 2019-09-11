@@ -2,7 +2,7 @@ import { commands, ConfigurationChangeEvent } from 'vscode';
 import { configuration } from '../configuration';
 import { CommandContext, setCommandContext } from '../constants';
 import { Container } from '../container';
-import { ITreeViewConfig, IViewConfig } from '../model/config';
+import { ITreeViewConfig, IViewConfig } from '../config';
 import { WorkspacesNode } from './nodes/workspacesNode';
 import { ViewBase } from './viewBase';
 

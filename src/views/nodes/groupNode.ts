@@ -1,12 +1,11 @@
 import * as uuid from 'uuid';
 import { TreeItem, TreeItemCollapsibleState } from 'vscode';
 import { Container } from '../../container';
-import { WorkspaceEntry } from '../../model/workspace';
+import { Workspace } from '../../model/workspace';
 import { Debug } from '../../system';
-import { GroupsView } from '../groupsView';
+import { View } from '../viewBase';
 import { ResourceType, ViewNode } from './viewNode';
 import { WorkspaceNode } from './workspaceNode';
-import { View } from '../viewBase';
 
 export class GroupNode extends ViewNode<View> {
     private _children: ViewNode[] | undefined;
@@ -15,7 +14,7 @@ export class GroupNode extends ViewNode<View> {
         public readonly group: string | undefined,
         view: View,
         parent: ViewNode,
-        public readonly workspaceEntries: WorkspaceEntry[]
+        public readonly workspaces: Workspace[]
     ) {
         super(group, view, parent);
     }
@@ -30,7 +29,7 @@ export class GroupNode extends ViewNode<View> {
         if (this._children === undefined) {
             const children: WorkspaceNode[] = [];
 
-            this.workspaceEntries.map(r => {
+            this.workspaces.map(r => {
                 if (this.group && this.group == r.group) {
                     children.push(
                         new WorkspaceNode(this.group, this.view, this, r)

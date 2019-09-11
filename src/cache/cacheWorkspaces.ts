@@ -1,16 +1,16 @@
 import { Logger } from '../logger';
-import { getWorkspaceEntries } from '../util/getWorkspaceEntries';
+import { getWorkspaces } from '../util/getWorkspaces';
 import { statusBarCache } from '../util/statusBar/cache';
 import { statusBarWorkspace } from '../util/statusBar/workspace';
 
-export class CacheWorkspaceEntries {
+export class CacheWorkspaces {
     static caching: boolean = false;
 
     static async execute(): Promise<void> {
         try {
-            const workspaceEntries = await getWorkspaceEntries(false);
+            const workspaces = await getWorkspaces(false);
 
-            if (!workspaceEntries || workspaceEntries.length === 0) {
+            if (!workspaces || workspaces.length === 0) {
                 Logger.log('No workspaces entries found without cache');
                 statusBarCache.statusBarItem.hide();
                 return;

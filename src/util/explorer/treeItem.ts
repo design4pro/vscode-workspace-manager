@@ -1,19 +1,23 @@
 import * as vscode from 'vscode';
 import { Container } from '../../container';
-import { IWorkspaceCommandArgs, WorkspaceEntry } from '../../model/workspace';
+import {
+    IWorkspaceCommandArgs,
+    WorkspaceEntry,
+    Workspace
+} from '../../model/workspace';
 import { ResourceType } from './treeDataProvider';
 
 export class TreeItem extends vscode.TreeItem {
     public readonly label: string;
 
-    constructor(public readonly workspaceEntry: WorkspaceEntry) {
-        super(workspaceEntry.name, vscode.TreeItemCollapsibleState.None);
+    constructor(public readonly workspace: Workspace) {
+        super(workspace.getName(), vscode.TreeItemCollapsibleState.None);
 
-        this.label = workspaceEntry.name;
+        this.label = workspace.getName();
     }
 
     get id(): string {
-        return `workspaceManager:worksapceEntry(${this.workspaceEntry.id})${
+        return `workspaceManager:worksapceEntry(${this.workspace.id})${
             this.favorite ? '+favorite' : ''
         }`;
     }
@@ -23,23 +27,23 @@ export class TreeItem extends vscode.TreeItem {
     }
 
     get tooltip(): string {
-        return `${this.workspaceEntry.name}\n${this.workspaceEntry.path}`;
+        return `${this.workspace.getName()}\n${this.workspace.getPath()}`;
     }
 
     get command(): vscode.Command {
         const args: IWorkspaceCommandArgs = {
-            workspaceEntry: this.workspaceEntry
+            workspace: this.workspace
         };
 
         return {
-            title: `Switch To Workspace "${this.workspaceEntry.name}"`,
+            title: `Switch To Workspace "${this.workspace.getName()}"`,
             command: 'workspaceManager.switchToWorkspace',
             arguments: [args]
         };
     }
 
     get contextValue() {
-        let contextValue: string = ResourceType.WorkspaceEntry;
+        let contextValue: string = ResourceType.Workspace;
 
         if (this.current) {
             contextValue += '+current';
@@ -74,10 +78,10 @@ export class TreeItem extends vscode.TreeItem {
     }
 
     get favorite(): boolean {
-        return !!this.workspaceEntry.favorite;
+        return !!this.workspace.favorite;
     }
 
     get current(): boolean {
-        return !!this.workspaceEntry.current;
+        return false; //!!this.workspace.current;
     }
 }

@@ -1,7 +1,7 @@
 import { debounce } from 'lodash';
 import * as vscode from 'vscode';
 import { configuration } from '../../configuration';
-import { getWorkspaceByRootPath } from '../getWorkspace';
+import { getWorkspaceByRootPath } from '../getWorkspaceByRootPath';
 import { Commands } from './../../commands/common';
 
 export class StatusBarWorkspace {
@@ -34,8 +34,8 @@ export class StatusBarWorkspace {
         }
 
         if (workspace) {
-            this.statusBarItem.text = workspace.name;
-            this.statusBarItem.tooltip = workspace.path;
+            this.statusBarItem.text = workspace.getName();
+            this.statusBarItem.tooltip = workspace.getPath();
         } else {
             this.statusBarItem.text = 'No workspace opened';
         }
@@ -63,7 +63,7 @@ export class StatusBarWorkspace {
 
     get canShow(): boolean {
         return configuration.get(
-            configuration.name('view')('showWorkspaceNameInStatusBar').value,
+            configuration.name('views')('showWorkspaceNameInStatusBar').value,
             null,
             true
         );

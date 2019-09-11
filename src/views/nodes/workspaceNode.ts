@@ -1,9 +1,10 @@
 import * as uuid from 'uuid';
-import { commands, TreeItem, TreeItemCollapsibleState, Command } from 'vscode';
-import { Commands } from '../../commands/common';
+import { Command, commands, TreeItem, TreeItemCollapsibleState } from 'vscode';
 import { Container } from '../../container';
-import { WorkspaceEntry, IWorkspaceCommandArgs } from '../../model/workspace';
+import { IWorkspaceCommandArgs, Workspace } from '../../model/workspace';
+import { Debug, Gate } from '../../system';
 import { View } from '../viewBase';
+import { Commands } from './../../commands/common';
 import { PageableViewNode, ResourceType, ViewNode } from './viewNode';
 
 export class WorkspaceNode extends ViewNode<View> implements PageableViewNode {
@@ -17,7 +18,7 @@ export class WorkspaceNode extends ViewNode<View> implements PageableViewNode {
         public readonly group: string | undefined,
         view: View,
         parent: ViewNode,
-        public readonly workspace: WorkspaceEntry,
+        public readonly workspace: Workspace,
         // Specifies that the node is shown as a root under the repository node
         private readonly _root: boolean = false
     ) {
@@ -29,23 +30,23 @@ export class WorkspaceNode extends ViewNode<View> implements PageableViewNode {
 
         return `workspaceManager:group(${this.group || groupId})${
             this._root ? ':root' : ''
-        }:workspace(${this.workspace.name})${
-            this.workspace.current ? '+current' : ''
-        }${this.workspace.favorite ? '+favorite' : ''}`;
+        }:workspace(${this.label})${this.current ? '+current' : ''}${
+            this.workspace.favorite ? '+favorite' : ''
+        }`;
     }
 
     get current(): boolean {
-        return !!this.workspace.current;
+        return false; //!!this.workspace.current;
     }
 
     get label(): string {
-        return this.workspace.name;
+        return this.workspace.getName();
     }
 
     async getTreeItem(): Promise<TreeItem> {
-        let tooltip = `${this.label}${this.current ? ' (current)' : ''}\n${
-            this.workspace.path
-        }`;
+        let tooltip = `${this.label}${
+            this.current ? ' (current)' : ''
+        }\n${this.workspace.getPath()}`;
         let iconSuffix = '';
 
         let description;
@@ -85,11 +86,11 @@ export class WorkspaceNode extends ViewNode<View> implements PageableViewNode {
 
     getCommand(): Command | undefined {
         const commandArgs: IWorkspaceCommandArgs = {
-            workspaceEntry: this.workspace
+            workspace: this.workspace
         };
         return {
             title: `Switch To Workspace "${this.label}"`,
-            command: 'workspaceManager.switchToWorkspace',
+            command: Commands.SwitchToWorkspace,
             arguments: [commandArgs]
         };
     }
@@ -117,6 +118,8 @@ export class WorkspaceNode extends ViewNode<View> implements PageableViewNode {
         void this.parent!.triggerChange();
     }
 
+    @Gate()
+    @Debug()
     refresh() {
         this._children = undefined;
     }

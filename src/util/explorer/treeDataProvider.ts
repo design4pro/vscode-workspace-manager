@@ -1,13 +1,13 @@
 import { isEqual } from 'lodash';
 import * as vscode from 'vscode';
 import { configuration } from '../../configuration';
-import { WorkspaceEntry } from '../../model/workspace';
-import { getWorkspaceByRootPath } from '../getWorkspace';
-import { getWorkspaceEntries } from '../getWorkspaceEntries';
+import { Workspace } from '../../model/workspace';
+import { getWorkspaceByRootPath } from '../getWorkspaceByRootPath';
+import { getWorkspaces } from '../getWorkspaces';
 import { TreeItem } from './treeItem';
 
 export enum ResourceType {
-    WorkspaceEntry = 'workspaceManager:workspaceEntry'
+    Workspace = 'workspaceManager:Workspace'
 }
 
 class NoWorkspaces extends vscode.TreeItem {
@@ -36,7 +36,7 @@ export class TreeDataProvider implements vscode.TreeDataProvider<TreeItem> {
 
     async getChildren(): Promise<TreeItem[]> {
         if (!this.workspaceTree) {
-            const workspaceEntries = await getWorkspaceEntries();
+            const workspaces = await getWorkspaces();
             const removeWorkspaceFromList: boolean = configuration.get(
                 configuration.name('views')('removeCurrentWorkspaceFromList')
                     .value,
@@ -44,18 +44,15 @@ export class TreeDataProvider implements vscode.TreeDataProvider<TreeItem> {
                 true
             );
 
-            if (workspaceEntries && workspaceEntries.length) {
+            if (workspaces && workspaces.length) {
                 const currentWorkspace = await getWorkspaceByRootPath();
 
-                this.workspaceTree = workspaceEntries.reduce(
-                    (acc: TreeItem[], workspaceEntry: WorkspaceEntry) => {
-                        const isCurrent = isEqual(
-                            workspaceEntry,
-                            currentWorkspace
-                        );
-                        workspaceEntry.current = isCurrent;
+                this.workspaceTree = workspaces.reduce(
+                    (acc: TreeItem[], workspace: Workspace) => {
+                        const isCurrent = isEqual(workspace, currentWorkspace);
+                        // workspace.current = isCurrent;
 
-                        const item = new TreeItem(workspaceEntry);
+                        const item = new TreeItem(workspace);
 
                         if (isCurrent && removeWorkspaceFromList) {
                             return acc;

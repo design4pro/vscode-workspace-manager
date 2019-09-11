@@ -2,7 +2,7 @@ import { existsSync, statSync } from 'fs';
 import { configuration } from '../configuration';
 import { untildify } from './untildify';
 
-export function getWorkspaceEntryDirectories(): string[] {
+export function getWorkspacesDirectories(): string[] {
     let includeGlobPattern: string[] = configuration.get<string[]>(
         configuration.name('includeGlobPattern').value,
         null,

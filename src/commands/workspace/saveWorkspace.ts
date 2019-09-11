@@ -5,7 +5,7 @@ import * as VError from 'verror';
 import * as vscode from 'vscode';
 import { WorkspaceEntry } from '../../model/workspace';
 import { getFirstWorkspaceFolderName } from '../../util/getFirstWorkspaceFolderName';
-import { getWorkspaceEntryDirectories } from '../../util/getWorkspaceEntryDirectories';
+import { getWorkspacesDirectories } from '../../util/getWorkspacesDirectories';
 import { AbstractCommand } from '../abstractCommand';
 import { Command, Commands } from '../common';
 
@@ -16,9 +16,9 @@ export class SaveWorkspaceCommand extends AbstractCommand {
     }
 
     async execute() {
-        const workspaceEntryDirectories = getWorkspaceEntryDirectories();
+        const workspacesDirectories = getWorkspacesDirectories();
 
-        if (!workspaceEntryDirectories || !workspaceEntryDirectories.length) {
+        if (!workspacesDirectories || !workspacesDirectories.length) {
             vscode.window.showInformationMessage(
                 'No workspace directories have been configured'
             );
@@ -26,7 +26,7 @@ export class SaveWorkspaceCommand extends AbstractCommand {
             return;
         }
 
-        const directoryItems = workspaceEntryDirectories.map(
+        const directoryItems = workspacesDirectories.map(
             directory =>
                 <vscode.QuickPickItem>{
                     label: path.basename(directory),
