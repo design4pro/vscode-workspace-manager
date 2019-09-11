@@ -1,6 +1,5 @@
 import { Container } from '../../container';
-import { LogCorrelationContext, Logger } from '../../logger';
-import { IOutputLevel } from '../../model/config';
+import { IOutputLevel, LogCorrelationContext, Logger } from '../../logger';
 import { Functions } from '../function';
 import { Promises } from '../promise';
 import { Strings } from '../string';

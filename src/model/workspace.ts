@@ -12,3 +12,5 @@ export interface IWorkspaceCommandArgs {
     workspaceEntry?: WorkspaceEntry;
     inNewWindow?: boolean;
 }
+
+export class Workspace {}

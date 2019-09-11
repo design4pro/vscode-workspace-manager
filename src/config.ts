@@ -1,10 +1,4 @@
-export enum IOutputLevel {
-    Silent = 'silent',
-    Errors = 'errors',
-    Verbose = 'verbose',
-    Debug = 'debug',
-    Info = 'info'
-}
+import { IOutputLevel } from './logger';
 
 export interface IConfig {
     includeGlobPattern: string | string[];

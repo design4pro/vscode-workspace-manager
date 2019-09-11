@@ -2,8 +2,15 @@ import * as vscode from 'vscode';
 import { configuration } from './configuration';
 import { extensionOutputChannelName } from './constants';
 import { Container } from './container';
-import { IOutputLevel } from './model/config';
 import { Reporter } from './telemetry';
+
+export enum IOutputLevel {
+    Silent = 'silent',
+    Errors = 'errors',
+    Verbose = 'verbose',
+    Debug = 'debug',
+    Info = 'info'
+}
 
 export interface LogCorrelationContext {
     readonly correlationId?: number;

@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { cacheWorkspace } from './cache/cacheWorkspace';
 import { registerCommands } from './commands';
+import { IConfig } from './config';
 import { configuration, Configuration } from './configuration';
 import {
     CommandContext,
@@ -10,8 +11,7 @@ import {
 } from './constants';
 import { Container } from './container';
 import { Environment } from './environment';
-import { Logger } from './logger';
-import { IConfig, IOutputLevel } from './model/config';
+import { IOutputLevel, Logger } from './logger';
 import { state } from './state';
 import { Strings } from './system';
 import * as telemetry from './telemetry';
@@ -24,6 +24,7 @@ export async function activate(
 ): Promise<void> {
     const start = process.hrtime();
 
+    // Pretend we are enabled (until we know otherwise) and set the view contexts to reduce flashing on load
     setCommandContext(CommandContext.Enabled, true);
 
     state.context = context;
