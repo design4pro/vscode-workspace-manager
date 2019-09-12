@@ -1,7 +1,7 @@
 import { commands, ConfigurationChangeEvent } from 'vscode';
+import { ITreeViewConfig, IViewConfig } from '../config';
 import { configuration } from '../configuration';
 import { Container } from '../container';
-import { ITreeViewConfig, IViewConfig } from '../model/config';
 import { GroupsNode } from './nodes';
 import { ViewBase } from './viewBase';
 

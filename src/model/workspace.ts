@@ -1,6 +1,5 @@
 import { FavoriteWorkspaces, WorkspaceState } from '../constants';
 import { Container } from '../container';
-import { Memoize } from '../system/decorators/memoize';
 
 export interface WorkspaceEntry {
     id: string;
@@ -8,8 +7,6 @@ export interface WorkspaceEntry {
     path: string;
     rootPath: string;
     group: string | undefined;
-    favorite: boolean;
-    current: boolean;
 }
 
 export interface IWorkspaceCommandArgs {
@@ -23,25 +20,24 @@ export class Workspace {
     }
 
     readonly id: string;
+    readonly name: string;
     readonly group?: string;
 
     constructor(public readonly workspace: WorkspaceEntry) {
         this.id = workspace.id;
+        this.name = workspace.name;
         this.group = workspace.group;
     }
 
-    @Memoize()
-    getName(): string {
-        return this.workspace.name;
+    get getName(): string {
+        return this.name;
     }
 
-    @Memoize()
-    getPath(): string {
+    get getPath(): string {
         return this.workspace.path;
     }
 
-    @Memoize()
-    getRootPath(): string {
+    get getRootPath(): string {
         return this.workspace.rootPath;
     }
 

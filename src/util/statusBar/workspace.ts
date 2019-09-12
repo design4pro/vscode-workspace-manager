@@ -34,8 +34,8 @@ export class StatusBarWorkspace {
         }
 
         if (workspace) {
-            this.statusBarItem.text = workspace.getName();
-            this.statusBarItem.tooltip = workspace.getPath();
+            this.statusBarItem.text = workspace.getName;
+            this.statusBarItem.tooltip = workspace.getPath;
         } else {
             this.statusBarItem.text = 'No workspace opened';
         }

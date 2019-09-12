@@ -13,14 +13,14 @@ export async function getWorkspaceByRootPath(
     }
 
     return workspaces.find(entry => {
-        let rootPath = entry.workspace.rootPath;
+        let rootPath = entry.getRootPath;
 
-        if (entry.getRootPath().startsWith('.')) {
-            rootPath = dirname(entry.workspace.rootPath);
+        if (rootPath.startsWith('.')) {
+            rootPath = dirname(rootPath);
 
             if (rootPath === path) return true;
 
-            rootPath = join(rootPath, entry.getRootPath());
+            rootPath = join(rootPath, entry.getRootPath);
 
             if (rootPath.endsWith('/')) {
                 rootPath = rootPath.slice(0, -1);

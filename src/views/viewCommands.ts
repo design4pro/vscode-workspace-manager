@@ -27,7 +27,7 @@ export class ViewCommands {
 
         return commands.executeCommand(
             BuiltInCommands.OpenFile,
-            Uri.file(node.workspace.path)
+            Uri.file(node.workspace.getPath)
         );
     }
 

@@ -1,9 +1,9 @@
 import { readFileSync, writeFileSync } from 'fs';
 import * as VError from 'verror';
 import * as vscode from 'vscode';
+import { IConfig } from './config';
 import { extensionId } from './constants';
 import { Container } from './container';
-import { IConfig } from './config';
 import { Functions } from './system/function';
 import { getWorkspaceByRootPath } from './util/getWorkspaceByRootPath';
 import { addToValueTree, getConfigurationValue, parse } from './util/json';
@@ -280,7 +280,7 @@ export class Configuration extends vscode.Disposable {
                 return;
             }
 
-            workspaceFilePath = activeWorkspace.getPath();
+            workspaceFilePath = activeWorkspace.getPath;
         }
 
         try {
@@ -313,7 +313,7 @@ export class Configuration extends vscode.Disposable {
                 return;
             }
 
-            workspaceFilePath = activeWorkspace.getPath();
+            workspaceFilePath = activeWorkspace.getPath;
         }
 
         try {

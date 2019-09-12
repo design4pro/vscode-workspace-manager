@@ -2,8 +2,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as VError from 'verror';
 import * as vscode from 'vscode';
+import { IAdvancedConfig } from '../config';
 import { configuration } from '../configuration';
-import { IAdvancedConfig } from '../model/config';
 
 export function getApp() {
     try {

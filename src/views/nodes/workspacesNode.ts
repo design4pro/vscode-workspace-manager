@@ -10,7 +10,7 @@ import { ResourceType, ViewNode } from './viewNode';
 import { WorkspaceNode } from './workspaceNode';
 
 export class WorkspacesNode extends ViewNode<WorkspacesView> {
-    private _children: (WorkspaceNode | MessageNode)[] = [];
+    private _children: (WorkspaceNode | MessageNode)[] | undefined;
 
     constructor(view: WorkspacesView) {
         super(undefined, view);

@@ -1,19 +1,15 @@
 import * as vscode from 'vscode';
 import { Container } from '../../container';
-import {
-    IWorkspaceCommandArgs,
-    WorkspaceEntry,
-    Workspace
-} from '../../model/workspace';
+import { IWorkspaceCommandArgs, Workspace } from '../../model/workspace';
 import { ResourceType } from './treeDataProvider';
 
 export class TreeItem extends vscode.TreeItem {
     public readonly label: string;
 
     constructor(public readonly workspace: Workspace) {
-        super(workspace.getName(), vscode.TreeItemCollapsibleState.None);
+        super(workspace.getName, vscode.TreeItemCollapsibleState.None);
 
-        this.label = workspace.getName();
+        this.label = workspace.getName;
     }
 
     get id(): string {
@@ -27,7 +23,7 @@ export class TreeItem extends vscode.TreeItem {
     }
 
     get tooltip(): string {
-        return `${this.workspace.getName()}\n${this.workspace.getPath()}`;
+        return `${this.workspace.getName}\n${this.workspace.getPath}`;
     }
 
     get command(): vscode.Command {
@@ -36,7 +32,7 @@ export class TreeItem extends vscode.TreeItem {
         };
 
         return {
-            title: `Switch To Workspace "${this.workspace.getName()}"`,
+            title: `Switch To Workspace "${this.workspace.getName}"`,
             command: 'workspaceManager.switchToWorkspace',
             arguments: [args]
         };

@@ -11,25 +11,25 @@ export abstract class AbstractFavorites extends AbstractCommand {
     async execute(context?: CommandContext, args: IWorkspaceCommandArgs = {}) {
         args = { ...args };
 
-        let workspaceFilePath;
+        let workspacePath;
         let workspaceName;
 
-        if (args.workspaceEntry) {
-            workspaceFilePath = args.workspaceEntry.path;
-            workspaceName = args.workspaceEntry.name;
+        if (args.workspace) {
+            workspacePath = args.workspace.getPath;
+            workspaceName = args.workspace.name;
         }
 
         const isFavorite = await configuration.getWorkspace(
             'favorite',
             false,
-            workspaceFilePath
+            workspacePath
         );
 
         try {
             await configuration.updateWorkspace(
                 'favorite',
                 !isFavorite,
-                workspaceFilePath
+                workspacePath
             );
 
             commands.executeCommand(Commands.CacheWorkspace);

@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 import { cacheWorkspace } from './cache/cacheWorkspace';
+import { IConfig } from './config';
 import { configuration, ConfigurationWillChangeEvent } from './configuration';
 import { CommandContext, setCommandContext } from './constants';
-import { IConfig } from './model/config';
 import { statusBarCache } from './util/statusBar/cache';
 import { statusBarWorkspace } from './util/statusBar/workspace';
 import { GroupsView } from './views/groupsView';
@@ -50,7 +50,7 @@ export class Container {
             )
         ) {
             setCommandContext(
-                CommandContext.ViewInActivityBarShow,
+                CommandContext.ViewsWorkspacesInActivityBar,
                 Container.config.views.showInActivityBar
             );
         }

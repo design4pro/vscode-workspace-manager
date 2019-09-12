@@ -22,10 +22,9 @@ export async function getWorkspaces(
 ): Promise<Workspace[] | undefined> {
     const cache = new Cache(extensionId);
     const cacheKey = 'workspace-entries';
-    const cachedWorkspaces: Workspace[] | undefined = cache.get<Workspace[]>(
-        cacheKey,
-        []
-    );
+    const cachedWorkspaces: WorkspaceEntry[] | undefined = cache.get<
+        WorkspaceEntry[]
+    >(cacheKey, []);
 
     if (
         fromCache &&
@@ -35,7 +34,9 @@ export async function getWorkspaces(
     ) {
         setCommandContext(CommandContext.Empty, false);
 
-        return await cachedWorkspaces;
+        return await cachedWorkspaces.map(
+            workspace => new Workspace(workspace)
+        );
     }
 
     const excludeGlobPattern: string[] = configuration.get<string[]>(
@@ -54,7 +55,7 @@ export async function getWorkspaces(
         .map(dir => join(dir, '**/*.code-workspace'))
         .filter((path, index, arr) => arr.indexOf(path) == index);
 
-    let entries: Workspace[] = [];
+    let entries: WorkspaceEntry[] = [];
     let filesParsed: number = 0;
     let timeoutId: NodeJS.Timer;
 
@@ -67,12 +68,6 @@ export async function getWorkspaces(
             if (workspaceConfiguration) {
                 const rootPath = workspaceConfiguration.folders[0].path;
                 const workspaceId = uuid();
-
-                const isFavorite = !!getConfigurationValue<boolean>(
-                    workspaceConfiguration.settings,
-                    `${extensionId}.favorite`,
-                    false
-                );
 
                 const group = getConfigurationValue<string | undefined>(
                     workspaceConfiguration.settings,
@@ -92,14 +87,10 @@ export async function getWorkspaces(
                     name,
                     path,
                     rootPath,
-                    group,
-                    current: false,
-                    favorite: isFavorite
+                    group
                 };
 
-                const workspace = new Workspace(workspaceEntry);
-
-                entries.push(workspace);
+                entries.push(workspaceEntry);
 
                 filesParsed++;
 
@@ -128,7 +119,7 @@ export async function getWorkspaces(
                 )}] has been found [${entries.length}]`
             );
 
-            entries.sort((a, b) => a.getName().localeCompare(b.getName()));
+            entries.sort((a, b) => a.name.localeCompare(b.name));
 
             cache.update(cacheKey, entries);
 
@@ -143,7 +134,7 @@ export async function getWorkspaces(
 
             setCommandContext(CommandContext.Empty, !!!entries.length);
 
-            return entries;
+            return entries.map(workspace => new Workspace(workspace));
         };
 
         stream

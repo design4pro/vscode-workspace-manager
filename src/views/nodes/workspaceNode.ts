@@ -1,5 +1,5 @@
 import * as uuid from 'uuid';
-import { Command, commands, TreeItem, TreeItemCollapsibleState } from 'vscode';
+import { Command, TreeItem, TreeItemCollapsibleState } from 'vscode';
 import { Container } from '../../container';
 import { IWorkspaceCommandArgs, Workspace } from '../../model/workspace';
 import { Debug, Gate } from '../../system';
@@ -31,7 +31,7 @@ export class WorkspaceNode extends ViewNode<View> implements PageableViewNode {
         return `workspaceManager:group(${this.group || groupId})${
             this._root ? ':root' : ''
         }:workspace(${this.label})${this.current ? '+current' : ''}${
-            this.workspace.favorite ? '+favorite' : ''
+            this.workspace.favorited ? '+favorite' : ''
         }`;
     }
 
@@ -40,13 +40,13 @@ export class WorkspaceNode extends ViewNode<View> implements PageableViewNode {
     }
 
     get label(): string {
-        return this.workspace.getName();
+        return this.workspace.getName;
     }
 
     async getTreeItem(): Promise<TreeItem> {
-        let tooltip = `${this.label}${
-            this.current ? ' (current)' : ''
-        }\n${this.workspace.getPath()}`;
+        let tooltip = `${this.label}${this.current ? ' (current)' : ''}\n${
+            this.workspace.getPath
+        }`;
         let iconSuffix = '';
 
         let description;
@@ -62,7 +62,7 @@ export class WorkspaceNode extends ViewNode<View> implements PageableViewNode {
             iconSuffix += '-current';
         }
 
-        if (this.workspace.favorite) {
+        if (this.workspace.favorited) {
             item.contextValue += '+favorite';
             iconSuffix += '-favorite';
         }
@@ -105,16 +105,12 @@ export class WorkspaceNode extends ViewNode<View> implements PageableViewNode {
     }
 
     async addToFavorites() {
-        await commands.executeCommand(Commands.AddToFavorites, {
-            workspaceEntry: this.workspace
-        });
+        await this.workspace.favorite();
         void this.parent!.triggerChange();
     }
 
     async removeFromFavorites() {
-        await commands.executeCommand(Commands.RemoveFromFavorites, {
-            workspaceEntry: this.workspace
-        });
+        await this.workspace.unfavorite();
         void this.parent!.triggerChange();
     }
 

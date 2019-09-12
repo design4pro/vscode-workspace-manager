@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { WorkspaceEntry, Workspace } from '../../model/workspace';
+import { Workspace } from '../../model/workspace';
 import { deleteWorkspace } from '../../util/deleteWorkspace';
 import { getWorkspaces } from '../../util/getWorkspaces';
 import { AbstractCommand } from '../abstractCommand';
@@ -23,8 +23,8 @@ export class DeleteWorkspaceCommand extends AbstractCommand {
         const workspaceItems = workspaces.map(
             entry =>
                 <vscode.QuickPickItem>{
-                    label: entry.getName(),
-                    description: entry.getPath()
+                    label: entry.getName,
+                    description: entry.getPath
                 }
         );
 
@@ -41,7 +41,7 @@ export class DeleteWorkspaceCommand extends AbstractCommand {
                 }
 
                 const entry: Workspace | undefined = workspaces.find(
-                    entry => entry.getPath() === workspaceItem.description
+                    entry => entry.getPath === workspaceItem.description
                 );
 
                 if (!entry) {
