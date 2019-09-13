@@ -71,10 +71,15 @@ export enum GlyphChars {
     ZeroWidthSpace = '\u200b'
 }
 
-export interface FavoriteWorkspaces {
+export interface IFavoriteWorkspaces {
+    [id: string]: boolean;
+}
+
+export interface IGroupWorkspaces {
     [id: string]: boolean;
 }
 
 export enum WorkspaceState {
-    FavoriteWorkspaces = 'workspace-manager:favorite:workspaces'
+    FavoriteWorkspaces = 'workspace-manager:favorite:workspaces',
+    GroupWorkspaces = 'workspace-manager:group:workspaces'
 }

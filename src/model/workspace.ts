@@ -1,7 +1,11 @@
-import { FavoriteWorkspaces, WorkspaceState } from '../constants';
+import {
+    IFavoriteWorkspaces,
+    WorkspaceState,
+    IGroupWorkspaces
+} from '../constants';
 import { Container } from '../container';
 
-export interface WorkspaceEntry {
+export interface IWorkspace {
     id: string;
     name: string;
     path: string;
@@ -20,30 +24,33 @@ export class Workspace {
     }
 
     readonly id: string;
-    readonly name: string;
-    readonly group?: string;
 
-    constructor(public readonly workspace: WorkspaceEntry) {
+    constructor(public readonly workspace: IWorkspace) {
         this.id = workspace.id;
-        this.name = workspace.name;
-        this.group = workspace.group;
     }
 
-    get getName(): string {
-        return this.name;
+    get name(): string {
+        return this.workspace.name;
     }
 
-    get getPath(): string {
+    get path(): string {
         return this.workspace.path;
     }
 
-    get getRootPath(): string {
+    get rootPath(): string {
         return this.workspace.rootPath;
+    }
+
+    get group() {
+        const favorited = Container.context.workspaceState.get<
+            IGroupWorkspaces
+        >(WorkspaceState.GroupWorkspaces);
+        return favorited !== undefined && favorited[this.id] === true;
     }
 
     get favorited() {
         const favorited = Container.context.workspaceState.get<
-            FavoriteWorkspaces
+            IFavoriteWorkspaces
         >(WorkspaceState.FavoriteWorkspaces);
         return favorited !== undefined && favorited[this.id] === true;
     }
@@ -58,7 +65,7 @@ export class Workspace {
 
     private async updateFavorite(favorite: boolean) {
         let favorited = Container.context.workspaceState.get<
-            FavoriteWorkspaces
+            IFavoriteWorkspaces
         >(WorkspaceState.FavoriteWorkspaces);
         if (favorited === undefined) {
             favorited = Object.create(null);

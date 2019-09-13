@@ -3,7 +3,7 @@ import * as mkdirp from 'mkdirp';
 import * as path from 'path';
 import * as VError from 'verror';
 import * as vscode from 'vscode';
-import { WorkspaceEntry } from '../../model/workspace';
+import { IWorkspace } from '../../model/workspace';
 import { getFirstWorkspaceFolderName } from '../../util/getFirstWorkspaceFolderName';
 import { getWorkspacesDirectories } from '../../util/getWorkspacesDirectories';
 import { AbstractCommand } from '../abstractCommand';
@@ -124,7 +124,7 @@ export class SaveWorkspaceCommand extends AbstractCommand {
 
                                     vscode.commands.executeCommand(
                                         Commands.SwitchToWorkspace,
-                                        <WorkspaceEntry>{
+                                        <IWorkspace>{
                                             path: workspaceFilePath
                                         }
                                     );

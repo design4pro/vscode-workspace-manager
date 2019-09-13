@@ -12,7 +12,7 @@ import {
     setCommandContext
 } from '../constants';
 import { Logger } from '../logger';
-import { Workspace, WorkspaceEntry } from '../model/workspace';
+import { Workspace, IWorkspace } from '../model/workspace';
 import { getWorkspacesDirectories } from './getWorkspacesDirectories';
 import { getConfigurationValue } from './json';
 import { statusBarCache } from './statusBar/cache';
@@ -21,10 +21,11 @@ export async function getWorkspaces(
     fromCache: boolean = true
 ): Promise<Workspace[] | undefined> {
     const cache = new Cache(extensionId);
-    const cacheKey = 'workspace-entries';
-    const cachedWorkspaces: WorkspaceEntry[] | undefined = cache.get<
-        WorkspaceEntry[]
-    >(cacheKey, []);
+    const cacheKey = 'workspaces';
+    const cachedWorkspaces: IWorkspace[] | undefined = cache.get<IWorkspace[]>(
+        cacheKey,
+        []
+    );
 
     if (
         fromCache &&
@@ -55,7 +56,7 @@ export async function getWorkspaces(
         .map(dir => join(dir, '**/*.code-workspace'))
         .filter((path, index, arr) => arr.indexOf(path) == index);
 
-    let entries: WorkspaceEntry[] = [];
+    let workspaces: IWorkspace[] = [];
     let filesParsed: number = 0;
     let timeoutId: NodeJS.Timer;
 
@@ -82,7 +83,7 @@ export async function getWorkspaces(
                     .pop()
                     .replace(/.code-workspace$/, '');
 
-                const workspaceEntry: WorkspaceEntry = {
+                const workspace: IWorkspace = {
                     id: workspaceId,
                     name,
                     path,
@@ -90,13 +91,13 @@ export async function getWorkspaces(
                     group
                 };
 
-                entries.push(workspaceEntry);
+                workspaces.push(workspace);
 
                 filesParsed++;
 
                 statusBarCache.notify(
                     'eye',
-                    `Looking for workspace entries... [${filesParsed}]`,
+                    `Looking for workspaces... [${filesParsed}]`,
                     false
                 );
             }
@@ -104,7 +105,7 @@ export async function getWorkspaces(
     };
 
     try {
-        statusBarCache.notify('eye', 'Looking for workspace entries...', false);
+        statusBarCache.notify('eye', 'Looking for workspaces...', false);
 
         const stream = glob.stream(directories, {
             ignore: ['**/node_modules/**', ...excludeGlobPattern],
@@ -116,12 +117,12 @@ export async function getWorkspaces(
             Logger.info(
                 `All the workspece files in the directories [${directories.join(
                     ', '
-                )}] has been found [${entries.length}]`
+                )}] has been found [${workspaces.length}]`
             );
 
-            entries.sort((a, b) => a.name.localeCompare(b.name));
+            workspaces.sort((a, b) => a.name.localeCompare(b.name));
 
-            cache.update(cacheKey, entries);
+            cache.update(cacheKey, workspaces);
 
             if (timeoutId) {
                 clearTimeout(timeoutId);
@@ -129,19 +130,19 @@ export async function getWorkspaces(
 
             statusBarCache.notify(
                 'sync',
-                'Workspace entries cached (click to cache again)'
+                'Workspaces cached (click to cache again)'
             );
 
-            setCommandContext(CommandContext.Empty, !!!entries.length);
+            setCommandContext(CommandContext.Empty, !!!workspaces.length);
 
-            return entries.map(workspace => new Workspace(workspace));
+            return workspaces.map(workspace => new Workspace(workspace));
         };
 
         stream
             .on('data', (path: string) => {
                 statusBarCache.notify(
                     'eye',
-                    `Looking for workspace entries... [${entries.length}]`,
+                    `Looking for workspaces... [${workspaces.length}]`,
                     false
                 );
                 addPath(path);
