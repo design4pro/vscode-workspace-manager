@@ -18,6 +18,7 @@ import { configuration } from '../configuration';
 import { Container } from '../container';
 import { Logger } from '../logger';
 import { Debug, Functions, Log, Strings } from '../system';
+import { FavoritesView } from './favoritesView';
 import { GroupsView } from './groupsView';
 import {
     nodeSupportsPaging,
@@ -26,7 +27,7 @@ import {
 } from './nodes/viewNode';
 import { WorkspacesView } from './workspacesView';
 
-export type View = GroupsView | WorkspacesView;
+export type View = FavoritesView | GroupsView | WorkspacesView;
 
 export interface TreeViewNodeStateChangeEvent<T>
     extends TreeViewExpansionEvent<T> {
@@ -94,7 +95,7 @@ export abstract class ViewBase<TRoot extends ViewNode<View>>
         return `${this.id}.${command}`;
     }
 
-    protected abstract get location(): string;
+    protected abstract get location(): string | undefined;
 
     protected abstract getRoot(): TRoot;
     protected abstract registerCommands(): void;
@@ -118,6 +119,7 @@ export abstract class ViewBase<TRoot extends ViewNode<View>>
                 treeDataProvider: this
             }
         );
+
         this._disposable = Disposable.from(
             this._tree,
             this._tree.onDidChangeVisibility(

@@ -21,9 +21,9 @@ export class SwitchWorkspaceCommand extends AbstractCommand {
             return;
         }
 
-        if (args.workspace && args.workspace.getPath) {
+        if (args.workspace && args.workspace.path) {
             const entry: Workspace | undefined = workspaces.find(
-                entry => entry.getPath === args.workspace!.getPath
+                entry => entry.path === args.workspace!.path
             );
 
             if (!entry) {
@@ -43,8 +43,8 @@ export class SwitchWorkspaceCommand extends AbstractCommand {
             const workspaceItems = workspaces.map(
                 entry =>
                     <vscode.QuickPickItem>{
-                        label: entry.getName,
-                        description: entry.getPath
+                        label: entry.name,
+                        description: entry.path
                     }
             );
 
@@ -63,7 +63,7 @@ export class SwitchWorkspaceCommand extends AbstractCommand {
                     }
 
                     const entry: Workspace | undefined = workspaces.find(
-                        entry => entry.getPath === workspaceItem.description
+                        entry => entry.path === workspaceItem.description
                     );
 
                     if (!entry) {

@@ -14,9 +14,10 @@ export enum BuiltInCommands {
 
 export enum CommandContext {
     Enabled = 'workspace-manager:enabled',
-    Empty = 'workspace-manager:empty',
-    ViewsWorkspacesInActivityBar = 'workspace-manager:viewsWorkspacesInActivityBar',
-    ViewInExplorerShow = 'workspace-manager:viewInExplorerShow'
+    FavoritesViewInActivityBar = 'workspace-manager:favoritesViewInActivityBar',
+    FavoritesEmpty = 'workspace-manager:favoritesEmpty',
+    GroupsViewInActivityBar = 'workspace-manager:groupsViewInActivityBar',
+    WorkspacesEmpty = 'workspace-manager:workspacesEmpty'
 }
 
 export function setCommandContext(key: CommandContext | string, value: any) {
@@ -76,10 +77,10 @@ export interface IFavoriteWorkspaces {
 }
 
 export interface IGroupWorkspaces {
-    [id: string]: boolean;
+    [id: string]: string;
 }
 
-export enum WorkspaceState {
+export enum GlobalState {
     FavoriteWorkspaces = 'workspace-manager:favorite:workspaces',
     GroupWorkspaces = 'workspace-manager:group:workspaces'
 }

@@ -108,22 +108,12 @@
                     "default": true,
                     "description": "Whether or not to open the workspaces in new window when you click the workspace name in the Status Bar"
                 },
-                "workspace-manager.views.showInActivityBar": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Whether or not to show the activity bar tree view container."
-                },
-                "workspace-manager.views.showInExplorer": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Whether or not to show the list of workspaces in the explorer tree view container"
-                },
-                "workspace-manager.views.showWorkspaceRefreshIconInStatusBar": {
+                "workspace-manager.views.workspacesRefreshIconInStatusBar": {
                     "type": "boolean",
                     "default": true,
                     "description": "Whether or not to show the workspaces refresh icon in the Status Bar"
                 },
-                "workspace-manager.views.showWorkspaceNameInStatusBar": {
+                "workspace-manager.views.workspacesNameInStatusBar": {
                     "type": "boolean",
                     "default": true,
                     "description": "Whether or not to show the workspaces name in the Status Bar"
@@ -145,6 +135,46 @@
                     "markdownDescription": "Specifies whether to show the _Workspaces_ view",
                     "scope": "window"
                 },
+                "workspace-manager.views.workspaces.location": {
+                    "type": "string",
+                    "default": "workspaceManager",
+                    "enum": [
+                        "workspaceManager",
+                        "explorer"
+                    ],
+                    "enumDescriptions": [
+                        "Adds to the Workspaces Manager side bar",
+                        "Adds to the Explorer side bar"
+                    ],
+                    "markdownDescription": "Specifies where to show the _Workspaces_ view",
+                    "scope": "window"
+                },
+                "workspace-manager.views.favorites.compact": {
+                    "type": "boolean",
+                    "default": false,
+                    "markdownDescription": "Specifies whether to show the _Favorites_ view in a compact display density",
+                    "scope": "window"
+                },
+                "workspace-manager.views.favorites.enabled": {
+                    "type": "boolean",
+                    "default": true,
+                    "markdownDescription": "Specifies whether to show the _Favorites_ view",
+                    "scope": "window"
+                },
+                "workspace-manager.views.favorites.location": {
+                    "type": "string",
+                    "default": "workspaceManager",
+                    "enum": [
+                        "workspaceManager",
+                        "explorer"
+                    ],
+                    "enumDescriptions": [
+                        "Adds to the Workspaces Manager side bar",
+                        "Adds to the Explorer side bar"
+                    ],
+                    "markdownDescription": "Specifies where to show the _Favorites_ view",
+                    "scope": "window"
+                },
                 "workspace-manager.views.groups.compact": {
                     "type": "boolean",
                     "default": false,
@@ -155,6 +185,20 @@
                     "type": "boolean",
                     "default": true,
                     "markdownDescription": "Specifies whether to show the _Groups_ view",
+                    "scope": "window"
+                },
+                "workspace-manager.views.groups.location": {
+                    "type": "string",
+                    "default": "workspaceManager",
+                    "enum": [
+                        "workspaceManager",
+                        "explorer"
+                    ],
+                    "enumDescriptions": [
+                        "Adds to the Workspaces Manager side bar",
+                        "Adds to the Explorer side bar"
+                    ],
+                    "markdownDescription": "Specifies where to show the _Groups_ view",
                     "scope": "window"
                 },
                 "workspace-manager.advanced.codeExecutable": {
@@ -247,8 +291,8 @@
                 "title": "Remove from Favorites",
                 "category": "Workspace Manager",
                 "icon": {
-                    "light": "resources/light/favorite-active.svg",
-                    "dark": "resources/dark/favorite-active.svg"
+                    "light": "resources/light/favorite-current.svg",
+                    "dark": "resources/dark/favorite-current.svg"
                 }
             },
             {
@@ -275,21 +319,36 @@
         "views": {
             "workspaceManager": [
                 {
+                    "id": "workspaceManager.views.favorites:workspaceManager",
+                    "name": "Favorites",
+                    "when": "config.workspace-manager.views.favorites.enabled && config.workspace-manager.views.favorites.location == workspaceManager"
+                },
+                {
                     "id": "workspaceManager.views.workspaces:workspaceManager",
                     "name": "Workspaces",
-                    "when": "config.workspace-manager.views.workspaces.enabled"
+                    "when": "config.workspace-manager.views.workspaces.enabled && config.workspace-manager.views.workspaces.location == workspaceManager"
                 },
                 {
                     "id": "workspaceManager.views.groups:workspaceManager",
                     "name": "Groups",
-                    "when": "config.workspace-manager.views.groups.enabled"
+                    "when": "config.workspace-manager.views.groups.enabled && config.workspace-manager.views.groups.location == workspaceManager"
                 }
             ],
             "explorer": [
                 {
                     "id": "workspaceManager.views.workspaces:explorer",
                     "name": "Workspaces",
-                    "when": "workspace-manager:enabled && config.workspace-manager.views.workspaces.enabled && !workspace-manager:empty"
+                    "when": "workspace-manager:enabled && config.workspace-manager.views.workspaces.enabled && config.workspace-manager.views.workspaces.location == explorer"
+                },
+                {
+                    "id": "workspaceManager.views.favorites:explorer",
+                    "name": "Favorite Workspaces",
+                    "when": "workspace-manager:enabled && config.workspace-manager.views.favorites.enabled && !workspace-manager:favoritesEmpty && config.workspace-manager.views.favorites.location == explorer"
+                },
+                {
+                    "id": "workspaceManager.views.groups:explorer",
+                    "name": "Workspaces Groups",
+                    "when": "workspace-manager:enabled && config.workspace-manager.views.groups.enabled && config.workspace-manager.views.groups.location == explorer"
                 }
             ]
         },
@@ -332,12 +391,12 @@
             "view/item/context": [
                 {
                     "command": "workspaceManager.addToFavorites",
-                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace\\b(?!.*\\b\\+favorite\\b)/",
+                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace\\b(?!.*?\\b\\+favorite\\b)/",
                     "group": "inline@1"
                 },
                 {
                     "command": "workspaceManager.removeFromFavorites",
-                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace\\b(?=.*\\b\\+favorite\\b)/",
+                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace\\b(?=.*?\\b\\+favorite\\b)/",
                     "group": "inline@1"
                 },
                 {
@@ -362,12 +421,12 @@
                 },
                 {
                     "command": "workspaceManager.addToFavorites",
-                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace\\b(?!.*\\b\\+favorite\\b)/",
+                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace\\b(?!.*?\\b\\+favorite\\b)/",
                     "group": "2_workspace@1"
                 },
                 {
                     "command": "workspaceManager.removeFromFavorites",
-                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace\\b(?=.*\\b\\+favorite\\b)/",
+                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace\\b(?=.*?\\b\\+favorite\\b)/",
                     "group": "2_workspace@1"
                 },
                 {

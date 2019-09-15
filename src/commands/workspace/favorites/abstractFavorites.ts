@@ -15,7 +15,7 @@ export abstract class AbstractFavorites extends AbstractCommand {
         let workspaceName;
 
         if (args.workspace) {
-            workspacePath = args.workspace.getPath;
+            workspacePath = args.workspace.path;
             workspaceName = args.workspace.name;
         }
 

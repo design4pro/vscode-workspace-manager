@@ -15,37 +15,35 @@ export class WorkspaceNode extends ViewNode<View> implements PageableViewNode {
     private _children: ViewNode[] | undefined;
 
     constructor(
-        public readonly group: string | undefined,
         view: View,
         parent: ViewNode,
         public readonly workspace: Workspace,
-        // Specifies that the node is shown as a root under the repository node
         private readonly _root: boolean = false
     ) {
-        super(group, view, parent);
+        super(view, parent);
     }
 
     get id(): string {
-        const groupId = uuid();
+        const id = uuid();
 
-        return `workspaceManager:group(${this.group || groupId})${
-            this._root ? ':root' : ''
-        }:workspace(${this.label})${this.current ? '+current' : ''}${
+        return `workspaceManager:workspace(${this.workspace.id || id})${
+            this._root ? ':root:' : ''
+        }${this.current ? '+current' : ''}${
             this.workspace.favorited ? '+favorite' : ''
         }`;
     }
 
     get current(): boolean {
-        return false; //!!this.workspace.current;
+        return !!this.workspace.current;
     }
 
     get label(): string {
-        return this.workspace.getName;
+        return this.workspace.name;
     }
 
     async getTreeItem(): Promise<TreeItem> {
         let tooltip = `${this.label}${this.current ? ' (current)' : ''}\n${
-            this.workspace.getPath
+            this.workspace.path
         }`;
         let iconSuffix = '';
 
@@ -55,6 +53,7 @@ export class WorkspaceNode extends ViewNode<View> implements PageableViewNode {
             `${this.label}`,
             TreeItemCollapsibleState.None
         );
+
         item.contextValue = ResourceType.Workspace;
 
         if (this.current) {
@@ -107,16 +106,19 @@ export class WorkspaceNode extends ViewNode<View> implements PageableViewNode {
     async addToFavorites() {
         await this.workspace.favorite();
         void this.parent!.triggerChange();
+        void Container.refreshViews();
     }
 
     async removeFromFavorites() {
         await this.workspace.unfavorite();
         void this.parent!.triggerChange();
+        void Container.refreshViews();
     }
 
     @Gate()
     @Debug()
     refresh() {
         this._children = undefined;
+        void this.parent!.triggerChange();
     }
 }

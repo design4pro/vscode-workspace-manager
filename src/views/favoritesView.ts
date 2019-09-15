@@ -3,16 +3,16 @@ import { ITreeViewConfig, IViewConfig } from '../config';
 import { configuration } from '../configuration';
 import { CommandContext, setCommandContext } from '../constants';
 import { Container } from '../container';
-import { GroupsNode } from './nodes';
+import { FavoritesNode } from './nodes/favoritesNode';
 import { ViewBase } from './viewBase';
 
-export class GroupsView extends ViewBase<GroupsNode> {
+export class FavoritesView extends ViewBase<FavoritesNode> {
     constructor() {
-        super('workspaceManager.views.groups', 'Groups');
+        super('workspaceManager.views.favorites', 'Favorites');
     }
 
     getRoot() {
-        return new GroupsNode(this);
+        return new FavoritesNode(this);
     }
 
     protected get location(): string | undefined {
@@ -33,7 +33,7 @@ export class GroupsView extends ViewBase<GroupsNode> {
         if (
             !configuration.changed(
                 e,
-                configuration.name('views')('groups').value
+                configuration.name('views')('favorites').value
             ) &&
             !configuration.changed(
                 e,
@@ -47,16 +47,16 @@ export class GroupsView extends ViewBase<GroupsNode> {
         if (
             configuration.changed(
                 e,
-                configuration.name('views')('groups')('enabled').value
+                configuration.name('views')('favorites')('enabled').value
             )
         ) {
-            setCommandContext(CommandContext.GroupsViewInActivityBar, true);
+            setCommandContext(CommandContext.FavoritesViewInActivityBar, true);
         }
 
         if (
             configuration.changed(
                 e,
-                configuration.name('views')('groups')('location').value
+                configuration.name('views')('favorites')('location').value
             )
         ) {
             this.initialize(this.location, { showCollapseAll: true });
@@ -77,7 +77,7 @@ export class GroupsView extends ViewBase<GroupsNode> {
     get config(): IViewConfig & ITreeViewConfig {
         return {
             ...Container.config.views,
-            ...Container.config.views.groups
+            ...Container.config.views.favorites
         };
     }
 }

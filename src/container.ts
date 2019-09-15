@@ -2,9 +2,9 @@ import * as vscode from 'vscode';
 import { cacheWorkspace } from './cache/cacheWorkspace';
 import { IConfig } from './config';
 import { configuration, ConfigurationWillChangeEvent } from './configuration';
-import { CommandContext, setCommandContext } from './constants';
 import { statusBarCache } from './util/statusBar/cache';
 import { statusBarWorkspace } from './util/statusBar/workspace';
+import { FavoritesView } from './views/favoritesView';
 import { GroupsView } from './views/groupsView';
 import { ViewCommands } from './views/viewCommands';
 import { WorkspacesView } from './views/workspacesView';
@@ -24,6 +24,7 @@ export class Container {
         context.subscriptions.push(
             (this._workspacesView = new WorkspacesView())
         );
+        context.subscriptions.push((this._favoritesView = new FavoritesView()));
         context.subscriptions.push((this._groupsView = new GroupsView()));
 
         context.subscriptions.push(
@@ -46,33 +47,8 @@ export class Container {
         if (
             configuration.changed(
                 e.change,
-                configuration.name('views')('showInActivityBar').value
-            )
-        ) {
-            setCommandContext(
-                CommandContext.ViewsWorkspacesInActivityBar,
-                Container.config.views.showInActivityBar
-            );
-        }
-
-        if (
-            configuration.changed(
-                e.change,
-                configuration.name('views')('showInExplorer').value
-            )
-        ) {
-            setCommandContext(
-                CommandContext.ViewInExplorerShow,
-                Container.config.views.showInExplorer
-            );
-        }
-
-        if (
-            configuration.changed(
-                e.change,
-                configuration.name('views')(
-                    'showWorkspaceRefreshIconInStatusBar'
-                ).value
+                configuration.name('views')('workspacesRefreshIconInStatusBar')
+                    .value
             )
         ) {
             statusBarCache.toggle();
@@ -81,8 +57,7 @@ export class Container {
         if (
             configuration.changed(
                 e.change,
-                configuration.name('views')('showWorkspaceNameInStatusBar')
-                    .value
+                configuration.name('views')('workspacesNameInStatusBar').value
             )
         ) {
             statusBarWorkspace.toggle();
@@ -147,6 +122,17 @@ export class Container {
         return this._workspacesView;
     }
 
+    private static _favoritesView: FavoritesView | undefined;
+    static get favoritesView(): FavoritesView {
+        if (this._favoritesView === undefined) {
+            this._context.subscriptions.push(
+                (this._favoritesView = new FavoritesView())
+            );
+        }
+
+        return this._favoritesView;
+    }
+
     private static _groupsView: GroupsView | undefined;
     static get groupsView(): GroupsView {
         if (this._groupsView === undefined) {
@@ -156,6 +142,20 @@ export class Container {
         }
 
         return this._groupsView;
+    }
+
+    static refreshViews() {
+        if (this._workspacesView) {
+            this._workspacesView.refresh();
+        }
+
+        if (this._favoritesView) {
+            this._favoritesView.refresh();
+        }
+
+        if (this._groupsView) {
+            this._groupsView.refresh();
+        }
     }
 
     private static _viewCommands: ViewCommands | undefined;

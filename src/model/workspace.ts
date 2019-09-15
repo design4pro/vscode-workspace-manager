@@ -1,6 +1,6 @@
 import {
+    GlobalState,
     IFavoriteWorkspaces,
-    WorkspaceState,
     IGroupWorkspaces
 } from '../constants';
 import { Container } from '../container';
@@ -10,7 +10,6 @@ export interface IWorkspace {
     name: string;
     path: string;
     rootPath: string;
-    group: string | undefined;
 }
 
 export interface IWorkspaceCommandArgs {
@@ -24,6 +23,7 @@ export class Workspace {
     }
 
     readonly id: string;
+    private _current: boolean = false;
 
     constructor(public readonly workspace: IWorkspace) {
         this.id = workspace.id;
@@ -41,17 +41,49 @@ export class Workspace {
         return this.workspace.rootPath;
     }
 
-    get group() {
-        const favorited = Container.context.workspaceState.get<
-            IGroupWorkspaces
-        >(WorkspaceState.GroupWorkspaces);
-        return favorited !== undefined && favorited[this.id] === true;
+    set current(value: boolean) {
+        this._current = value;
     }
 
-    get favorited() {
-        const favorited = Container.context.workspaceState.get<
+    get current(): boolean {
+        return this._current;
+    }
+
+    get group(): string | undefined {
+        const group = Container.context.globalState.get<IGroupWorkspaces>(
+            GlobalState.GroupWorkspaces
+        );
+
+        return group![this.id];
+    }
+
+    async addToGroup(group?: string) {
+        let workspaces = Container.context.globalState.get<IGroupWorkspaces>(
+            GlobalState.FavoriteWorkspaces
+        );
+
+        if (workspaces === undefined) {
+            workspaces = Object.create(null);
+        }
+
+        if (group) {
+            workspaces![this.id] = group;
+        } else {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { [this.id]: _, ...rest } = workspaces!;
+            workspaces = rest;
+        }
+
+        await Container.context.globalState.update(
+            GlobalState.FavoriteWorkspaces,
+            workspaces
+        );
+    }
+
+    get favorited(): boolean {
+        const favorited = Container.context.globalState.get<
             IFavoriteWorkspaces
-        >(WorkspaceState.FavoriteWorkspaces);
+        >(GlobalState.FavoriteWorkspaces);
         return favorited !== undefined && favorited[this.id] === true;
     }
 
@@ -64,9 +96,10 @@ export class Workspace {
     }
 
     private async updateFavorite(favorite: boolean) {
-        let favorited = Container.context.workspaceState.get<
-            IFavoriteWorkspaces
-        >(WorkspaceState.FavoriteWorkspaces);
+        let favorited = Container.context.globalState.get<IFavoriteWorkspaces>(
+            GlobalState.FavoriteWorkspaces
+        );
+
         if (favorited === undefined) {
             favorited = Object.create(null);
         }
@@ -78,8 +111,9 @@ export class Workspace {
             const { [this.id]: _, ...rest } = favorited!;
             favorited = rest;
         }
-        await Container.context.workspaceState.update(
-            WorkspaceState.FavoriteWorkspaces,
+
+        await Container.context.globalState.update(
+            GlobalState.FavoriteWorkspaces,
             favorited
         );
     }

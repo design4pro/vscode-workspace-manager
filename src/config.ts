@@ -8,13 +8,12 @@ export interface IConfig {
 }
 
 export interface IViewConfig {
-    showInActivityBar: boolean;
-    showInExplorer: boolean;
-    showWorkspaceRefreshIconInStatusBar: boolean;
-    showWorkspaceNameInStatusBar: boolean;
+    workspacesRefreshIconInStatusBar: boolean;
+    workspacesNameInStatusBar: boolean;
     removeCurrentWorkspaceFromList: boolean;
     groups: ITreeViewConfig;
     workspaces: ITreeViewConfig;
+    favorites: ITreeViewConfig;
 }
 
 export interface IAdvancedConfig {
@@ -31,4 +30,5 @@ export interface IAdvancedConfig {
 export interface ITreeViewConfig {
     compact: boolean;
     enabled: boolean;
+    location?: string;
 }

@@ -7,7 +7,7 @@ export function deleteWorkspace(workspace: Workspace, prompt: boolean) {
     if (prompt) {
         vscode.window
             .showInformationMessage(
-                `Are you sure you want to delete file ${workspace.getPath}?`,
+                `Are you sure you want to delete file ${workspace.path}?`,
                 'Yes',
                 'No'
             )
@@ -17,13 +17,13 @@ export function deleteWorkspace(workspace: Workspace, prompt: boolean) {
                         return;
                     }
 
-                    fs.unlinkSync(workspace.getPath);
+                    fs.unlinkSync(workspace.path);
 
                     vscode.commands.executeCommand(Commands.CacheWorkspace);
                 },
                 (reason: any) => {}
             );
     } else {
-        fs.unlinkSync(workspace.getPath);
+        fs.unlinkSync(workspace.path);
     }
 }

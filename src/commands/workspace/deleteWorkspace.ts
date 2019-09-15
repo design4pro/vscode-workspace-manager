@@ -23,8 +23,8 @@ export class DeleteWorkspaceCommand extends AbstractCommand {
         const workspaceItems = workspaces.map(
             entry =>
                 <vscode.QuickPickItem>{
-                    label: entry.getName,
-                    description: entry.getPath
+                    label: entry.name,
+                    description: entry.path
                 }
         );
 
@@ -41,7 +41,7 @@ export class DeleteWorkspaceCommand extends AbstractCommand {
                 }
 
                 const entry: Workspace | undefined = workspaces.find(
-                    entry => entry.getPath === workspaceItem.description
+                    entry => entry.path === workspaceItem.description
                 );
 
                 if (!entry) {

@@ -1,7 +1,6 @@
 import { commands, ConfigurationChangeEvent } from 'vscode';
 import { ITreeViewConfig, IViewConfig } from '../config';
 import { configuration } from '../configuration';
-import { CommandContext, setCommandContext } from '../constants';
 import { Container } from '../container';
 import { WorkspacesNode } from './nodes/workspacesNode';
 import { ViewBase } from './viewBase';
@@ -15,8 +14,8 @@ export class WorkspacesView extends ViewBase<WorkspacesNode> {
         return new WorkspacesNode(this);
     }
 
-    protected get location(): string {
-        return `workspaceManager`;
+    protected get location(): string | undefined {
+        return this.config.location;
     }
 
     protected registerCommands() {
@@ -34,6 +33,11 @@ export class WorkspacesView extends ViewBase<WorkspacesNode> {
             !configuration.changed(
                 e,
                 configuration.name('views')('workspaces').value
+            ) &&
+            !configuration.changed(
+                e,
+                configuration.name('views')('removeCurrentWorkspaceFromList')
+                    .value
             )
         ) {
             return;
@@ -42,25 +46,20 @@ export class WorkspacesView extends ViewBase<WorkspacesNode> {
         if (
             configuration.changed(
                 e,
-                configuration.name('views')('workspaces')('enabled').value
-            )
-        ) {
-            setCommandContext(
-                CommandContext.ViewsWorkspacesInActivityBar,
-                true
-            );
-        }
-
-        if (
-            configuration.changed(
-                e,
-                configuration.name('views')('workspaces').value
+                configuration.name('views')('workspaces')('location').value
             )
         ) {
             this.initialize(this.location);
         }
 
-        if (!configuration.initializing(e) && this._root !== undefined) {
+        if (
+            (!configuration.initializing(e) && this._root !== undefined) ||
+            configuration.changed(
+                e,
+                configuration.name('views')('removeCurrentWorkspaceFromList')
+                    .value
+            )
+        ) {
             void this.refresh(true);
         }
     }

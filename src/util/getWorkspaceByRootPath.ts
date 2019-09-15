@@ -12,22 +12,23 @@ export async function getWorkspaceByRootPath(
         return;
     }
 
-    return workspaces.find(entry => {
-        let rootPath = entry.getRootPath;
+    return workspaces.find(workspace => {
+        let rootPath = workspace.rootPath;
 
         if (rootPath.startsWith('.')) {
-            rootPath = dirname(rootPath);
+            rootPath = dirname(workspace.path);
 
             if (rootPath === path) return true;
 
-            rootPath = join(rootPath, entry.getRootPath);
+            rootPath = join(rootPath, workspace.rootPath);
 
             if (rootPath.endsWith('/')) {
                 rootPath = rootPath.slice(0, -1);
             }
         }
 
-        if (rootPath === path || (path && path.startsWith(rootPath)))
+        if (rootPath === path || (path && path.startsWith(rootPath))) {
             return true;
+        }
     });
 }

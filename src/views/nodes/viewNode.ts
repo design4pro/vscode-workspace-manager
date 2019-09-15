@@ -11,11 +11,11 @@ import { Functions, LogName } from '../../system';
 import { TreeViewNodeStateChangeEvent, View } from '../viewBase';
 
 export enum ResourceType {
+    Favorite = 'workspaceManager:favorite',
+    Favorites = 'workspaceManager:favorites',
     Group = 'workspaceManager:group',
     Groups = 'workspaceManager:groups',
     Message = 'workspaceManager:message',
-    Search = 'workspaceManager:search',
-    SearchResults = 'workspaceManager:search:results',
     Workspace = 'workspaceManager:workspace',
     Workspaces = 'workspaceManager:workspaces'
 }
@@ -29,22 +29,14 @@ export interface ViewNode {
 )
 export abstract class ViewNode<TView extends View = View> {
     constructor(
-        path: string | undefined,
         public readonly view: TView,
         protected readonly parent?: ViewNode
-    ) {
-        this._path = path;
-    }
+    ) {}
 
     toString() {
         return `${Logger.toLoggableName(this)}${
             this.id != null ? `(${this.id})` : ''
         }`;
-    }
-
-    protected _path?: string;
-    get path() {
-        return this._path;
     }
 
     abstract getChildren(): ViewNode[] | Promise<ViewNode[]>;
@@ -99,8 +91,8 @@ export abstract class SubscribeableViewNode<
     protected _disposable: Disposable;
     protected _subscription: Promise<Disposable | undefined> | undefined;
 
-    constructor(path: string | undefined, view: TView, parent?: ViewNode) {
-        super(path, view, parent);
+    constructor(view: TView, parent?: ViewNode) {
+        super(view, parent);
 
         const disposables = [
             this.view.onDidChangeVisibility(this.onVisibilityChanged, this),
@@ -137,6 +129,7 @@ export abstract class SubscribeableViewNode<
         this._canSubscribe = value;
 
         void this.ensureSubscription();
+
         if (value) {
             void this.triggerChange();
         }

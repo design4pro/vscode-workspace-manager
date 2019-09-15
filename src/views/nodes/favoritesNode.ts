@@ -5,29 +5,39 @@ import { CommandContext, setCommandContext } from '../../constants';
 import { Workspace } from '../../model/workspace';
 import { getWorkspaceByRootPath } from '../../util/getWorkspaceByRootPath';
 import { getWorkspaces } from '../../util/getWorkspaces';
-import { WorkspacesView } from '../workspacesView';
+import { FavoritesView } from '../favoritesView';
 import { MessageNode } from './common';
 import { ResourceType, ViewNode } from './viewNode';
 import { WorkspaceNode } from './workspaceNode';
 
-export class WorkspacesNode extends ViewNode<WorkspacesView> {
+export class FavoritesNode extends ViewNode<FavoritesView> {
     private _children: (WorkspaceNode | MessageNode)[] | undefined;
 
-    constructor(view: WorkspacesView) {
+    constructor(view: FavoritesView) {
         super(view);
     }
 
     async getChildren(): Promise<ViewNode[]> {
         if (this._children === undefined) {
-            this._children = await this.getWorkspaces();
+            this._children = await this.getFavorites();
+        }
+
+        if (!this._children || this._children.length === 0) {
+            return [
+                new MessageNode(
+                    this.view,
+                    this,
+                    'No favorite workspaces could be found.'
+                )
+            ];
         }
 
         return this._children;
     }
 
     getTreeItem(): TreeItem {
-        const item = new TreeItem('Workspaces', TreeItemCollapsibleState.None);
-        item.contextValue = ResourceType.Workspaces;
+        const item = new TreeItem('Favorites', TreeItemCollapsibleState.None);
+        item.contextValue = ResourceType.Favorites;
 
         return item;
     }
@@ -35,10 +45,10 @@ export class WorkspacesNode extends ViewNode<WorkspacesView> {
     async refresh() {
         if (this._children === undefined) return;
 
-        this._children = await this.getWorkspaces();
+        this._children = await this.getFavorites();
     }
 
-    private async getWorkspaces() {
+    private async getFavorites() {
         const workspaces = await getWorkspaces();
 
         const removeWorkspaceFromList: boolean = configuration.get(
@@ -52,7 +62,7 @@ export class WorkspacesNode extends ViewNode<WorkspacesView> {
                 new MessageNode(
                     this.view,
                     this,
-                    'No workspaces could be found.'
+                    'No favorite workspaces could be found.'
                 )
             ];
         }
@@ -66,7 +76,10 @@ export class WorkspacesNode extends ViewNode<WorkspacesView> {
 
                 const item = new WorkspaceNode(this.view, this, workspace);
 
-                if (isCurrent && removeWorkspaceFromList) {
+                if (
+                    (isCurrent && removeWorkspaceFromList) ||
+                    !workspace.favorited
+                ) {
                     return acc;
                 }
 
@@ -77,7 +90,7 @@ export class WorkspacesNode extends ViewNode<WorkspacesView> {
             []
         );
 
-        setCommandContext(CommandContext.WorkspacesEmpty, !!!items.length);
+        setCommandContext(CommandContext.FavoritesEmpty, !!!items.length);
 
         return items;
     }

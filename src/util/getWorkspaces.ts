@@ -1,6 +1,5 @@
 import * as glob from 'fast-glob';
 import { join } from 'path';
-import * as uuid from 'uuid';
 import * as VError from 'verror';
 import * as vscode from 'vscode';
 import { Cache } from '../cache/cache';
@@ -12,9 +11,8 @@ import {
     setCommandContext
 } from '../constants';
 import { Logger } from '../logger';
-import { Workspace, IWorkspace } from '../model/workspace';
+import { IWorkspace, Workspace } from '../model/workspace';
 import { getWorkspacesDirectories } from './getWorkspacesDirectories';
-import { getConfigurationValue } from './json';
 import { statusBarCache } from './statusBar/cache';
 
 export async function getWorkspaces(
@@ -33,7 +31,7 @@ export async function getWorkspaces(
         cachedWorkspaces.length &&
         !cache.isExpired(cacheKey)
     ) {
-        setCommandContext(CommandContext.Empty, false);
+        setCommandContext(CommandContext.WorkspacesEmpty, false);
 
         return await cachedWorkspaces.map(
             workspace => new Workspace(workspace)
@@ -68,27 +66,18 @@ export async function getWorkspaces(
 
             if (workspaceConfiguration) {
                 const rootPath = workspaceConfiguration.folders[0].path;
-                const workspaceId = uuid();
-
-                const group = getConfigurationValue<string | undefined>(
-                    workspaceConfiguration.settings,
-                    `${extensionId}.group`,
-                    undefined
-                );
-
-                const name = (<any>path)
+                const workspaceId = (<any>path)
                     .split('\\')
                     .pop()
-                    .split('/')
-                    .pop()
                     .replace(/.code-workspace$/, '');
+
+                const name = workspaceId.split('/').pop();
 
                 const workspace: IWorkspace = {
                     id: workspaceId,
                     name,
                     path,
-                    rootPath,
-                    group
+                    rootPath
                 };
 
                 workspaces.push(workspace);
@@ -133,7 +122,10 @@ export async function getWorkspaces(
                 'Workspaces cached (click to cache again)'
             );
 
-            setCommandContext(CommandContext.Empty, !!!workspaces.length);
+            setCommandContext(
+                CommandContext.WorkspacesEmpty,
+                !!!workspaces.length
+            );
 
             return workspaces.map(workspace => new Workspace(workspace));
         };

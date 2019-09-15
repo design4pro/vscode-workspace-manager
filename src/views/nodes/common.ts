@@ -18,7 +18,7 @@ export class MessageNode extends ViewNode {
               }
             | ThemeIcon
     ) {
-        super('', view, parent);
+        super(view, parent);
     }
 
     getChildren(): ViewNode[] | Promise<ViewNode[]> {
@@ -31,6 +31,7 @@ export class MessageNode extends ViewNode {
         item.description = this._description;
         item.tooltip = this._tooltip;
         item.iconPath = this._iconPath;
+
         return item;
     }
 }

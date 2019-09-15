@@ -16,7 +16,7 @@ export class GroupNode extends ViewNode<View> {
         parent: ViewNode,
         public readonly workspaces: Workspace[]
     ) {
-        super(group, view, parent);
+        super(view, parent);
     }
 
     get id(): string {
@@ -31,9 +31,7 @@ export class GroupNode extends ViewNode<View> {
 
             this.workspaces.map(r => {
                 if (this.group && this.group == r.group) {
-                    children.push(
-                        new WorkspaceNode(this.group, this.view, this, r)
-                    );
+                    children.push(new WorkspaceNode(this.view, this, r));
                 }
             });
 
@@ -46,7 +44,6 @@ export class GroupNode extends ViewNode<View> {
     async getTreeItem(): Promise<TreeItem> {
         const label = this.group || '';
 
-        let description;
         let tooltip = `${label}`;
         let iconSuffix = '';
 
@@ -71,5 +68,6 @@ export class GroupNode extends ViewNode<View> {
     @Debug()
     async refresh() {
         this._children = undefined;
+        void this.parent!.triggerChange();
     }
 }

@@ -34,8 +34,8 @@ export class StatusBarWorkspace {
         }
 
         if (workspace) {
-            this.statusBarItem.text = workspace.getName;
-            this.statusBarItem.tooltip = workspace.getPath;
+            this.statusBarItem.text = workspace.name;
+            this.statusBarItem.tooltip = workspace.path;
         } else {
             this.statusBarItem.text = 'No workspace opened';
         }
@@ -63,7 +63,7 @@ export class StatusBarWorkspace {
 
     get canShow(): boolean {
         return configuration.get(
-            configuration.name('views')('showWorkspaceNameInStatusBar').value,
+            configuration.name('views')('workspacesNameInStatusBar').value,
             null,
             true
         );

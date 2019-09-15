@@ -280,7 +280,7 @@ export class Configuration extends vscode.Disposable {
                 return;
             }
 
-            workspaceFilePath = activeWorkspace.getPath;
+            workspaceFilePath = activeWorkspace.path;
         }
 
         try {
@@ -313,7 +313,7 @@ export class Configuration extends vscode.Disposable {
                 return;
             }
 
-            workspaceFilePath = activeWorkspace.getPath;
+            workspaceFilePath = activeWorkspace.path;
         }
 
         try {

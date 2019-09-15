@@ -1,3 +1,4 @@
+import { Container } from '../container';
 import { Logger } from '../logger';
 import { getWorkspaces } from '../util/getWorkspaces';
 import { statusBarCache } from '../util/statusBar/cache';
@@ -27,6 +28,8 @@ export class CacheWorkspaces {
             );
 
             statusBarWorkspace.notify();
+
+            void Container.refreshViews();
         }
     }
 }

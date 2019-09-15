@@ -52,7 +52,7 @@ export class StatusBarCache {
 
     get canShow(): boolean {
         return configuration.get(
-            configuration.name('views')('showWorkspaceRefreshIconInStatusBar')
+            configuration.name('views')('workspacesRefreshIconInStatusBar')
                 .value,
             null,
             true
