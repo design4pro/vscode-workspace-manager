@@ -54,7 +54,7 @@ export class Workspace {
             GlobalState.GroupWorkspaces
         );
 
-        return group![this.id];
+        return group ? group[this.id] : undefined;
     }
 
     async addToGroup(group?: string) {

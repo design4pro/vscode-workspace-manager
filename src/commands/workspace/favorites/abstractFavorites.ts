@@ -4,6 +4,7 @@ import { configuration } from '../../../configuration';
 import { IWorkspaceCommandArgs } from '../../../model/workspace';
 import { AbstractCommand, CommandContext } from '../../abstractCommand';
 import { Commands } from '../../common';
+import { Container } from '../../../container';
 
 export abstract class AbstractFavorites extends AbstractCommand {
     protected trackSuccess = true;
@@ -26,13 +27,7 @@ export abstract class AbstractFavorites extends AbstractCommand {
         );
 
         try {
-            await configuration.updateWorkspace(
-                'favorite',
-                !isFavorite,
-                workspacePath
-            );
-
-            commands.executeCommand(Commands.CacheWorkspace);
+            Container.refreshViews();
 
             if (isFavorite) {
                 window.showInformationMessage(
@@ -48,7 +43,9 @@ export abstract class AbstractFavorites extends AbstractCommand {
                 error,
                 'Could not add the workspace to favorites!'
             );
+
             window.showErrorMessage(error);
+
             throw error;
         }
     }

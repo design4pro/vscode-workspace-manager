@@ -260,7 +260,7 @@
                 }
             },
             {
-                "command": "workspaceManager.refreshTreeData",
+                "command": "workspaceManager.cacheWorkspace",
                 "title": "Reload Workspaces",
                 "category": "Workspace Manager",
                 "icon": {
@@ -303,6 +303,16 @@
             {
                 "command": "workspaceManager.cacheWorkspace",
                 "title": "Cache Workspace",
+                "category": "Workspace Manager"
+            },
+            {
+                "command": "workspaceManager.addToGroup",
+                "title": "Add to Group",
+                "category": "Workspace Manager"
+            },
+            {
+                "command": "workspaceManager.moveToGroup",
+                "title": "Move to Group or Remove from Group",
                 "category": "Workspace Manager"
             }
         ],
@@ -367,7 +377,27 @@
                     "when": "false"
                 },
                 {
-                    "command": "workspaceManager.refreshTreeData",
+                    "command": "workspaceManager.cacheWorkspace",
+                    "when": "false"
+                },
+                {
+                    "command": "workspaceManager.addToFavorites",
+                    "when": "false"
+                },
+                {
+                    "command": "workspaceManager.removeFromFavorites",
+                    "when": "false"
+                },
+                {
+                    "command": "workspaceManager.openWorkspaceSettings",
+                    "when": "false"
+                },
+                {
+                    "command": "workspaceManager.addToGroup",
+                    "when": "false"
+                },
+                {
+                    "command": "workspaceManager.moveToGroup",
                     "when": "false"
                 }
             ],
@@ -378,7 +408,7 @@
                     "group": "navigation@2"
                 },
                 {
-                    "command": "workspaceManager.refreshTreeData",
+                    "command": "workspaceManager.cacheWorkspace",
                     "when": "view =~ /^workspaceManager\\.views/",
                     "group": "navigation@3"
                 },
@@ -430,12 +460,22 @@
                     "group": "2_workspace@1"
                 },
                 {
+                    "command": "workspaceManager.addToGroup",
+                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace\\b(?!.*?\\b\\+group\\b)/",
+                    "group": "2_workspace@2"
+                },
+                {
+                    "command": "workspaceManager.moveToGroup",
+                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace\\b(?=.*?\\b\\+group\\b)/",
+                    "group": "2_workspace@2"
+                },
+                {
                     "command": "workspaceManager.openWorkspaceSettings",
                     "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace/",
                     "group": "2_workspace@2"
                 },
                 {
-                    "command": "workspaceManager.refreshTreeData",
+                    "command": "workspaceManager.cacheWorkspace",
                     "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace/",
                     "group": "z_commands@1"
                 }

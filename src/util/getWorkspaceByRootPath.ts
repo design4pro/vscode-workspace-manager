@@ -13,6 +13,8 @@ export async function getWorkspaceByRootPath(
     }
 
     return workspaces.find(workspace => {
+        if (!workspace) return false;
+
         let rootPath = workspace.rootPath;
 
         if (rootPath.startsWith('.')) {

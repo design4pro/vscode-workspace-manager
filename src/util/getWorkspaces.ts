@@ -1,3 +1,4 @@
+import { Container } from './../container';
 import * as glob from 'fast-glob';
 import { join } from 'path';
 import * as VError from 'verror';
@@ -126,6 +127,8 @@ export async function getWorkspaces(
                 CommandContext.WorkspacesEmpty,
                 !!!workspaces.length
             );
+
+            Container.refreshViews();
 
             return workspaces.map(workspace => new Workspace(workspace));
         };

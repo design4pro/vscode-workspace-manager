@@ -10,16 +10,22 @@ export class ViewCommands {
             this.openWorkspaceSettings,
             this
         );
+
         commands.registerCommand(
             Commands.AddToFavorites,
             this.addToFavorites,
             this
         );
+
         commands.registerCommand(
             Commands.RemoveFromFavorites,
             this.removeFromFavorites,
             this
         );
+
+        commands.registerCommand(Commands.AddToGroup, this.addToGroup, this);
+
+        commands.registerCommand(Commands.MoveToGroup, this.moveToGroup, this);
     }
 
     private openWorkspaceSettings(node: WorkspaceNode) {
@@ -38,6 +44,16 @@ export class ViewCommands {
 
     private removeFromFavorites(node: WorkspaceNode) {
         if (node instanceof WorkspaceNode) return node.removeFromFavorites();
+        return undefined;
+    }
+
+    private addToGroup(node: WorkspaceNode) {
+        if (node instanceof WorkspaceNode) return node.addToGroup();
+        return undefined;
+    }
+
+    private moveToGroup(node: WorkspaceNode) {
+        if (node instanceof WorkspaceNode) return node.moveToGroup();
         return undefined;
     }
 }

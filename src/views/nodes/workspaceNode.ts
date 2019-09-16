@@ -103,6 +103,18 @@ export class WorkspaceNode extends ViewNode<View> implements PageableViewNode {
         return this._children;
     }
 
+    async addToGroup() {
+        await this.workspace.addToGroup();
+        void this.parent!.triggerChange();
+        void Container.refreshViews();
+    }
+
+    async moveToGroup() {
+        await this.workspace.addToGroup();
+        void this.parent!.triggerChange();
+        void Container.refreshViews();
+    }
+
     async addToFavorites() {
         await this.workspace.favorite();
         void this.parent!.triggerChange();

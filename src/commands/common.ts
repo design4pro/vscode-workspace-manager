@@ -3,9 +3,11 @@ import { AbstractCommand } from './abstractCommand';
 
 export enum Commands {
     AddToFavorites = 'workspaceManager.addToFavorites',
+    AddToGroup = 'workspaceManager.addToGroup',
     CacheWorkspace = 'workspaceManager.cacheWorkspace',
     CloseWorkspace = 'workspaceManager.closeWorkspace',
     DeleteWorkspace = 'workspaceManager.deleteWorkspace',
+    MoveToGroup = 'workspaceManager.moveToGroup',
     OpenWorkspaceSettings = 'workspaceManager.openWorkspaceSettings',
     RemoveFromFavorites = 'workspaceManager.removeFromFavorites',
     SaveWorkspace = 'workspaceManager.saveWorkspace',
