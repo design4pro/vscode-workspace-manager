@@ -302,8 +302,12 @@
             },
             {
                 "command": "workspaceManager.cacheWorkspace",
-                "title": "Cache Workspace",
-                "category": "Workspace Manager"
+                "title": "Cache Workspaces",
+                "category": "Workspace Manager",
+                "icon": {
+                    "light": "resources/light/refresh.svg",
+                    "dark": "resources/dark/refresh.svg"
+                }
             },
             {
                 "command": "workspaceManager.addToGroup",

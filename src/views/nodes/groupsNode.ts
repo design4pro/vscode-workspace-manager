@@ -46,8 +46,6 @@ export class GroupsNode extends ViewNode<GroupsView> {
     private async getGroups() {
         const workspaces = await getWorkspaces();
 
-        console.log('getGroups', workspaces);
-
         if (!workspaces || workspaces.length === 0) {
             return [
                 new MessageNode(
@@ -65,8 +63,6 @@ export class GroupsNode extends ViewNode<GroupsView> {
                 groups.push(r.group);
             }
         });
-
-        console.log(groups);
 
         return groups.map(r => new GroupNode(r, this.view, this, workspaces));
     }

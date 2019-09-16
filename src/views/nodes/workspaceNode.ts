@@ -1,5 +1,5 @@
 import * as uuid from 'uuid';
-import { Command, TreeItem, TreeItemCollapsibleState } from 'vscode';
+import { Command, TreeItem, TreeItemCollapsibleState, Uri } from 'vscode';
 import { Container } from '../../container';
 import { IWorkspaceCommandArgs, Workspace } from '../../model/workspace';
 import { Debug, Gate } from '../../system';
@@ -68,11 +68,15 @@ export class WorkspaceNode extends ViewNode<View> implements PageableViewNode {
 
         item.description = description;
         item.iconPath = {
-            dark: Container.context.asAbsolutePath(
-                `resources/dark/folder${iconSuffix}.svg`
+            dark: Uri.file(
+                Container.context.asAbsolutePath(
+                    `resources/dark/folder${iconSuffix}.svg`
+                )
             ),
-            light: Container.context.asAbsolutePath(
-                `resources/light/folder${iconSuffix}.svg`
+            light: Uri.file(
+                Container.context.asAbsolutePath(
+                    `resources/light/folder${iconSuffix}.svg`
+                )
             )
         };
 
