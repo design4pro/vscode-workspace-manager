@@ -12,8 +12,10 @@ export enum Commands {
     RemoveFromFavorites = 'workspaceManager.removeFromFavorites',
     SaveWorkspace = 'workspaceManager.saveWorkspace',
     SwitchWorkspace = 'workspaceManager.switchWorkspace',
+    SwitchWorkspaceQuickPick = 'workspaceManager.switchWorkspaceQuickPick',
     SwitchToWorkspace = 'workspaceManager.switchToWorkspace',
-    SwitchWorkspaceInNewWindow = 'workspaceManager.switchWorkspaceInNewWindow'
+    SwitchWorkspaceInNewWindow = 'workspaceManager.switchWorkspaceInNewWindow',
+    SwitchWorkspaceInNewWindowQuickPick = 'workspaceManager.switchWorkspaceInNewWindowQuickPick'
 }
 
 interface CommandConstructor {

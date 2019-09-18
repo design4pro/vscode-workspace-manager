@@ -1,10 +1,22 @@
-import { commands, Uri } from 'vscode';
+import { commands, Uri, window } from 'vscode';
 import { Commands } from '../commands/common';
 import { BuiltInCommands } from '../constants';
 import { WorkspaceNode } from './nodes';
 
 export class ViewCommands {
     constructor() {
+        commands.registerCommand(
+            Commands.SwitchWorkspace,
+            this.switchWorkspace,
+            this
+        );
+
+        commands.registerCommand(
+            Commands.SwitchWorkspaceInNewWindow,
+            this.switchWorkspaceInNewWindow,
+            this
+        );
+
         commands.registerCommand(
             Commands.OpenWorkspaceSettings,
             this.openWorkspaceSettings,
@@ -28,12 +40,35 @@ export class ViewCommands {
         commands.registerCommand(Commands.MoveToGroup, this.moveToGroup, this);
     }
 
+    private switchWorkspace(node: WorkspaceNode) {
+        if (node instanceof WorkspaceNode) return node.switchWorkspace();
+
+        return commands.executeCommand(Commands.SwitchWorkspaceQuickPick);
+    }
+
+    private switchWorkspaceInNewWindow(node: WorkspaceNode) {
+        if (node instanceof WorkspaceNode)
+            return node.switchWorkspaceInNewWindow();
+
+        return commands.executeCommand(
+            Commands.SwitchWorkspaceInNewWindowQuickPick,
+            {
+                inNewWindow: true
+            }
+        );
+    }
+
     private openWorkspaceSettings(node: WorkspaceNode) {
         if (!(node instanceof WorkspaceNode)) return undefined;
 
-        return commands.executeCommand(
-            BuiltInCommands.OpenFile,
-            Uri.file(node.workspace.path)
+        const uri = Uri.file(node.workspace.path);
+
+        commands.executeCommand(BuiltInCommands.OpenFile, uri).then(
+            value => ({}), // done
+            value =>
+                window.showErrorMessage(
+                    'Could not open the workspace settings!'
+                )
         );
     }
 

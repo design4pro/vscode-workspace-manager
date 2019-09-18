@@ -59,7 +59,11 @@ export class GroupsNode extends ViewNode<GroupsView> {
         const groups: string[] = [];
 
         workspaces.map(r => {
-            if (r.group && !groups.includes(r.group)) {
+            if (
+                r.group &&
+                typeof r.group === 'string' &&
+                !groups.includes(r.group)
+            ) {
                 groups.push(r.group);
             }
         });

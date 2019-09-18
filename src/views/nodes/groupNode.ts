@@ -1,18 +1,17 @@
 import * as uuid from 'uuid';
 import { TreeItem, TreeItemCollapsibleState } from 'vscode';
-import { Container } from '../../container';
 import { Workspace } from '../../model/workspace';
 import { Debug } from '../../system';
-import { View } from '../viewBase';
+import { GroupsView } from '../groupsView';
 import { ResourceType, ViewNode } from './viewNode';
 import { WorkspaceNode } from './workspaceNode';
 
-export class GroupNode extends ViewNode<View> {
+export class GroupNode extends ViewNode<GroupsView> {
     private _children: ViewNode[] | undefined;
 
     constructor(
         public readonly group: string | undefined,
-        view: View,
+        view: GroupsView,
         parent: ViewNode,
         public readonly workspaces: Workspace[]
     ) {
@@ -20,9 +19,9 @@ export class GroupNode extends ViewNode<View> {
     }
 
     get id(): string {
-        const groupId = uuid();
+        const id = uuid();
 
-        return `workspaceManager:group(${this.group || groupId})`;
+        return `workspaceManager:group(${this.group || id})`;
     }
 
     async getChildren(): Promise<ViewNode[]> {
@@ -45,19 +44,9 @@ export class GroupNode extends ViewNode<View> {
         const label = this.group || '';
 
         let tooltip = `${label}`;
-        let iconSuffix = '';
 
         const item = new TreeItem(label, TreeItemCollapsibleState.Expanded);
         item.contextValue = ResourceType.Group;
-
-        item.iconPath = {
-            dark: Container.context.asAbsolutePath(
-                `images/dark/icon-repo${iconSuffix}.svg`
-            ),
-            light: Container.context.asAbsolutePath(
-                `images/light/icon-repo${iconSuffix}.svg`
-            )
-        };
 
         item.id = this.id;
         item.tooltip = tooltip;

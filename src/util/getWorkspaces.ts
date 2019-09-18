@@ -1,4 +1,3 @@
-import { Container } from './../container';
 import * as glob from 'fast-glob';
 import { join } from 'path';
 import * as VError from 'verror';
@@ -13,6 +12,7 @@ import {
 } from '../constants';
 import { Logger } from '../logger';
 import { IWorkspace, Workspace } from '../model/workspace';
+import { Container } from './../container';
 import { getWorkspacesDirectories } from './getWorkspacesDirectories';
 import { statusBarCache } from './statusBar/cache';
 
@@ -94,79 +94,99 @@ export async function getWorkspaces(
         }
     };
 
-    try {
-        statusBarCache.notify('eye', 'Looking for workspaces...', false);
-
-        const stream = glob.stream(directories, {
-            ignore: ['**/node_modules/**', ...excludeGlobPattern],
-            deep: deep,
-            onlyFiles: true
-        });
-
-        const onEnd = () => {
-            Logger.info(
-                `All the workspece files in the directories [${directories.join(
-                    ', '
-                )}] has been found [${workspaces.length}]`
-            );
-
-            workspaces.sort((a, b) => a.name.localeCompare(b.name));
-
-            cache.update(cacheKey, workspaces);
-
-            if (timeoutId) {
-                clearTimeout(timeoutId);
-            }
-
-            statusBarCache.notify(
-                'sync',
-                'Workspaces cached (click to cache again)'
-            );
-
-            setCommandContext(
-                CommandContext.WorkspacesEmpty,
-                !!!workspaces.length
-            );
-
-            Container.refreshViews();
-
-            return workspaces.map(workspace => new Workspace(workspace));
-        };
-
-        stream
-            .on('data', (path: string) => {
+    vscode.window.withProgress(
+        {
+            location: vscode.ProgressLocation.Notification,
+            title: 'Looking for workspaces...',
+            cancellable: false
+        },
+        async progress => {
+            try {
                 statusBarCache.notify(
                     'eye',
-                    `Looking for workspaces... [${workspaces.length}]`,
+                    'Looking for workspaces...',
                     false
                 );
-                addPath(path);
-            })
-            .on('error', err => {
-                err = new VError(
-                    err,
-                    '${extensionOutputChannelName}\nReading stream error'
-                );
-                vscode.window.showInformationMessage(err);
-                throw err;
-            })
-            .on('pause', onEnd)
-            .on('end', onEnd)
-            .on('close', () => {
-                Logger.info(
-                    `Stream has been destroyed and file has been closed`
-                );
-            });
 
-        timeoutId = setTimeout(() => {
-            stream.pause();
-            Logger.info('Reading stream has been poused after 10s.');
-            vscode.window.showInformationMessage(
-                `${extensionOutputChannelName}\nReading stream has been poused after 10s.`
-            );
-        }, 10000);
-    } catch (err) {
-        err = new VError(err, 'Reading stream has been destroyed');
-        throw err;
-    }
+                const stream = glob.stream(directories, {
+                    ignore: ['**/node_modules/**', ...excludeGlobPattern],
+                    deep: deep,
+                    onlyFiles: true
+                });
+
+                const onEnd = () => {
+                    Logger.info(
+                        `All the workspece files in the directories [${directories.join(
+                            ', '
+                        )}] has been found [${workspaces.length}]`
+                    );
+
+                    workspaces.sort((a, b) => a.name.localeCompare(b.name));
+
+                    cache.update(cacheKey, workspaces);
+
+                    if (timeoutId) {
+                        clearTimeout(timeoutId);
+                    }
+
+                    statusBarCache.notify(
+                        'sync',
+                        'Workspaces cached (click to cache again)'
+                    );
+
+                    setCommandContext(
+                        CommandContext.WorkspacesEmpty,
+                        !!!workspaces.length
+                    );
+
+                    Container.refreshViews();
+
+                    return workspaces.map(
+                        workspace => new Workspace(workspace)
+                    );
+                };
+
+                stream
+                    .on('data', (path: string) => {
+                        statusBarCache.notify(
+                            'eye',
+                            `Looking for workspaces... [${workspaces.length}]`,
+                            false
+                        );
+
+                        progress.report({
+                            message: `Looking for workspaces... [${workspaces.length}]`
+                        });
+
+                        addPath(path);
+                    })
+                    .on('error', err => {
+                        err = new VError(
+                            err,
+                            '${extensionOutputChannelName}\nReading stream error'
+                        );
+                        vscode.window.showInformationMessage(err);
+                        throw err;
+                    })
+                    .on('pause', onEnd)
+                    .on('end', onEnd)
+                    .on('close', () => {
+                        Logger.info(
+                            `Stream has been destroyed and file has been closed`
+                        );
+                    });
+
+                timeoutId = setTimeout(() => {
+                    stream.pause();
+                    Logger.info('Reading stream has been poused after 10s.');
+                    vscode.window.showInformationMessage(
+                        `${extensionOutputChannelName}\nReading stream has been poused after 10s.`
+                    );
+                }, 10000);
+            } catch (err) {
+                err = new VError(err, 'Reading stream has been destroyed');
+                throw err;
+            }
+        }
+    );
 }

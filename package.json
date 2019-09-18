@@ -408,17 +408,17 @@
             "view/title": [
                 {
                     "command": "workspaceManager.saveWorkspace",
-                    "when": "view =~ /^workspaceManager\\.views/",
+                    "when": "view =~ /^workspaceManager\\.views\\.workspace/",
                     "group": "navigation@2"
                 },
                 {
                     "command": "workspaceManager.cacheWorkspace",
-                    "when": "view =~ /^workspaceManager\\.views/",
+                    "when": "view =~ /^workspaceManager\\.views\\.workspace/",
                     "group": "navigation@3"
                 },
                 {
                     "command": "workspaceManager.closeWorkspace",
-                    "when": "view =~ /^workspaceManager\\.views/",
+                    "when": "view =~ /^workspaceManager\\.views\\.workspace/",
                     "group": "navigation@4"
                 }
             ],
@@ -477,19 +477,10 @@
                     "command": "workspaceManager.openWorkspaceSettings",
                     "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace/",
                     "group": "2_workspace@2"
-                },
-                {
-                    "command": "workspaceManager.cacheWorkspace",
-                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace/",
-                    "group": "z_commands@1"
                 }
             ]
         },
         "keybindings": [
-            {
-                "command": "workspaceManager.saveWorkspace",
-                "key": "ctrl-k shift-w"
-            },
             {
                 "command": "workspaceManager.switchWorkspace",
                 "key": "shift+alt+p",

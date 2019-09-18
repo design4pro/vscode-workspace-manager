@@ -22,6 +22,7 @@ export interface IAdvancedConfig {
     deep: number;
     excludeGlobPattern: string | string[];
     outputLevel: IOutputLevel;
+    messages: {};
     telemetry: {
         enabled: boolean;
     };

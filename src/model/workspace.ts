@@ -1,4 +1,5 @@
-import { QuickPickItem, Uri, window } from 'vscode';
+import { commands, MessageItem, QuickPickItem, Uri, window } from 'vscode';
+import { Commands } from '../commands/common';
 import {
     GlobalState,
     IFavoriteWorkspaces,
@@ -79,33 +80,56 @@ export class Workspace {
                 ignoreFocusOut: true
             });
 
-            console.log(name);
-
             if (name === undefined || name.length === 0) return undefined;
 
-            group![this.id] = name;
+            if (group) {
+                group[this.id] = name;
+            }
         } else {
-            class QuickInputButton implements QuickInputButton {
+            class RemoveQuickInputButton implements RemoveQuickInputButton {
                 constructor(
                     public iconPath: { light: Uri; dark: Uri },
                     public tooltip: string
                 ) {}
             }
 
-            const createGroupButton = new QuickInputButton(
+            class AddQuickInputButton implements AddQuickInputButton {
+                constructor(
+                    public iconPath: { light: Uri; dark: Uri },
+                    public tooltip: string
+                ) {}
+            }
+
+            const removeGroupButton = new RemoveQuickInputButton(
                 {
                     dark: Uri.file(
                         Container.context.asAbsolutePath(
-                            'resources/dark/save.svg'
+                            'resources/dark/remove.svg'
                         )
                     ),
                     light: Uri.file(
                         Container.context.asAbsolutePath(
-                            'resources/light/save.svg'
+                            'resources/light/remove.svg'
                         )
                     )
                 },
-                'Create Workspace Group'
+                'Remove from Group'
+            );
+
+            const addGroupButton = new AddQuickInputButton(
+                {
+                    dark: Uri.file(
+                        Container.context.asAbsolutePath(
+                            'resources/dark/add.svg'
+                        )
+                    ),
+                    light: Uri.file(
+                        Container.context.asAbsolutePath(
+                            'resources/light/add.svg'
+                        )
+                    )
+                },
+                'Add new Group'
             );
 
             interface State {
@@ -117,37 +141,56 @@ export class Workspace {
                 runtime: QuickPickItem;
             }
 
-            async function collectInputs() {
+            const collectInputs = async () => {
                 const state = {} as Partial<State>;
                 await MultiStepInput.run(input => pickGroup(input, state));
                 return state as State;
-            }
+            };
 
-            const title = 'Create Workspace Group';
+            const title = 'Workspaces Groups';
 
-            async function pickGroup(
+            const pickGroup = async (
                 input: MultiStepInput,
                 state: Partial<State>
-            ) {
+            ) => {
                 const pick = await input.showQuickPick({
                     title,
                     step: 1,
                     totalSteps: 2,
-                    placeholder: 'Pick a workspace group',
+                    placeholder:
+                        'Pick a workspace group or add new group by clicking +',
                     items: groups,
                     activeItem:
                         typeof state.group !== 'string'
                             ? state.group
                             : undefined,
-                    buttons: [createGroupButton],
+                    buttons: [removeGroupButton, addGroupButton],
                     shouldResume: shouldResume
                 });
-                if (pick instanceof QuickInputButton) {
+
+                if (pick instanceof RemoveQuickInputButton) {
+                    const actions: MessageItem[] = [
+                        { title: 'Yes' },
+                        { title: 'No', isCloseAffordance: true }
+                    ];
+
+                    const result = await window.showInformationMessage(
+                        `Remove workspace '${this.name}' from group '${this.group}'?`,
+                        ...actions
+                    );
+
+                    if (result !== undefined && result.title === 'Yes') {
+                        state.group = undefined;
+                    } else {
+                        state.group = this.group;
+                    }
+                } else if (pick instanceof AddQuickInputButton) {
                     return (input: MultiStepInput) =>
                         inputGroupName(input, state);
+                } else {
+                    state.group = pick;
                 }
-                state.group = pick;
-            }
+            };
 
             async function inputGroupName(
                 input: MultiStepInput,
@@ -172,10 +215,32 @@ export class Workspace {
             async function validateNameIsUnique(name: string) {
                 // ...validate...
                 await new Promise(resolve => setTimeout(resolve, 1000));
-                return name === 'vscode' ? 'Name not unique' : undefined;
+                return undefined;
             }
 
             const state = await collectInputs();
+
+            if (group) {
+                if (!state.group) {
+                    const { [this.id]: _, ...rest } = group!;
+
+                    group = rest;
+
+                    window.showInformationMessage(
+                        `Workspace '${this.name}' was removed from group '${this.group}'.`
+                    );
+                } else if (typeof state.group === 'string') {
+                    group[this.id] = state.group;
+                    window.showInformationMessage(
+                        `Workspace '${this.name}' was added from group '${state.group}'.`
+                    );
+                } else if (state.group.label) {
+                    group[this.id] = state.group.label;
+                    window.showInformationMessage(
+                        `Workspace '${this.name}' was added from group '${state.group.label}'.`
+                    );
+                }
+            }
         }
 
         await Container.context.globalState.update(
@@ -210,10 +275,18 @@ export class Workspace {
 
         if (favorite) {
             favorited![this.id] = true;
+
+            window.showInformationMessage(
+                `Workspace '${this.name}' was added to favorites.`
+            );
         } else {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const { [this.id]: _, ...rest } = favorited!;
             favorited = rest;
+
+            window.showInformationMessage(
+                `Workspace '${this.name}' was removed from favorites.`
+            );
         }
 
         await Container.context.globalState.update(
@@ -232,11 +305,28 @@ export class Workspace {
         const groups: string[] = [];
 
         workspaces.map(r => {
-            if (r.group && !groups.includes(r.group)) {
+            if (
+                r.group &&
+                typeof r.group === 'string' &&
+                !groups.includes(r.group)
+            ) {
                 groups.push(r.group);
             }
         });
 
         return groups.map(label => ({ label }));
+    }
+
+    switchWorkspace() {
+        commands.executeCommand(Commands.SwitchToWorkspace, {
+            workspace: this
+        });
+    }
+
+    switchWorkspaceInNewWindow() {
+        commands.executeCommand(Commands.SwitchToWorkspace, {
+            workspace: this,
+            inNewWindow: true
+        });
     }
 }

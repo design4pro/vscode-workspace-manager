@@ -406,6 +406,12 @@ export class Logger {
         }
     }
 
+    static showOutputChannel() {
+        if (this.output === undefined) return;
+
+        this.output.show();
+    }
+
     static toLoggableName(instance: Function | object) {
         let name;
         if (typeof instance === 'function') {

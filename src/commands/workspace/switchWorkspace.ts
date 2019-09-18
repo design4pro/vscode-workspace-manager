@@ -5,9 +5,9 @@ import { AbstractCommand, CommandContext } from '../abstractCommand';
 import { Command, Commands } from '../common';
 
 @Command()
-export class SwitchWorkspaceCommand extends AbstractCommand {
+export class SwitchWorkspaceQuickPickCommand extends AbstractCommand {
     constructor() {
-        super(Commands.SwitchWorkspace);
+        super(Commands.SwitchWorkspaceQuickPick);
     }
 
     async execute(context?: CommandContext, args: IWorkspaceCommandArgs = {}) {

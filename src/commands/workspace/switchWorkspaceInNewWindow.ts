@@ -4,9 +4,9 @@ import { AbstractCommand, CommandContext } from '../abstractCommand';
 import { Command, Commands } from '../common';
 
 @Command()
-export class SwitchWorkspaceInNewWindowCommand extends AbstractCommand {
+export class SwitchWorkspaceInNewWindowQuickPickCommand extends AbstractCommand {
     constructor() {
-        super(Commands.SwitchWorkspaceInNewWindow);
+        super(Commands.SwitchWorkspaceInNewWindowQuickPick);
     }
 
     async execute(
@@ -15,13 +15,8 @@ export class SwitchWorkspaceInNewWindowCommand extends AbstractCommand {
     ) {
         args = { ...args };
 
-        if (
-            context &&
-            context.command === Commands.SwitchWorkspaceInNewWindow
-        ) {
-            args.inNewWindow = true;
-        }
+        args.inNewWindow = true;
 
-        vscode.commands.executeCommand(Commands.SwitchWorkspace, args);
+        vscode.commands.executeCommand(Commands.SwitchWorkspaceQuickPick, args);
     }
 }

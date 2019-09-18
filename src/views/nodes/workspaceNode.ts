@@ -28,9 +28,9 @@ export class WorkspaceNode extends ViewNode<View> implements PageableViewNode {
 
         return `workspaceManager:workspace(${this.workspace.id || id})${
             this._root ? ':root:' : ''
-        }${this.current ? '+current' : ''}${
-            this.workspace.favorited ? '+favorite' : ''
-        }`;
+        }${this.workspace.group ? '+group' : ''}${
+            this.current ? '+current' : ''
+        }${this.workspace.favorited ? '+favorite' : ''}`;
     }
 
     get current(): boolean {
@@ -64,6 +64,10 @@ export class WorkspaceNode extends ViewNode<View> implements PageableViewNode {
         if (this.workspace.favorited) {
             item.contextValue += '+favorite';
             iconSuffix += '-favorite';
+        }
+
+        if (this.workspace.group) {
+            item.contextValue += '+group';
         }
 
         item.description = description;
@@ -129,6 +133,14 @@ export class WorkspaceNode extends ViewNode<View> implements PageableViewNode {
         await this.workspace.unfavorite();
         void this.parent!.triggerChange();
         void Container.refreshViews();
+    }
+
+    switchWorkspace() {
+        this.workspace.switchWorkspace();
+    }
+
+    switchWorkspaceInNewWindow() {
+        this.workspace.switchWorkspaceInNewWindow();
     }
 
     @Gate()
