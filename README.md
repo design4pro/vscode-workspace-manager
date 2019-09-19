@@ -9,9 +9,34 @@
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![Build Status](https://travis-ci.org/design4pro/vscode-workspace-manager.svg?branch=master)](https://travis-ci.org/design4pro/vscode-workspace-manager)
 
+![](https://raw.githubusercontent.com/design4pro/vscode-workspace-manager/master/resources/workspace-manager.png)
+
+## Features
+
+-   Find workspaces - `.code-workspace` files in any location
+-   **Group** workspaces
+
+    <img src="https://raw.githubusercontent.com/design4pro/vscode-workspace-manager/master/images/vscode-workspace-manager-groups.gif" width=" 400">
+
+-   Add workspace to **Favorite**
+
+    <img src="https://raw.githubusercontent.com/design4pro/vscode-workspace-manager/master/images/vscode-workspace-manager-favorites.gif" width=" 400">
+
+-   Open workspace in the same or new window
+-   Open workpsace settings file
+
+    <img src="https://raw.githubusercontent.com/design4pro/vscode-workspace-manager/master/images/vscode-workspace-manager-open-settings.gif" width=" 400">
+
+-   Identify the current project in **Status Bar**
+-   A dedicated **Side Bar**
+
 ## Install
 
-1. Open **Extensions** side bar panel in Visual Studio Code and choose the menu options for **View → Extensions**
-1. Search for `Workspace Manager`
-1. Click **Install**
-1. Click **Reload**, if required
+1. Open **Extensions** side bar panel in Visual Studio Code and choose the menu options for **View → Extensions**.
+1. Search for `Workspace Manager`.
+1. Click **Install**.
+1. Click **Reload**, if required.
+
+## Licence
+
+[MIT](https://github.com/design4pro/vscode-workspace-manager/blob/master/LICENSE) © DESIGN4 ᴾ ᴿ ᴼ

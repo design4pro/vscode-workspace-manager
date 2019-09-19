@@ -242,7 +242,21 @@
                 "category": "Workspace Manager"
             },
             {
+                "command": "workspaceManager.switchWorkspaceQuickPick",
+                "title": "Switch Workspace",
+                "category": "Workspace Manager"
+            },
+            {
                 "command": "workspaceManager.switchWorkspaceInNewWindow",
+                "title": "Switch Workspace in New Window",
+                "category": "Workspace Manager",
+                "icon": {
+                    "light": "resources/light/new-window.svg",
+                    "dark": "resources/dark/new-window.svg"
+                }
+            },
+            {
+                "command": "workspaceManager.switchWorkspaceInNewWindowQuickPick",
                 "title": "Switch Workspace in New Window",
                 "category": "Workspace Manager",
                 "icon": {

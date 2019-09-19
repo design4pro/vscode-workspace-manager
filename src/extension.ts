@@ -10,9 +10,7 @@ import {
     setCommandContext
 } from './constants';
 import { Container } from './container';
-import { Environment } from './environment';
 import { IOutputLevel, Logger } from './logger';
-import { state } from './state';
 import { Strings } from './system';
 import * as telemetry from './telemetry';
 import { getExtension } from './util/getExtension';
@@ -26,9 +24,6 @@ export async function activate(
 
     // Pretend we are enabled (until we know otherwise) and set the view contexts to reduce flashing on load
     setCommandContext(CommandContext.Enabled, true);
-
-    state.context = context;
-    state.environment = new Environment();
 
     Logger.configure(
         context,

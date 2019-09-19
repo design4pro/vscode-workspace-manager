@@ -32,7 +32,7 @@ export class GroupsNode extends ViewNode<GroupsView> {
 
     getTreeItem(): TreeItem {
         const item = new TreeItem('Groups', TreeItemCollapsibleState.Expanded);
-        item.contextValue = ResourceType.Workspaces;
+        item.contextValue = ResourceType.Group;
 
         return item;
     }

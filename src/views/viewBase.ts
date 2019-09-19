@@ -208,62 +208,6 @@ export abstract class ViewBase<TRoot extends ViewNode<View>>
         this.triggerNodeChange(node);
     }
 
-    @Log({
-        args: { 0: (n: ViewNode) => n.toString() }
-    })
-    async reveal(
-        node: ViewNode,
-        options?: {
-            select?: boolean;
-            focus?: boolean;
-            expand?: boolean | number;
-        }
-    ) {
-        if (this._tree === undefined) return;
-
-        try {
-            await this._tree.reveal(node, options);
-        } catch (ex) {
-            Logger.error(ex);
-        }
-    }
-
-    @Log()
-    async show() {
-        try {
-            void (await commands.executeCommand(
-                `${this.id}${location ? `:${location}` : ''}.focus`
-            ));
-        } catch (ex) {
-            Logger.error(ex);
-
-            const setting = `${Strings.splitSingle(this.id, '.')[1]}.enabled`;
-            if (!configuration.get(setting)) {
-                const actions: MessageItem[] = [
-                    { title: 'Enable' },
-                    { title: 'Cancel', isCloseAffordance: true }
-                ];
-
-                const result = await window.showErrorMessage(
-                    `Unable to show the ${this.name} view since it's currently disabled. Would you like to enable it?`,
-                    ...actions
-                );
-
-                if (result === actions[0]) {
-                    await configuration.update(
-                        setting,
-                        true,
-                        ConfigurationTarget.Global
-                    );
-
-                    void (await commands.executeCommand(
-                        `${this.id}${location ? `:${location}` : ''}.focus`
-                    ));
-                }
-            }
-        }
-    }
-
     @Debug({
         args: { 0: (n: ViewNode) => n.toString() }
     })
@@ -280,34 +224,6 @@ export abstract class ViewBase<TRoot extends ViewNode<View>>
         if (node.id === undefined || !node.rememberLastMaxCount) return;
 
         this._lastMaxCounts.delete(node.id);
-    }
-
-    @Debug({
-        args: {
-            0: (n: ViewNode & PageableViewNode) => n.toString(),
-            3: (n?: ViewNode) => (n === undefined ? '' : n.toString())
-        }
-    })
-    async showMoreNodeChildren(
-        node: ViewNode & PageableViewNode,
-        maxCount: number | undefined,
-        previousNode?: ViewNode
-    ) {
-        if (maxCount === undefined || maxCount === 0) {
-            node.maxCount = maxCount;
-        } else {
-            node.maxCount = (node.maxCount || maxCount) + maxCount;
-        }
-
-        if (node.rememberLastMaxCount) {
-            this._lastMaxCounts.set(node.id!, node.maxCount);
-        }
-
-        if (previousNode !== undefined) {
-            void (await this.reveal(previousNode, { select: true }));
-        }
-
-        return this.refreshNode(node);
     }
 
     @Debug({

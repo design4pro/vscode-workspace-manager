@@ -11,9 +11,9 @@ export enum Commands {
     OpenWorkspaceSettings = 'workspaceManager.openWorkspaceSettings',
     RemoveFromFavorites = 'workspaceManager.removeFromFavorites',
     SaveWorkspace = 'workspaceManager.saveWorkspace',
+    SwitchToWorkspace = 'workspaceManager.switchToWorkspace',
     SwitchWorkspace = 'workspaceManager.switchWorkspace',
     SwitchWorkspaceQuickPick = 'workspaceManager.switchWorkspaceQuickPick',
-    SwitchToWorkspace = 'workspaceManager.switchToWorkspace',
     SwitchWorkspaceInNewWindow = 'workspaceManager.switchWorkspaceInNewWindow',
     SwitchWorkspaceInNewWindowQuickPick = 'workspaceManager.switchWorkspaceInNewWindowQuickPick'
 }
