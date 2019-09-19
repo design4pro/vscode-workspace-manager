@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
-import { Command, Commands } from '../common';
+import { BuiltInCommands } from '../../constants';
 import { AbstractCommand } from '../abstractCommand';
+import { Command, Commands } from '../common';
 
 @Command()
 export class CloseWorkspaceCommand extends AbstractCommand {
@@ -9,6 +10,6 @@ export class CloseWorkspaceCommand extends AbstractCommand {
     }
 
     async execute() {
-        await vscode.commands.executeCommand('workbench.action.closeFolder');
+        await vscode.commands.executeCommand(BuiltInCommands.CloseFolder);
     }
 }

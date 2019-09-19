@@ -1,4 +1,3 @@
-import * as vscode from 'vscode';
 import { cacheWorkspace } from '../../cache/cacheWorkspace';
 import { AbstractCommand } from '../abstractCommand';
 import { Command, Commands } from '../common';

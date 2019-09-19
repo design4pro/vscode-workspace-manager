@@ -1,10 +1,11 @@
 import * as fs from 'fs';
 import * as mkdirp from 'mkdirp';
 import * as path from 'path';
+import * as VError from 'verror';
 import * as vscode from 'vscode';
-import { WorkspaceEntry } from '../../model/workspace';
+import { IWorkspace } from '../../model/workspace';
 import { getFirstWorkspaceFolderName } from '../../util/getFirstWorkspaceFolderName';
-import { getWorkspaceEntryDirectories } from '../../util/getWorkspaceEntryDirectories';
+import { getWorkspacesDirectories } from '../../util/getWorkspacesDirectories';
 import { AbstractCommand } from '../abstractCommand';
 import { Command, Commands } from '../common';
 
@@ -15,9 +16,9 @@ export class SaveWorkspaceCommand extends AbstractCommand {
     }
 
     async execute() {
-        const workspaceEntryDirectories = getWorkspaceEntryDirectories();
+        const workspacesDirectories = getWorkspacesDirectories();
 
-        if (!workspaceEntryDirectories || !workspaceEntryDirectories.length) {
+        if (!workspacesDirectories || !workspacesDirectories.length) {
             vscode.window.showInformationMessage(
                 'No workspace directories have been configured'
             );
@@ -25,7 +26,7 @@ export class SaveWorkspaceCommand extends AbstractCommand {
             return;
         }
 
-        const directoryItems = workspaceEntryDirectories.map(
+        const directoryItems = workspacesDirectories.map(
             directory =>
                 <vscode.QuickPickItem>{
                     label: path.basename(directory),
@@ -100,10 +101,14 @@ export class SaveWorkspaceCommand extends AbstractCommand {
                                 })
                             );
 
-                            const workspaceFileContent = JSON.stringify({
-                                folders: workspaceFolderPaths,
-                                settings: {}
-                            });
+                            const workspaceFileContent = JSON.stringify(
+                                {
+                                    folders: workspaceFolderPaths,
+                                    settings: {}
+                                },
+                                null,
+                                4
+                            );
 
                             const workspaceFilePathSaveFunc = () => {
                                 try {
@@ -119,15 +124,16 @@ export class SaveWorkspaceCommand extends AbstractCommand {
 
                                     vscode.commands.executeCommand(
                                         Commands.SwitchToWorkspace,
-                                        <WorkspaceEntry>{
+                                        <IWorkspace>{
                                             path: workspaceFilePath
                                         }
                                     );
                                 } catch (error) {
-                                    vscode.window.showErrorMessage(
-                                        'Error while trying to save workspace ' +
-                                            `${workspaceFileName} to ${workspaceFilePath}: ${error.message}`
+                                    error = new VError(
+                                        error,
+                                        `Error while trying to save workspace settings to ${workspaceFilePath}`
                                     );
+                                    vscode.window.showErrorMessage(error);
                                 }
                             };
 

@@ -1,22 +1,22 @@
 import * as VError from 'verror';
 import * as vscode from 'vscode';
 import { Logger } from '../logger';
-import { CacheWorkspaceEntries } from './cacheWorkspaceEntries';
+import { CacheWorkspaces } from './cacheWorkspaces';
 
 export async function cacheWorkspace(): Promise<void> {
-    if (CacheWorkspaceEntries.caching) {
+    if (CacheWorkspaces.caching) {
         return;
     }
 
-    CacheWorkspaceEntries.caching = true;
+    CacheWorkspaces.caching = true;
 
     try {
-        await CacheWorkspaceEntries.execute();
+        await CacheWorkspaces.execute();
     } catch (err) {
-        err = new VError(err, 'Failed to cache the workspace entries');
+        err = new VError(err, 'Failed to cache the workspaces');
         Logger.error(err);
         vscode.window.showErrorMessage(err.message);
     } finally {
-        CacheWorkspaceEntries.caching = false;
+        CacheWorkspaces.caching = false;
     }
 }

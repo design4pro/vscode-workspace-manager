@@ -1,6 +1,6 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { state } from './state';
+import { Container } from './container';
 
 export enum OsType {
     Windows = 'win32',
@@ -28,9 +28,9 @@ export class Environment {
         this.OsType = process.platform as OsType;
 
         if (!this.isPortable) {
-            if (state.context) {
+            if (Container.context) {
                 this.PATH = path
-                    .resolve(state.context.globalStoragePath, '../../..')
+                    .resolve(Container.context.globalStoragePath, '../../..')
                     .concat(path.normalize('/'));
             }
 

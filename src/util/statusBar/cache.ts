@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { Commands } from '../../commands/common';
+import { configuration } from '../../configuration';
 
 export class StatusBarCache {
     statusBarItem: vscode.StatusBarItem;
@@ -22,7 +23,12 @@ export class StatusBarCache {
             clearTimeout(this.timeoutId);
         }
 
-        this.statusBarItem.show();
+        if (!this.canShow) {
+            this.statusBarItem.hide();
+
+            return;
+        }
+
         this.statusBarItem.text = `$(${icon}) ${text}`;
         this.statusBarItem.tooltip = undefined;
 
@@ -32,6 +38,25 @@ export class StatusBarCache {
                 this.statusBarItem.tooltip = text;
             }, 5000);
         }
+
+        this.statusBarItem.show();
+    }
+
+    toggle() {
+        if (!this.canShow) {
+            this.statusBarItem.hide();
+        } else {
+            this.statusBarItem.show();
+        }
+    }
+
+    get canShow(): boolean {
+        return configuration.get(
+            configuration.name('views')('workspacesRefreshIconInStatusBar')
+                .value,
+            null,
+            true
+        );
     }
 }
 

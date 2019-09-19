@@ -1,8 +1,12 @@
+import { readFileSync, writeFileSync } from 'fs';
+import * as VError from 'verror';
 import * as vscode from 'vscode';
+import { IConfig } from './config';
 import { extensionId } from './constants';
 import { Container } from './container';
-import { IConfig } from './model/config';
 import { Functions } from './system/function';
+import { getWorkspaceByRootPath } from './util/getWorkspaceByRootPath';
+import { addToValueTree, getConfigurationValue, parse } from './util/json';
 
 const emptyConfig: IConfig = new Proxy<IConfig>({} as IConfig, {
     get: function() {
@@ -109,6 +113,26 @@ export class Configuration extends vscode.Disposable {
             : vscode.workspace
                   .getConfiguration(undefined, resource!)
                   .get<T>(section, defaultValue)!;
+    }
+
+    async getWorkspace<T>(
+        section: string,
+        defaultValue?: T,
+        workspaceFilePath?: string
+    ): Promise<T | undefined> {
+        const workspaceConfiguration = await this.getWorkspaceConfiguration(
+            workspaceFilePath
+        );
+
+        if (workspaceConfiguration) {
+            return getConfigurationValue<T>(
+                workspaceConfiguration.settings,
+                `${extensionId}.${section}`,
+                defaultValue
+            );
+        }
+
+        return;
     }
 
     changed(
@@ -219,6 +243,93 @@ export class Configuration extends vscode.Disposable {
             value === inspect.defaultValue ? undefined : value,
             vscode.ConfigurationTarget.Global
         );
+    }
+
+    async updateWorkspace(
+        section: string,
+        value: any,
+        workspaceFilePath?: string
+    ) {
+        const workspaceConfiguration = await this.getWorkspaceConfiguration(
+            workspaceFilePath
+        );
+
+        if (workspaceConfiguration) {
+            addToValueTree(
+                workspaceConfiguration.settings,
+                `${extensionId}.${section}`,
+                value,
+                vscode.window.showErrorMessage
+            );
+
+            await this.saveWorkspaceConfiguration(
+                workspaceConfiguration,
+                workspaceFilePath
+            );
+        }
+    }
+
+    async getWorkspaceConfiguration(workspaceFilePath?: string) {
+        if (!workspaceFilePath) {
+            const activeWorkspace = await getWorkspaceByRootPath();
+
+            if (!activeWorkspace) {
+                vscode.window.showErrorMessage(
+                    'Could not read current workspace settings'
+                );
+                return;
+            }
+
+            workspaceFilePath = activeWorkspace.path;
+        }
+
+        try {
+            const data = await readFileSync(workspaceFilePath);
+
+            const workspaceFileContent: {
+                folders: any;
+                settings: any;
+            } = parse(data.toString());
+
+            return workspaceFileContent;
+        } catch (error) {
+            error = new VError(
+                error,
+                'Error while trying to update workspace settings'
+            );
+            vscode.window.showErrorMessage(error);
+            throw error;
+        }
+    }
+
+    async saveWorkspaceConfiguration(content: any, workspaceFilePath?: string) {
+        if (!workspaceFilePath) {
+            const activeWorkspace = await getWorkspaceByRootPath();
+
+            if (!activeWorkspace) {
+                vscode.window.showErrorMessage(
+                    'Could not update current workspace settings!'
+                );
+                return;
+            }
+
+            workspaceFilePath = activeWorkspace.path;
+        }
+
+        try {
+            const json = JSON.stringify(content, null, 4);
+
+            writeFileSync(workspaceFilePath, json, {
+                encoding: 'utf8'
+            });
+        } catch (err) {
+            err = new VError(
+                err,
+                `Error while trying to save workspace settings to ${workspaceFilePath}`
+            );
+            vscode.window.showErrorMessage(err);
+            throw err;
+        }
     }
 }
 

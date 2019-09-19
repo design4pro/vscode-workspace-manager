@@ -1,14 +1,9 @@
 import { exec } from 'child_process';
-import { WorkspaceEntry } from '../../model/workspace';
+import { IWorkspaceCommandArgs } from '../../model/workspace';
 import { getApp } from '../../util/getApp';
 import { onCommandRun } from '../../util/onCommandRun';
 import { AbstractCommand, CommandContext } from '../abstractCommand';
 import { Command, Commands } from '../common';
-
-export interface ISwitchToWorkspaceCommandArgs {
-    workspaceEntry?: WorkspaceEntry;
-    inNewWindow?: boolean;
-}
 
 @Command()
 export class SwitchToWorkspaceCommand extends AbstractCommand {
@@ -16,15 +11,12 @@ export class SwitchToWorkspaceCommand extends AbstractCommand {
         super(Commands.SwitchToWorkspace);
     }
 
-    async execute(
-        context?: CommandContext,
-        args: ISwitchToWorkspaceCommandArgs = {}
-    ) {
+    async execute(context?: CommandContext, args: IWorkspaceCommandArgs = {}) {
         args = { ...args };
 
         const app = getApp();
         const command = `${app} ${args.inNewWindow ? '-n' : '-r'} "${
-            args.workspaceEntry!.path
+            args.workspace!.path
         }"`;
 
         exec(command, onCommandRun);

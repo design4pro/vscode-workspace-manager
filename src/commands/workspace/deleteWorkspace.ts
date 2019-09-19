@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
-import { WorkspaceEntry } from '../../model/workspace';
+import { Workspace } from '../../model/workspace';
 import { deleteWorkspace } from '../../util/deleteWorkspace';
-import { getWorkspaceEntries } from '../../util/getWorkspaceEntries';
+import { getWorkspaces } from '../../util/getWorkspaces';
 import { AbstractCommand } from '../abstractCommand';
 import { Command, Commands } from '../common';
 
@@ -12,15 +12,15 @@ export class DeleteWorkspaceCommand extends AbstractCommand {
     }
 
     async execute() {
-        const workspaceEntries = await getWorkspaceEntries();
+        const workspaces = await getWorkspaces();
 
-        if (!workspaceEntries || !workspaceEntries.length) {
+        if (!workspaces || !workspaces.length) {
             vscode.window.showInformationMessage('No workspaces entries found');
 
             return;
         }
 
-        const workspaceItems = workspaceEntries.map(
+        const workspaceItems = workspaces.map(
             entry =>
                 <vscode.QuickPickItem>{
                     label: entry.name,
@@ -36,11 +36,11 @@ export class DeleteWorkspaceCommand extends AbstractCommand {
 
         vscode.window.showQuickPick(workspaceItems, options).then(
             (workspaceItem?: vscode.QuickPickItem) => {
-                if (!workspaceItem || !workspaceEntries) {
+                if (!workspaceItem || !workspaces) {
                     return;
                 }
 
-                const entry: WorkspaceEntry | undefined = workspaceEntries.find(
+                const entry: Workspace | undefined = workspaces.find(
                     entry => entry.path === workspaceItem.description
                 );
 

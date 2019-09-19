@@ -2,14 +2,20 @@ import * as vscode from 'vscode';
 import { AbstractCommand } from './abstractCommand';
 
 export enum Commands {
-    RefreshTreeData = 'workspaceManager.refreshTreeData',
+    AddToFavorites = 'workspaceManager.addToFavorites',
+    AddToGroup = 'workspaceManager.addToGroup',
     CacheWorkspace = 'workspaceManager.cacheWorkspace',
     CloseWorkspace = 'workspaceManager.closeWorkspace',
     DeleteWorkspace = 'workspaceManager.deleteWorkspace',
+    MoveToGroup = 'workspaceManager.moveToGroup',
+    OpenWorkspaceSettings = 'workspaceManager.openWorkspaceSettings',
+    RemoveFromFavorites = 'workspaceManager.removeFromFavorites',
     SaveWorkspace = 'workspaceManager.saveWorkspace',
-    SwitchWorkspace = 'workspaceManager.switchWorkspace',
     SwitchToWorkspace = 'workspaceManager.switchToWorkspace',
-    SwitchWorkspaceInNewWindow = 'workspaceManager.switchWorkspaceInNewWindow'
+    SwitchWorkspace = 'workspaceManager.switchWorkspace',
+    SwitchWorkspaceQuickPick = 'workspaceManager.switchWorkspaceQuickPick',
+    SwitchWorkspaceInNewWindow = 'workspaceManager.switchWorkspaceInNewWindow',
+    SwitchWorkspaceInNewWindowQuickPick = 'workspaceManager.switchWorkspaceInNewWindowQuickPick'
 }
 
 interface CommandConstructor {

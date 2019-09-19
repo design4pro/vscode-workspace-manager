@@ -978,15 +978,68 @@ export function visit(text: string, visitor: JSONVisitor, options: ParseOptions 
 	}
 
 	scanNext();
+
 	if (_scanner.getToken() === SyntaxKind.EOF) {
 		return true;
 	}
+
 	if (!parseValue()) {
 		handleError(ParseErrorCode.ValueExpected, [], []);
 		return false;
 	}
+
 	if (_scanner.getToken() !== SyntaxKind.EOF) {
 		handleError(ParseErrorCode.EndOfFileExpected, [], []);
 	}
+
 	return true;
+}
+
+export function addToValueTree(settingsTreeRoot: any, key: string, value: any, conflictReporter: (message: string) => void): void {
+	const segments = key.split('.');
+	const last = segments.pop()!;
+
+	let curr = settingsTreeRoot;
+	for (let i = 0; i < segments.length; i++) {
+		let s = segments[i];
+		let obj = curr[s];
+		switch (typeof obj) {
+			case 'undefined':
+				obj = curr[s] = Object.create(null);
+				break;
+			case 'object':
+				break;
+			default:
+				conflictReporter(`Ignoring ${key} as ${segments.slice(0, i + 1).join('.')} is ${JSON.stringify(obj)}`);
+				return;
+		}
+		curr = obj;
+	}
+
+	if (typeof curr === 'object') {
+		curr[last] = value; // workaround https://github.com/Microsoft/vscode/issues/13606
+	} else {
+		conflictReporter(`Ignoring ${key} as ${segments.join('.')} is ${JSON.stringify(curr)}`);
+	}
+}
+
+/**
+ * A helper function to get the configuration value with a specific settings path (e.g. config.some.setting)
+ */
+export function getConfigurationValue<T>(config: any, settingPath: string, defaultValue?: T): T {
+	function accessSetting(config: any, path: string[]): any {
+		let current = config;
+		for (const component of path) {
+			if (typeof current !== 'object' || current === null) {
+				return undefined;
+			}
+			current = current[component];
+		}
+		return <T>current;
+	}
+
+	const path = settingPath.split('.');
+	const result = accessSetting(config, path);
+
+	return typeof result === 'undefined' ? defaultValue : result;
 }

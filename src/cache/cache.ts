@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { state } from '../state';
+import { Container } from '../container';
 
 /**
  * @name now
@@ -17,7 +17,7 @@ export class Cache {
 
     constructor(namespace?: string) {
         // ExtensionContext
-        this.context = <vscode.ExtensionContext>state.context;
+        this.context = <vscode.ExtensionContext>Container.context;
 
         // Namespace of the context's globalState
         this.namespace = namespace || 'cache';
