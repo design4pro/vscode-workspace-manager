@@ -1,3 +1,18 @@
+# [1.4.0](https://github.com/design4pro/vscode-workspace-manager/compare/v1.3.3...v1.4.0) (2019-09-19)
+
+
+### Features
+
+* **ci:** travis run on each branch ([9e87f48](https://github.com/design4pro/vscode-workspace-manager/commit/9e87f48))
+* **extension:** add to favorite ([1e82aa8](https://github.com/design4pro/vscode-workspace-manager/commit/1e82aa8))
+* **extension:** new icons ([471c68a](https://github.com/design4pro/vscode-workspace-manager/commit/471c68a))
+* **groups:** workspaces groups ([cbe2f0f](https://github.com/design4pro/vscode-workspace-manager/commit/cbe2f0f))
+* **groups:** workspaces groups ([f68b4b2](https://github.com/design4pro/vscode-workspace-manager/commit/f68b4b2))
+* **package:** new icons ([#21](https://github.com/design4pro/vscode-workspace-manager/issues/21)) ([f141b27](https://github.com/design4pro/vscode-workspace-manager/commit/f141b27))
+* **workspace:** add to favorites ([2913281](https://github.com/design4pro/vscode-workspace-manager/commit/2913281))
+* **workspace:** favorite workspaces ([7556991](https://github.com/design4pro/vscode-workspace-manager/commit/7556991))
+* **workspace:** new commands ([79c2e92](https://github.com/design4pro/vscode-workspace-manager/commit/79c2e92))
+
 ## [1.3.3](https://github.com/design4pro/vscode-workspace-manager/compare/v1.3.2...v1.3.3) (2019-08-30)
 
 
