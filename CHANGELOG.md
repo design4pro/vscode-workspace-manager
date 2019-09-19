@@ -1,3 +1,10 @@
+## [1.3.3](https://github.com/design4pro/vscode-workspace-manager/compare/v1.3.2...v1.3.3) (2019-08-30)
+
+
+### Bug Fixes
+
+* **workspace:** open in new window ([3f16d5a](https://github.com/design4pro/vscode-workspace-manager/commit/3f16d5a))
+
 ## [1.3.2](https://github.com/design4pro/vscode-workspace-manager/compare/v1.3.1...v1.3.2) (2019-08-27)
 
 
