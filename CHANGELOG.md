@@ -1,3 +1,11 @@
+## [1.4.1](https://github.com/design4pro/vscode-workspace-manager/compare/v1.4.0...v1.4.1) (2019-09-25)
+
+
+### Bug Fixes
+
+* **ci:** package name ([83cd7f1](https://github.com/design4pro/vscode-workspace-manager/commit/83cd7f1))
+* **package:** duplicate commands ([8c86a78](https://github.com/design4pro/vscode-workspace-manager/commit/8c86a78))
+
 # [1.4.0](https://github.com/design4pro/vscode-workspace-manager/compare/v1.3.3...v1.4.0) (2019-09-19)
 
 
