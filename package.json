@@ -2,7 +2,7 @@
     "name": "workspace-manager",
     "displayName": "Workspace Manager",
     "description": "Workspace manager for Visual Studio Code",
-    "version": "1.4.1",
+    "version": "1.5.0",
     "publisher": "design4pro",
     "icon": "resources/workspace-manager.png",
     "homepage": "https://github.com/design4pro/vscode-workspace-manager",

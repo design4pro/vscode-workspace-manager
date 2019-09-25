@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/design4pro/vscode-workspace-manager/compare/v1.4.1...v1.5.0) (2019-09-25)
+
+
+### Features
+
+* **ci:** github actions publish to registry ([fdf8771](https://github.com/design4pro/vscode-workspace-manager/commit/fdf8771))
+
 ## [1.4.1](https://github.com/design4pro/vscode-workspace-manager/compare/v1.4.0...v1.4.1) (2019-09-25)
 
 
