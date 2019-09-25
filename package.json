@@ -1,5 +1,5 @@
 {
-    "name": "workspace-manager",
+    "name": "@design4pro/workspace-manager",
     "displayName": "Workspace Manager",
     "description": "Workspace manager for Visual Studio Code",
     "version": "1.4.0",
@@ -271,15 +271,6 @@
                 "icon": {
                     "light": "resources/light/delete.svg",
                     "dark": "resources/dark/delete.svg"
-                }
-            },
-            {
-                "command": "workspaceManager.cacheWorkspace",
-                "title": "Reload Workspaces",
-                "category": "Workspace Manager",
-                "icon": {
-                    "light": "resources/light/refresh.svg",
-                    "dark": "resources/dark/refresh.svg"
                 }
             },
             {
