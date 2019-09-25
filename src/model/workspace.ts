@@ -132,6 +132,14 @@ export class Workspace {
                 'Add new Group'
             );
 
+            const buttons: RemoveQuickInputButton[] = [];
+
+            if (group && group[this.id]) {
+                buttons.push(removeGroupButton);
+            }
+
+            buttons.push(addGroupButton);
+
             interface State {
                 title: string;
                 step: number;
@@ -164,7 +172,7 @@ export class Workspace {
                         typeof state.group !== 'string'
                             ? state.group
                             : undefined,
-                    buttons: [removeGroupButton, addGroupButton],
+                    buttons: buttons,
                     shouldResume: shouldResume
                 });
 
