@@ -1,5 +1,5 @@
 {
-    "name": "@design4pro/workspace-manager",
+    "name": "workspace-manager",
     "displayName": "Workspace Manager",
     "description": "Workspace manager for Visual Studio Code",
     "version": "1.4.0",
