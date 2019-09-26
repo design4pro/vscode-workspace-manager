@@ -4,6 +4,7 @@
     "description": "Workspace manager for Visual Studio Code",
     "version": "1.5.0",
     "publisher": "design4pro",
+    "license": "MIT",
     "icon": "resources/workspace-manager.png",
     "homepage": "https://github.com/design4pro/vscode-workspace-manager",
     "repository": {

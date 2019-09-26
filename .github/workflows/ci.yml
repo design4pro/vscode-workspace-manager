@@ -11,30 +11,38 @@ on:
 
 jobs:
     build:
+        name: Run Tests
         runs-on: ubuntu-latest
         strategy:
             matrix:
                 node: ['12', '11', '10', '8']
-        name: Build - Node version ${{ matrix.node }}
         steps:
-            - uses: actions/checkout@v1
-            - name: Setup node
+            - name: Checkout
+              uses: actions/checkout@v1
+
+            - name: Set Node.js 12 ${{ matrix.node }}
               uses: actions/setup-node@v1
               with:
                   node-version: ${{ matrix.node }}
+
             - name: Test
               run: |
                   npm install
                   npm test
+
     release:
+        name: Release
         needs: build
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v1
-            - name: Setup node
+            - name: Checkout
+              uses: actions/checkout@v1
+
+            - name: Set Node.js 12
               uses: actions/setup-node@v1
               with:
                   node-version: 12
+
             - name: Release
               if: github.event_name == 'pull_request'
               run: npm release
@@ -42,17 +50,22 @@ jobs:
                   NPM_TOKEN: ${{secrets.NPM_TOKEN}}
                   VSCE_TOKEN: ${{secrets.VSCE_TOKEN}}
                   GH_TOKEN: ${{secrets.GH_TOKEN}}
+
     publish-gpr:
+        name: Publish GitHub Packages
         needs: build
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v1
-            - name: Setup node
+            - name: Checkout
+              uses: actions/checkout@v1
+
+            - name: Set Node.js 12
               uses: actions/setup-node@v1
               with:
                   node-version: 12
                   registry-url: https://npm.pkg.github.com/
                   scope: '@design4pro'
+
             - name: Publish
               if: github.event_name == 'pull_request'
               run: npm publish
