@@ -37,6 +37,10 @@ jobs:
             - name: Release
               if: github.event_name == 'pull_request'
               run: npm release
+              env:
+                  NPM_TOKEN: ${{secrets.NPM_TOKEN}}
+                  VSCE_TOKEN: ${{secrets.VSCE_TOKEN}}
+                  GH_TOKEN: ${{secrets.GH_TOKEN}}
     publish-gpr:
         needs: build
         runs-on: ubuntu-latest
