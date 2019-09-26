@@ -1,0 +1,55 @@
+name: CI
+
+on:
+    pull_request:
+        branches:
+            - master
+    push:
+        branches:
+            - master
+            - develop
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node: ['12', '11', '10', '8']
+        name: Build - Node version ${{ matrix.node }}
+        steps:
+            - uses: actions/checkout@v1
+            - name: Setup node
+              uses: actions/setup-node@v1
+              with:
+                  node-version: ${{ matrix.node }}
+              run: npm install
+            - name: Test
+              run: npm test
+    release:
+        needs: build
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v1
+            - name: Setup node
+              uses: actions/setup-node@v1
+              with:
+                  node-version: 12
+            - name: Release
+              if: github.event_name == 'pull_request'
+              run: npm release
+    publish-gpr:
+        needs: build
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v1
+            - name: Setup node
+              uses: actions/setup-node@v1
+              with:
+                  node-version: 12
+                  registry-url: https://npm.pkg.github.com/
+                  scope: '@design4pro'
+            - name: Publish
+              if: github.event_name == 'pull_request'
+              run: npm publish
+              env:
+                  NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
