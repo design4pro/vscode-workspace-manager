@@ -1,4 +1,4 @@
-name: CI
+name: Test
 
 on:
     pull_request:
@@ -10,7 +10,7 @@ on:
             - develop
 
 jobs:
-    build:
+    test:
         name: ${{ format('Run Test Node.js {0}', matrix.node) }}
         runs-on: ubuntu-latest
         strategy:
@@ -31,8 +31,8 @@ jobs:
                   npm run test
 
     release:
-        name: Release
-        needs: build
+        name: Semantic Release
+        needs: test
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
@@ -44,7 +44,7 @@ jobs:
                   node-version: 12
 
             - name: Release
-              if: github.event.push && github.ref == 'refs/heads/master'
+              if: github.event_name == 'push' && github.ref == 'refs/heads/master'
               run: |
                   npm install
                   npm run release
@@ -55,7 +55,7 @@ jobs:
 
     publish-gpr:
         name: Publish GitHub Packages
-        needs: [build, release]
+        needs: [test, release]
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
@@ -69,7 +69,7 @@ jobs:
                   scope: '@design4pro'
 
             - name: Publish
-              if: github.event.push && github.ref == 'refs/heads/master'
+              if: github.event_name == 'push' && github.ref == 'refs/heads/master'
               run: npm publish
               env:
                   NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
