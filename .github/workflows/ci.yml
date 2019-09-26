@@ -22,9 +22,10 @@ jobs:
               uses: actions/setup-node@v1
               with:
                   node-version: ${{ matrix.node }}
-              run: npm install
             - name: Test
-              run: npm test
+              run: |
+                  npm install
+                  npm test
     release:
         needs: build
         runs-on: ubuntu-latest
