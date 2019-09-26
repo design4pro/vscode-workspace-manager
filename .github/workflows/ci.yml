@@ -28,7 +28,7 @@ jobs:
             - name: Test
               run: |
                   npm install
-                  npm test
+                  npm run test
 
     release:
         name: Release
@@ -45,7 +45,7 @@ jobs:
 
             - name: Release
               if: github.event_name == 'pull_request'
-              run: npm release
+              run: npm run release
               env:
                   NPM_TOKEN: ${{secrets.NPM_TOKEN}}
                   VSCE_TOKEN: ${{secrets.VSCE_TOKEN}}
@@ -53,7 +53,7 @@ jobs:
 
     publish-gpr:
         name: Publish GitHub Packages
-        needs: build
+        needs: [build, release]
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
