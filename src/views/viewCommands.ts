@@ -5,6 +5,8 @@ import { WorkspaceNode } from './nodes';
 
 export class ViewCommands {
     constructor() {
+        console.log('ViewCommands', Commands.SwitchWorkspace);
+
         commands.registerCommand(
             Commands.SwitchWorkspace,
             this.switchWorkspace,
@@ -38,6 +40,12 @@ export class ViewCommands {
         commands.registerCommand(Commands.AddToGroup, this.addToGroup, this);
 
         commands.registerCommand(Commands.MoveToGroup, this.moveToGroup, this);
+
+        commands.registerCommand(
+            Commands.DeleteWorkspace,
+            this.deleteWorkspace,
+            this
+        );
     }
 
     private switchWorkspace(node: WorkspaceNode) {
@@ -90,5 +98,11 @@ export class ViewCommands {
     private moveToGroup(node: WorkspaceNode) {
         if (node instanceof WorkspaceNode) return node.moveToGroup();
         return undefined;
+    }
+
+    private deleteWorkspace(node: WorkspaceNode) {
+        if (node instanceof WorkspaceNode) return node.deleteWorkspace();
+
+        return commands.executeCommand(Commands.DeleteWorkspaceQuickPick);
     }
 }

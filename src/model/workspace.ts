@@ -337,4 +337,10 @@ export class Workspace {
             inNewWindow: true
         });
     }
+
+    deleteWorkspace() {
+        commands.executeCommand(Commands.DeleteWorkspaceQuickPick, {
+            workspace: this
+        });
+    }
 }

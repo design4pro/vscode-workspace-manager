@@ -21,6 +21,8 @@ export class WorkspacesView extends ViewBase<WorkspacesNode> {
     protected registerCommands() {
         void Container.viewCommands;
 
+        console.log('WorkspacesView', this.getQualifiedCommand('refresh'));
+
         commands.registerCommand(
             this.getQualifiedCommand('refresh'),
             () => this.refresh(true),
