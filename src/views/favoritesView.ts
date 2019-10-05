@@ -22,8 +22,6 @@ export class FavoritesView extends ViewBase<FavoritesNode> {
     protected registerCommands() {
         void Container.viewCommands;
 
-        console.log('FavoritesView', this.getQualifiedCommand('refresh'));
-
         commands.registerCommand(
             this.getQualifiedCommand('refresh'),
             () => this.refresh(true),

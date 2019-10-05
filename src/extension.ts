@@ -35,15 +35,19 @@ export async function activate(
 
     telemetry.activate(context);
 
-    const workspaceManager = getExtension()!;
-    const workspaceManagerVersion = workspaceManager.packageJSON.version;
+    const extension = getExtension()!;
+    let version = '0.0.0';
+
+    if (extension) {
+        version = extension.packageJSON.version;
+    }
 
     Configuration.configure(context);
 
     const cfg = configuration.get<IConfig>();
 
     try {
-        Container.initialize(context, cfg, workspaceManagerVersion);
+        Container.initialize(context, cfg, version);
 
         registerCommands(context);
     } catch (e) {
@@ -59,7 +63,7 @@ export async function activate(
     );
 
     Logger.log(
-        `${extensionOutputChannelName} (v${workspaceManagerVersion}) activated ${
+        `${extensionOutputChannelName} (v${version}) activated ${
             GlyphChars.Dot
         } ${Strings.getDurationMilliseconds(start)} ms`
     );

@@ -5,8 +5,6 @@ import { WorkspaceNode } from './nodes';
 
 export class ViewCommands {
     constructor() {
-        console.log('ViewCommands', Commands.SwitchWorkspace);
-
         commands.registerCommand(
             Commands.SwitchWorkspace,
             this.switchWorkspace,

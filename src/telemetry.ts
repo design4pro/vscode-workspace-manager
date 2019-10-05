@@ -175,9 +175,16 @@ class TelemetryReporter extends vscode.Disposable {
 export let Reporter: TelemetryReporter;
 
 export function activate(ctx: vscode.ExtensionContext) {
+    let packageJson = {
+        publisher: 'design4pro',
+        name: '@design4pro/workspace-manager',
+        version: '0.0.0'
+    };
     const extension = getExtension()!;
 
-    const packageJson = extension.packageJSON;
+    if (extension) {
+        packageJson = extension.packageJSON;
+    }
 
     Reporter = new TelemetryReporter(
         `${packageJson.publisher}.${packageJson.name}`,

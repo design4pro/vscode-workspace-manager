@@ -22,8 +22,6 @@ export class GroupsView extends ViewBase<GroupsNode> {
     protected registerCommands() {
         void Container.viewCommands;
 
-        console.log('GroupsView', this.getQualifiedCommand('refresh'));
-
         commands.registerCommand(
             this.getQualifiedCommand('refresh'),
             () => this.refresh(true),

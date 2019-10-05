@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { Workspace, IWorkspaceCommandArgs } from '../../model/workspace';
+import { IWorkspaceCommandArgs, Workspace } from '../../model/workspace';
 import { deleteWorkspace } from '../../util/deleteWorkspace';
 import { getWorkspaces } from '../../util/getWorkspaces';
 import { AbstractCommand, CommandContext } from '../abstractCommand';
@@ -13,8 +13,6 @@ export class DeleteWorkspaceQuickPickCommand extends AbstractCommand {
 
     async execute(context?: CommandContext, args: IWorkspaceCommandArgs = {}) {
         const workspaces = await getWorkspaces();
-
-        console.log(args);
 
         if (!workspaces || !workspaces.length) {
             vscode.window.showInformationMessage('No workspaces entries found');
