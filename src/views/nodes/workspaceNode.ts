@@ -143,6 +143,10 @@ export class WorkspaceNode extends ViewNode<View> implements PageableViewNode {
         this.workspace.switchWorkspaceInNewWindow();
     }
 
+    deleteWorkspace() {
+        this.workspace.deleteWorkspace();
+    }
+
     @Gate()
     @Debug()
     refresh() {

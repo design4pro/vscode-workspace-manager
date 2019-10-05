@@ -46,6 +46,7 @@ export abstract class AbstractCommand implements vscode.Disposable {
     private _disposable: vscode.Disposable;
 
     constructor(command: Commands | Commands[]) {
+        console.info('AbstractCommand', command);
         if (typeof command === 'string') {
             this._disposable = vscode.commands.registerCommand(
                 command,
