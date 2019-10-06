@@ -16,11 +16,6 @@
             }
         ],
         [
-            "@semantic-release/npm", {
-                "tarballDir": "dist"
-            }
-        ],
-        [
             "semantic-release-vsce", {
                 "packageVsix": "dist/vscode-workspace-manager.vsix"
             }

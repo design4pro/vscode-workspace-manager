@@ -49,27 +49,5 @@ jobs:
                   npm install
                   npm run release
               env:
-                  NPM_TOKEN: ${{secrets.NPM_TOKEN}}
                   VSCE_TOKEN: ${{secrets.VSCE_TOKEN}}
                   GH_TOKEN: ${{secrets.GH_TOKEN}}
-
-    publish-gpr:
-        name: Publish GitHub Packages
-        needs: [test, release]
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v1
-
-            - name: Set Node.js 12
-              uses: actions/setup-node@v1
-              with:
-                  node-version: 12
-                  registry-url: https://npm.pkg.github.com/
-                  scope: '@design4pro'
-
-            - name: Publish
-              if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-              run: npm publish
-              env:
-                  NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
