@@ -32,16 +32,16 @@
     ],
     "main": "./out/extension",
     "scripts": {
-        "vscode:prepublish": "yarn run clean && yarn run compile",
-        "vsce:publish": "npx vsce publish --yarn",
-        "vsce:package": "npx vsce package --yarn",
+        "vscode:prepublish": "npm run clean && npm run compile",
+        "vsce:publish": "npx vsce publish",
+        "vsce:package": "npx vsce package",
         "clean": "rimraf out/** && rimraf package.nls.*.json && rimraf workspace-manager-*.vsix",
         "compile": "webpack --mode production",
         "watch": "webpack --mode none --watch",
         "commit": "commit",
         "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "yarn run test:compile",
-        "test:compile": "tsc -p ./ && yarn run compile",
+        "test": "npm run test:compile",
+        "test:compile": "tsc -p ./ && npm run compile",
         "release": "npx semantic-release"
     },
     "dependencies": {
