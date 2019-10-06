@@ -1,3 +1,12 @@
+## [1.5.1](https://github.com/design4pro/vscode-workspace-manager/compare/v1.5.0...v1.5.1) (2019-10-06)
+
+
+### Bug Fixes
+
+* **ci:** release fix ([253d68b](https://github.com/design4pro/vscode-workspace-manager/commit/253d68b))
+* **ci:** release fix ([6e8ae32](https://github.com/design4pro/vscode-workspace-manager/commit/6e8ae32))
+* **workspace:** delete workspace from tree view ([428b97c](https://github.com/design4pro/vscode-workspace-manager/commit/428b97c))
+
 # [1.5.0](https://github.com/design4pro/vscode-workspace-manager/compare/v1.4.1...v1.5.0) (2019-09-25)
 
 
