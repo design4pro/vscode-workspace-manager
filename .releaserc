@@ -17,14 +17,14 @@
         ],
         [
             "semantic-release-vsce", {
-                "packageVsix": "dist/vscode-workspace-manager.vsix"
+                "packageVsix": "vscode-workspace-manager.vsix"
             }
         ],
         [
             "@semantic-release/github", {
                 "assets": [
                     {
-                        "path": "dist/vscode-workspace-manager.vsix",
+                        "path": "vscode-workspace-manager.vsix",
                         "label": "vscode-workspace-manager.vsix"
                     }
                 ]
