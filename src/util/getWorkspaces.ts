@@ -178,9 +178,9 @@ export async function getWorkspaces(
 
                 timeoutId = setTimeout(() => {
                     stream.pause();
-                    Logger.info('Reading stream has been poused after 10s.');
+                    Logger.info('Reading stream has been paused after 10s.');
                     vscode.window.showInformationMessage(
-                        `${extensionOutputChannelName}\nReading stream has been poused after 10s.`
+                        `${extensionOutputChannelName}\nReading stream has been paused after 10s.`
                     );
                 }, 10000);
             } catch (err) {
