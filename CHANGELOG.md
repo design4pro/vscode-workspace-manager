@@ -1,3 +1,10 @@
+## [1.5.2](https://github.com/design4pro/vscode-workspace-manager/compare/v1.5.1...v1.5.2) (2019-11-26)
+
+
+### Bug Fixes
+
+* **package:** remove default include directories ([#39](https://github.com/design4pro/vscode-workspace-manager/issues/39)) ([e675e22](https://github.com/design4pro/vscode-workspace-manager/commit/e675e22))
+
 ## [1.5.1](https://github.com/design4pro/vscode-workspace-manager/compare/v1.5.0...v1.5.1) (2019-10-06)
 
 
