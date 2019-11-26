@@ -17,15 +17,9 @@ export class CacheWorkspaces {
                 return;
             }
         } catch (err) {
-            statusBarCache.notify(
-                'alert',
-                'Failed to cache the workspace entries (click for another attempt)'
-            );
+            statusBarCache.notify('alert', 'Failed to cache the workspace entries (click for another attempt)');
         } finally {
-            statusBarCache.notify(
-                'sync',
-                'Workspace entries cached (click to cache again)'
-            );
+            statusBarCache.notify('sync', 'Workspace entries cached (click to cache again)');
 
             statusBarWorkspace.notify();
 
