@@ -1,503 +1,76 @@
 {
-    "name": "workspace-manager",
-    "displayName": "Workspace Manager",
-    "description": "Workspace manager for Visual Studio Code",
-    "version": "1.5.1",
-    "publisher": "design4pro",
-    "license": "MIT",
-    "icon": "resources/workspace-manager.png",
-    "homepage": "https://github.com/design4pro/vscode-workspace-manager",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/design4pro/vscode-workspace-manager.git"
-    },
-    "bugs": {
-        "url": "https://github.com/design4pro/vscode-workspace-manager/issues",
-        "email": "workspace-manager@design4.pro"
-    },
-    "publishConfig": {
-        "access": "public"
-    },
-    "engines": {
-        "vscode": "^1.35.0"
-    },
-    "categories": [
-        "Other"
-    ],
-    "keywords": [
-        "workspace",
-        "save",
-        "manager",
-        "switch"
-    ],
-    "main": "./out/extension",
-    "scripts": {
-        "vscode:prepublish": "npm run clean && npm run compile",
-        "vsce:publish": "npx vsce publish",
-        "vsce:package": "npx vsce package",
-        "clean": "rimraf out/** && rimraf package.nls.*.json && rimraf workspace-manager-*.vsix",
-        "compile": "webpack --mode production",
-        "watch": "webpack --mode none --watch",
-        "commit": "commit",
-        "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "npm run test:compile",
-        "test:compile": "tsc -p ./ && npm run compile",
-        "release": "npx semantic-release"
-    },
-    "dependencies": {
-        "applicationinsights": "1.4.2",
-        "fast-glob": "3.0.4",
-        "lodash": "4.17.15",
-        "mkdirp": "0.5.1",
-        "uuid": "3.3.3",
-        "verror": "1.10.0",
-        "vscode-nls": "4.1.1"
-    },
-    "devDependencies": {
-        "@commitlint/cli": "^8.2.0",
-        "@commitlint/config-conventional": "^8.2.0",
-        "@commitlint/prompt-cli": "^8.2.0",
-        "@semantic-release/changelog": "^3.0.4",
-        "@semantic-release/git": "^7.0.16",
-        "@types/lodash": "^4.14.138",
-        "@types/mkdirp": "^0.5.2",
-        "@types/mocha": "^5.2.7",
-        "@types/node": "12.7.5",
-        "@types/uuid": "^3.4.5",
-        "@types/verror": "^1.10.3",
-        "husky": "^3.0.5",
-        "lint-staged": "^9.2.5",
-        "prettier": "^1.18.2",
-        "rimraf": "^3.0.0",
-        "semantic-release": "^15.13.24",
-        "semantic-release-vsce": "^2.2.8",
-        "ts-loader": "^6.1.0",
-        "tslint-plugin-prettier": "^2.0.1",
-        "typescript": "^3.3.1",
-        "vscode": "^1.1.36",
-        "vscode-nls-dev": "^3.3.1",
-        "webpack": "^4.40.2",
-        "webpack-cli": "^3.3.9"
-    },
-    "lint-staged": {
-        "*": [
-            "git add"
-        ]
-    },
-    "husky": {
-        "hooks": {
-            "pre-commit": "lint-staged",
-            "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-        }
-    },
-    "activationEvents": [
-        "*"
-    ],
-    "contributes": {
-        "configuration": {
-            "type": "object",
-            "title": "Workspace Manager",
-            "properties": {
-                "workspace-manager.includeGlobPattern": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "default": [],
-                    "description": "Paths of directories where `.code-workspace` files can be saved and then read from. You do not need to use `**/*` at the end."
-                },
-                "workspace-manager.openInNewWindowWhenClickingInStatusBar": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Whether or not to open the workspaces in new window when you click the workspace name in the Status Bar"
-                },
-                "workspace-manager.views.workspacesRefreshIconInStatusBar": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Whether or not to show the workspaces refresh icon in the Status Bar"
-                },
-                "workspace-manager.views.workspacesNameInStatusBar": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Whether or not to show the workspaces name in the Status Bar"
-                },
-                "workspace-manager.views.removeCurrentWorkspaceFromList": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Whether or not to hide the workspaces in the list of available workspaces"
-                },
-                "workspace-manager.views.workspaces.compact": {
-                    "type": "boolean",
-                    "default": false,
-                    "markdownDescription": "Specifies whether to show the _Workspaces_ view in a compact display density",
-                    "scope": "window"
-                },
-                "workspace-manager.views.workspaces.enabled": {
-                    "type": "boolean",
-                    "default": true,
-                    "markdownDescription": "Specifies whether to show the _Workspaces_ view",
-                    "scope": "window"
-                },
-                "workspace-manager.views.workspaces.location": {
-                    "type": "string",
-                    "default": "workspaceManager",
-                    "enum": [
-                        "workspaceManager",
-                        "explorer"
-                    ],
-                    "enumDescriptions": [
-                        "Adds to the Workspaces Manager side bar",
-                        "Adds to the Explorer side bar"
-                    ],
-                    "markdownDescription": "Specifies where to show the _Workspaces_ view",
-                    "scope": "window"
-                },
-                "workspace-manager.views.favorites.compact": {
-                    "type": "boolean",
-                    "default": false,
-                    "markdownDescription": "Specifies whether to show the _Favorites_ view in a compact display density",
-                    "scope": "window"
-                },
-                "workspace-manager.views.favorites.enabled": {
-                    "type": "boolean",
-                    "default": true,
-                    "markdownDescription": "Specifies whether to show the _Favorites_ view",
-                    "scope": "window"
-                },
-                "workspace-manager.views.favorites.location": {
-                    "type": "string",
-                    "default": "workspaceManager",
-                    "enum": [
-                        "workspaceManager",
-                        "explorer"
-                    ],
-                    "enumDescriptions": [
-                        "Adds to the Workspaces Manager side bar",
-                        "Adds to the Explorer side bar"
-                    ],
-                    "markdownDescription": "Specifies where to show the _Favorites_ view",
-                    "scope": "window"
-                },
-                "workspace-manager.views.groups.compact": {
-                    "type": "boolean",
-                    "default": false,
-                    "markdownDescription": "Specifies whether to show the _Groups_ view in a compact display density",
-                    "scope": "window"
-                },
-                "workspace-manager.views.groups.enabled": {
-                    "type": "boolean",
-                    "default": true,
-                    "markdownDescription": "Specifies whether to show the _Groups_ view",
-                    "scope": "window"
-                },
-                "workspace-manager.views.groups.location": {
-                    "type": "string",
-                    "default": "workspaceManager",
-                    "enum": [
-                        "workspaceManager",
-                        "explorer"
-                    ],
-                    "enumDescriptions": [
-                        "Adds to the Workspaces Manager side bar",
-                        "Adds to the Explorer side bar"
-                    ],
-                    "markdownDescription": "Specifies where to show the _Groups_ view",
-                    "scope": "window"
-                },
-                "workspace-manager.advanced.codeExecutable": {
-                    "type": "string",
-                    "default": "code",
-                    "description": "Path to the executable file for VS Code."
-                },
-                "workspace-manager.advanced.codeInsidersExecutable": {
-                    "type": "string",
-                    "default": "code-insiders",
-                    "description": "Path to the executable file for VS Code Insiders."
-                },
-                "workspace-manager.advanced.deep": {
-                    "type": "number",
-                    "default": "5",
-                    "description": "The maximum depth of a read directory relative to the start directory."
-                },
-                "workspace-manager.advanced.excludeGlobPattern": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    },
-                    "default": [],
-                    "description": "A glob pattern that defines files and folders to exclude. `node_modules` directory is ignored by default."
-                }
-            }
-        },
-        "commands": [
-            {
-                "command": "workspaceManager.saveWorkspace",
-                "title": "Save Workspace",
-                "category": "Workspace Manager",
-                "icon": {
-                    "light": "resources/light/save.svg",
-                    "dark": "resources/dark/save.svg"
-                }
-            },
-            {
-                "command": "workspaceManager.switchWorkspace",
-                "title": "Switch Workspace",
-                "category": "Workspace Manager"
-            },
-            {
-                "command": "workspaceManager.switchWorkspaceQuickPick",
-                "title": "Switch Workspace",
-                "category": "Workspace Manager"
-            },
-            {
-                "command": "workspaceManager.switchWorkspaceInNewWindow",
-                "title": "Switch Workspace in New Window",
-                "category": "Workspace Manager",
-                "icon": {
-                    "light": "resources/light/new-window.svg",
-                    "dark": "resources/dark/new-window.svg"
-                }
-            },
-            {
-                "command": "workspaceManager.switchWorkspaceInNewWindowQuickPick",
-                "title": "Switch Workspace in New Window",
-                "category": "Workspace Manager",
-                "icon": {
-                    "light": "resources/light/new-window.svg",
-                    "dark": "resources/dark/new-window.svg"
-                }
-            },
-            {
-                "command": "workspaceManager.deleteWorkspace",
-                "title": "Delete Workspace",
-                "category": "Workspace Manager",
-                "icon": {
-                    "light": "resources/light/delete.svg",
-                    "dark": "resources/dark/delete.svg"
-                }
-            },
-            {
-                "command": "workspaceManager.closeWorkspace",
-                "title": "Close Workspace",
-                "category": "Workspace Manager",
-                "icon": {
-                    "light": "resources/light/close.svg",
-                    "dark": "resources/dark/close.svg"
-                }
-            },
-            {
-                "command": "workspaceManager.addToFavorites",
-                "title": "Add to Favorites",
-                "category": "Workspace Manager",
-                "icon": {
-                    "light": "resources/light/favorite.svg",
-                    "dark": "resources/dark/favorite.svg"
-                }
-            },
-            {
-                "command": "workspaceManager.removeFromFavorites",
-                "title": "Remove from Favorites",
-                "category": "Workspace Manager",
-                "icon": {
-                    "light": "resources/light/favorite-current.svg",
-                    "dark": "resources/dark/favorite-current.svg"
-                }
-            },
-            {
-                "command": "workspaceManager.openWorkspaceSettings",
-                "title": "Open Workspace Settings",
-                "category": "Workspace Manager"
-            },
-            {
-                "command": "workspaceManager.cacheWorkspace",
-                "title": "Cache Workspaces",
-                "category": "Workspace Manager",
-                "icon": {
-                    "light": "resources/light/refresh.svg",
-                    "dark": "resources/dark/refresh.svg"
-                }
-            },
-            {
-                "command": "workspaceManager.addToGroup",
-                "title": "Add to Group",
-                "category": "Workspace Manager"
-            },
-            {
-                "command": "workspaceManager.moveToGroup",
-                "title": "Move to Group or Remove from Group",
-                "category": "Workspace Manager"
-            }
-        ],
-        "viewsContainers": {
-            "activitybar": [
-                {
-                    "id": "workspaceManager",
-                    "title": "Workspace Manager",
-                    "icon": "resources/workspace-manager.svg",
-                    "when": "workspace-manager:enabled"
-                }
-            ]
-        },
-        "views": {
-            "workspaceManager": [
-                {
-                    "id": "workspaceManager.views.favorites:workspaceManager",
-                    "name": "Favorites",
-                    "when": "config.workspace-manager.views.favorites.enabled && config.workspace-manager.views.favorites.location == workspaceManager"
-                },
-                {
-                    "id": "workspaceManager.views.workspaces:workspaceManager",
-                    "name": "Workspaces",
-                    "when": "config.workspace-manager.views.workspaces.enabled && config.workspace-manager.views.workspaces.location == workspaceManager"
-                },
-                {
-                    "id": "workspaceManager.views.groups:workspaceManager",
-                    "name": "Groups",
-                    "when": "config.workspace-manager.views.groups.enabled && config.workspace-manager.views.groups.location == workspaceManager"
-                }
-            ],
-            "explorer": [
-                {
-                    "id": "workspaceManager.views.workspaces:explorer",
-                    "name": "Workspaces",
-                    "when": "workspace-manager:enabled && config.workspace-manager.views.workspaces.enabled && config.workspace-manager.views.workspaces.location == explorer"
-                },
-                {
-                    "id": "workspaceManager.views.favorites:explorer",
-                    "name": "Favorite Workspaces",
-                    "when": "workspace-manager:enabled && config.workspace-manager.views.favorites.enabled && !workspace-manager:favoritesEmpty && config.workspace-manager.views.favorites.location == explorer"
-                },
-                {
-                    "id": "workspaceManager.views.groups:explorer",
-                    "name": "Workspaces Groups",
-                    "when": "workspace-manager:enabled && config.workspace-manager.views.groups.enabled && config.workspace-manager.views.groups.location == explorer"
-                }
-            ]
-        },
-        "menus": {
-            "commandPalette": [
-                {
-                    "command": "workspaceManager.saveWorkspace",
-                    "when": "false"
-                },
-                {
-                    "command": "workspaceManager.switchWorkspace",
-                    "when": "false"
-                },
-                {
-                    "command": "workspaceManager.switchWorkspaceInNewWindow",
-                    "when": "false"
-                },
-                {
-                    "command": "workspaceManager.cacheWorkspace",
-                    "when": "false"
-                },
-                {
-                    "command": "workspaceManager.addToFavorites",
-                    "when": "false"
-                },
-                {
-                    "command": "workspaceManager.removeFromFavorites",
-                    "when": "false"
-                },
-                {
-                    "command": "workspaceManager.openWorkspaceSettings",
-                    "when": "false"
-                },
-                {
-                    "command": "workspaceManager.addToGroup",
-                    "when": "false"
-                },
-                {
-                    "command": "workspaceManager.moveToGroup",
-                    "when": "false"
-                }
-            ],
-            "view/title": [
-                {
-                    "command": "workspaceManager.saveWorkspace",
-                    "when": "view =~ /^workspaceManager\\.views\\.workspace/",
-                    "group": "navigation@2"
-                },
-                {
-                    "command": "workspaceManager.cacheWorkspace",
-                    "when": "view =~ /^workspaceManager\\.views\\.workspace/",
-                    "group": "navigation@3"
-                },
-                {
-                    "command": "workspaceManager.closeWorkspace",
-                    "when": "view =~ /^workspaceManager\\.views\\.workspace/",
-                    "group": "navigation@4"
-                }
-            ],
-            "view/item/context": [
-                {
-                    "command": "workspaceManager.addToFavorites",
-                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace\\b(?!.*?\\b\\+favorite\\b)/",
-                    "group": "inline@1"
-                },
-                {
-                    "command": "workspaceManager.removeFromFavorites",
-                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace\\b(?=.*?\\b\\+favorite\\b)/",
-                    "group": "inline@1"
-                },
-                {
-                    "command": "workspaceManager.switchWorkspaceInNewWindow",
-                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace/",
-                    "group": "inline@2"
-                },
-                {
-                    "command": "workspaceManager.deleteWorkspace",
-                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace/",
-                    "group": "inline@3"
-                },
-                {
-                    "command": "workspaceManager.switchWorkspace",
-                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace/",
-                    "group": "navigation@1"
-                },
-                {
-                    "command": "workspaceManager.switchWorkspaceInNewWindow",
-                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace/",
-                    "group": "navigation@2"
-                },
-                {
-                    "command": "workspaceManager.addToFavorites",
-                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace\\b(?!.*?\\b\\+favorite\\b)/",
-                    "group": "2_workspace@1"
-                },
-                {
-                    "command": "workspaceManager.removeFromFavorites",
-                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace\\b(?=.*?\\b\\+favorite\\b)/",
-                    "group": "2_workspace@1"
-                },
-                {
-                    "command": "workspaceManager.addToGroup",
-                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace\\b(?!.*?\\b\\+group\\b)/",
-                    "group": "2_workspace@2"
-                },
-                {
-                    "command": "workspaceManager.moveToGroup",
-                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace\\b(?=.*?\\b\\+group\\b)/",
-                    "group": "2_workspace@2"
-                },
-                {
-                    "command": "workspaceManager.openWorkspaceSettings",
-                    "when": "view =~ /^workspaceManager\\.views/ && viewItem =~ /workspaceManager:workspace/",
-                    "group": "2_workspace@2"
-                }
-            ]
-        },
-        "keybindings": [
-            {
-                "command": "workspaceManager.switchWorkspace",
-                "key": "shift+alt+p",
-                "mac": "cmd+alt+p"
-            },
-            {
-                "command": "workspaceManager.switchWorkspaceInNewWindow",
-                "key": "ctrl-k ctrl-w"
-            }
-        ]
-    }
+  "name": "workspace-manager",
+  "displayName": "Workspace Manager",
+  "description": "Workspace manager for Visual Studio Code",
+  "version": "1.5.1",
+  "publisher": "design4pro",
+  "license": "MIT",
+  "icon": "resources/workspace-manager.png",
+  "homepage": "https://github.com/design4pro/vscode-workspace-manager",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/design4pro/vscode-workspace-manager.git"
+  },
+  "bugs": {
+    "url": "https://github.com/design4pro/vscode-workspace-manager/issues",
+    "email": "workspace-manager@design4.pro"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "vscode": "^1.35.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "workspace",
+    "save",
+    "manager",
+    "switch"
+  ],
+  "scripts": {
+    "nx": "nx",
+    "start": "nx serve",
+    "build": "nx build",
+    "test": "nx test",
+    "lint": "nx workspace-lint && nx lint",
+    "e2e": "nx e2e",
+    "affected:apps": "nx affected:apps",
+    "affected:libs": "nx affected:libs",
+    "affected:build": "nx affected:build",
+    "affected:e2e": "nx affected:e2e",
+    "affected:test": "nx affected:test",
+    "affected:lint": "nx affected:lint",
+    "affected:dep-graph": "nx affected:dep-graph",
+    "affected": "nx affected",
+    "format": "nx format:write",
+    "format:write": "nx format:write",
+    "format:check": "nx format:check",
+    "update": "nx migrate latest",
+    "workspace-schematic": "nx workspace-schematic",
+    "dep-graph": "nx dep-graph",
+    "help": "nx help"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@nrwl/node": "^9.0.4",
+    "@nrwl/workspace": "9.0.4",
+    "@types/node": "~8.9.4",
+    "dotenv": "6.2.0",
+    "eslint": "6.1.0",
+    "prettier": "1.18.2",
+    "ts-node": "~7.0.0",
+    "tslint": "~5.11.0",
+    "typescript": "~3.7.4",
+    "@nrwl/jest": "9.0.4",
+    "jest": "24.9.0",
+    "@types/jest": "24.9.1",
+    "ts-jest": "24.0.0",
+    "@nrwl/eslint-plugin-nx": "9.0.4",
+    "@typescript-eslint/parser": "2.19.2",
+    "@typescript-eslint/eslint-plugin": "2.19.2",
+    "eslint-config-prettier": "6.0.0"
+  }
 }
